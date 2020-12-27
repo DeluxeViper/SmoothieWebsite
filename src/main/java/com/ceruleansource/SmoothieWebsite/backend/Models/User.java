@@ -11,11 +11,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     private String name;
-
     private String email;
-
     private String password;
 
     @OneToMany(fetch = FetchType.EAGER)
@@ -23,17 +20,20 @@ public class User {
 
     // TODO: Double check the logic for this
     private String intake;
+    private boolean active;
+    private String roles;
 
     protected User() {
     }
 
-    public User(String name, String email, String password, List<Smoothie> favouriteSmoothies, String intake) {
-        this.id = id;
+    public User(String name, String email, String password, List<Smoothie> favouriteSmoothies, String intake, boolean active, String roles) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.favouriteSmoothies = favouriteSmoothies;
         this.intake = intake;
+        this.active = active;
+        this.roles = roles;
     }
 
     public Long getId() {
@@ -84,6 +84,22 @@ public class User {
         this.intake = intake;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public String getRoles() {
+        return roles;
+    }
+
+    public void setRoles(String roles) {
+        this.roles = roles;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -93,6 +109,8 @@ public class User {
                 ", password='" + password + '\'' +
                 ", favouriteSmoothies=" + favouriteSmoothies +
                 ", intake='" + intake + '\'' +
+                ", active=" + active +
+                ", roles='" + roles + '\'' +
                 '}';
     }
 }
