@@ -9,42 +9,50 @@ import javax.persistence.Id;
 public class NutritionalInformation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private int calories;
 
-    private String totalFat;
+    private double totalFat;
 
-    private String saturatedFat;
+    private double saturatedFat;
 
-    private String polyunsaturatedFat;
+    private double polyunsaturatedFat;
 
-    private String monounsaturatedFat;
+    private double monounsaturatedFat;
 
-    private String cholesterol;
+    private double cholesterol;
 
-    private String sodium;
+    private double sodium;
 
-    private String potassium;
+    private double potassium;
 
-    private String totalCarbohydrates;
+    private double totalCarbohydrates;
 
-    private String dietaryFibre;
+    private double dietaryFibre;
 
-    private String protein;
+    private double sugars;
 
-    private String vitaminA;
+    private double protein;
 
-    private String vitaminB;
+    private double vitaminA;
 
-    private String vitaminC;
+    private double vitaminB;
+
+    private double vitaminC;
+
+    private double calcium;
+
+    private double iron;
 
     public NutritionalInformation() {
     }
 
-    public NutritionalInformation(Long id, int calories, String totalFat, String saturatedFat, String polyunsaturatedFat, String monounsaturatedFat, String cholesterol, String sodium, String potassium, String totalCarbohydrates, String dietaryFibre, String protein, String vitaminA, String vitaminB, String vitaminC) {
-        this.id = id;
+    public NutritionalInformation(int calories, double totalFat, double saturatedFat, double polyunsaturatedFat,
+                                  double monounsaturatedFat, double cholesterol, double sodium, double potassium,
+                                  double totalCarbohydrates, double dietaryFibre, double sugars, double protein,
+                                  double vitaminA, double vitaminB, double vitaminC, double calcium, double iron) {
         this.calories = calories;
         this.totalFat = totalFat;
         this.saturatedFat = saturatedFat;
@@ -55,10 +63,13 @@ public class NutritionalInformation {
         this.potassium = potassium;
         this.totalCarbohydrates = totalCarbohydrates;
         this.dietaryFibre = dietaryFibre;
+        this.sugars = sugars;
         this.protein = protein;
         this.vitaminA = vitaminA;
         this.vitaminB = vitaminB;
         this.vitaminC = vitaminC;
+        this.calcium = calcium;
+        this.iron = iron;
     }
 
     public Long getId() {
@@ -77,108 +88,132 @@ public class NutritionalInformation {
         this.calories = calories;
     }
 
-    public String getTotalFat() {
+    public double getTotalFat() {
         return totalFat;
     }
 
-    public void setTotalFat(String totalFat) {
+    public void setTotalFat(double totalFat) {
         this.totalFat = totalFat;
     }
 
-    public String getSaturatedFat() {
+    public double getSaturatedFat() {
         return saturatedFat;
     }
 
-    public void setSaturatedFat(String saturatedFat) {
+    public void setSaturatedFat(double saturatedFat) {
         this.saturatedFat = saturatedFat;
     }
 
-    public String getPolyunsaturatedFat() {
+    public double getPolyunsaturatedFat() {
         return polyunsaturatedFat;
     }
 
-    public void setPolyunsaturatedFat(String polyunsaturatedFat) {
+    public void setPolyunsaturatedFat(double polyunsaturatedFat) {
         this.polyunsaturatedFat = polyunsaturatedFat;
     }
 
-    public String getMonounsaturatedFat() {
+    public double getMonounsaturatedFat() {
         return monounsaturatedFat;
     }
 
-    public void setMonounsaturatedFat(String monounsaturatedFat) {
+    public void setMonounsaturatedFat(double monounsaturatedFat) {
         this.monounsaturatedFat = monounsaturatedFat;
     }
 
-    public String getCholesterol() {
+    public double getCholesterol() {
         return cholesterol;
     }
 
-    public void setCholesterol(String cholesterol) {
+    public void setCholesterol(double cholesterol) {
         this.cholesterol = cholesterol;
     }
 
-    public String getSodium() {
+    public double getSodium() {
         return sodium;
     }
 
-    public void setSodium(String sodium) {
+    public void setSodium(double sodium) {
         this.sodium = sodium;
     }
 
-    public String getPotassium() {
+    public double getPotassium() {
         return potassium;
     }
 
-    public void setPotassium(String potassium) {
+    public void setPotassium(double potassium) {
         this.potassium = potassium;
     }
 
-    public String getTotalCarbohydrates() {
+    public double getTotalCarbohydrates() {
         return totalCarbohydrates;
     }
 
-    public void setTotalCarbohydrates(String totalCarbohydrates) {
+    public void setTotalCarbohydrates(double totalCarbohydrates) {
         this.totalCarbohydrates = totalCarbohydrates;
     }
 
-    public String getDietaryFibre() {
+    public double getDietaryFibre() {
         return dietaryFibre;
     }
 
-    public void setDietaryFibre(String dietaryFibre) {
+    public void setDietaryFibre(double dietaryFibre) {
         this.dietaryFibre = dietaryFibre;
     }
 
-    public String getProtein() {
+    public double getSugars() {
+        return sugars;
+    }
+
+    public void setSugars(double sugars) {
+        this.sugars = sugars;
+    }
+
+    public double getProtein() {
         return protein;
     }
 
-    public void setProtein(String protein) {
+    public void setProtein(double protein) {
         this.protein = protein;
     }
 
-    public String getVitaminA() {
+    public double getVitaminA() {
         return vitaminA;
     }
 
-    public void setVitaminA(String vitaminA) {
+    public void setVitaminA(double vitaminA) {
         this.vitaminA = vitaminA;
     }
 
-    public String getVitaminB() {
+    public double getVitaminB() {
         return vitaminB;
     }
 
-    public void setVitaminB(String vitaminB) {
+    public void setVitaminB(double vitaminB) {
         this.vitaminB = vitaminB;
     }
 
-    public String getVitaminC() {
+    public double getVitaminC() {
         return vitaminC;
     }
 
-    public void setVitaminC(String vitaminC) {
+    public void setVitaminC(double vitaminC) {
         this.vitaminC = vitaminC;
+    }
+
+    public double getCalcium() {
+        return calcium;
+    }
+
+    public void setCalcium(double calcium) {
+        this.calcium = calcium;
+    }
+
+    public double getIron() {
+        return iron;
+    }
+
+    public void setIron(double iron) {
+        this.iron = iron;
     }
 
     @Override

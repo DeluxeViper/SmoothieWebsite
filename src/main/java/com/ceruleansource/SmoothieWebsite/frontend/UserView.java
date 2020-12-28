@@ -1,5 +1,6 @@
 package com.ceruleansource.SmoothieWebsite.frontend;
 
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -12,8 +13,13 @@ public class UserView extends VerticalLayout {
         Label name = new Label("");
 
         name.setText(SecurityContextHolder.getContext().getAuthentication().getName().toString());
+        Button logoutBtn = new Button("Logout");
 
-        add(label, name);
+        add(label, name, logoutBtn);
+        logoutBtn.addClickListener(e -> {
+            SecurityContextHolder.clearContext();
+            logoutBtn.getUI().ifPresent(ui -> ui.navigate("login"));
+        });
     }
 
 }

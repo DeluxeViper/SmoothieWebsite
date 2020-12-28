@@ -1,18 +1,36 @@
 package com.ceruleansource.SmoothieWebsite.backend.Models;
 
 import org.hibernate.annotations.Fetch;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
+/**
+ * JPA Model (Entity) for User
+ */
 @Entity
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String name;
+
+    @NotNull
+    @Length(min = 1, max = 32)
+    private String firstName;
+
+    @NotNull
+    @Length(min = 1, max = 32)
+    private String lastName;
+
+    @Email
     private String email;
+
+    @NotNull
+    @Length(min = 8, max = 64)
     private String password;
 
     @OneToMany(fetch = FetchType.EAGER)
@@ -26,8 +44,9 @@ public class User {
     protected User() {
     }
 
-    public User(String name, String email, String password, List<Smoothie> favouriteSmoothies, String intake, boolean active, String roles) {
-        this.name = name;
+    public User(String firstName, String lastName, String email, String password, List<Smoothie> favouriteSmoothies, String intake, boolean active, String roles) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.favouriteSmoothies = favouriteSmoothies;
@@ -44,12 +63,20 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getEmail() {
@@ -104,7 +131,8 @@ public class User {
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", favouriteSmoothies=" + favouriteSmoothies +

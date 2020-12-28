@@ -5,6 +5,7 @@ import com.ceruleansource.SmoothieWebsite.backend.Repositories.IngredientReposit
 import com.ceruleansource.SmoothieWebsite.backend.Repositories.NutritionalInformationRepository;
 import com.ceruleansource.SmoothieWebsite.backend.Repositories.SmoothieRepository;
 import com.ceruleansource.SmoothieWebsite.backend.Repositories.UserRepository;
+import com.ceruleansource.SmoothieWebsite.backend.Security.SecurityConfiguration;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -26,9 +27,6 @@ public class SmoothieWebsiteApplication {
     @Bean
     public CommandLineRunner loadData(UserRepository repository) {
         return (args -> {
-            if (repository.findByEmail("hello@gmail.com").isEmpty()) {
-                repository.save(new User("Bruce Lee", "hello@gmail.com", "password", new ArrayList<>(), "0", true, "USER"));
-            }
         });
     }
 
