@@ -1,13 +1,13 @@
-package com.ceruleansource.SmoothieWebsite.backend.Security;
+package com.ceruleansource.SmoothieWebsite.backend.Authentication;
 
 import com.ceruleansource.SmoothieWebsite.frontend.Error.AccessDeniedView;
 import com.ceruleansource.SmoothieWebsite.frontend.Error.CustomRouteNotFoundError;
+import com.ceruleansource.SmoothieWebsite.frontend.HomeView;
 import com.ceruleansource.SmoothieWebsite.frontend.LoginView;
+import com.ceruleansource.SmoothieWebsite.frontend.MainView;
 import com.ceruleansource.SmoothieWebsite.frontend.RegisterView;
 import com.vaadin.flow.server.ServletHelper;
 import com.vaadin.flow.shared.ApplicationConstants;
-import org.apache.catalina.security.SecurityUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -16,7 +16,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -56,7 +55,9 @@ public class SecurityUtils {
         final boolean publicView = LoginView.class.equals(securedClass)
                 || AccessDeniedView.class.equals(securedClass)
                 || CustomRouteNotFoundError.class.equals(securedClass)
-                || RegisterView.class.equals(securedClass);
+                || RegisterView.class.equals(securedClass)
+                || HomeView.class.equals(securedClass)
+                || MainView.class.equals(securedClass);
 
         // Always allow access to public views
         if (publicView) {
@@ -64,8 +65,6 @@ public class SecurityUtils {
         }
 
         Authentication userAuthentication = SecurityContextHolder.getContext().getAuthentication();
-
-        System.out.println(userAuthentication);
 
         // All other views require authentication
         if (!isUserLoggedIn()) {

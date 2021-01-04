@@ -1,18 +1,5 @@
 package com.ceruleansource.SmoothieWebsite.backend.Controllers;
 
-import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
-import com.ceruleansource.SmoothieWebsite.backend.Models.User;
-import com.ceruleansource.SmoothieWebsite.backend.Repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
-import org.springframework.util.Assert;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-
 //@RestController
 //@RequestMapping("/user")
 public class UserController {

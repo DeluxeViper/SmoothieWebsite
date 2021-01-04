@@ -11,22 +11,23 @@ public class Ingredient {
 
     private String name;
 
-    private String quantityType;
-
-    private String quantityValue;
+    private String quantityTypeAndValue;
 
     @OneToOne
-    private NutritionalInformation nutritionalInformation;
+    private NutritionalInformationGrams nutritionalInformationGrams;
+
+    @OneToOne
+    private NutritionalInformationPercentage nutritionalInformationPercentage;
 
     public Ingredient(){
     }
 
-    public Ingredient(Long id, String name, String quantityType, String quantityValue, NutritionalInformation nutritionalInformation) {
+    public Ingredient(Long id, String name, String quantityTypeAndValue, NutritionalInformationGrams nutritionalInformationGrams, NutritionalInformationPercentage nutritionalInformationPercentage) {
         this.id = id;
         this.name = name;
-        this.quantityType = quantityType;
-        this.quantityValue = quantityValue;
-        this.nutritionalInformation = nutritionalInformation;
+        this.quantityTypeAndValue = quantityTypeAndValue;
+        this.nutritionalInformationGrams = nutritionalInformationGrams;
+        this.nutritionalInformationPercentage = nutritionalInformationPercentage;
     }
 
     public Long getId() {
@@ -45,28 +46,28 @@ public class Ingredient {
         this.name = name;
     }
 
-    public String getQuantityType() {
-        return quantityType;
+    public String getQuantityTypeAndValue() {
+        return quantityTypeAndValue;
     }
 
-    public void setQuantityType(String quantityType) {
-        this.quantityType = quantityType;
+    public void setQuantityTypeAndValue(String quantityTypeAndValue) {
+        this.quantityTypeAndValue = quantityTypeAndValue;
     }
 
-    public String getQuantityValue() {
-        return quantityValue;
+    public NutritionalInformationGrams getNutritionalInformationGrams() {
+        return nutritionalInformationGrams;
     }
 
-    public void setQuantityValue(String quantityValue) {
-        this.quantityValue = quantityValue;
+    public void setNutritionalInformationGrams(NutritionalInformationGrams nutritionalInformation) {
+        this.nutritionalInformationGrams = nutritionalInformation;
     }
 
-    public NutritionalInformation getNutritionalInformation() {
-        return nutritionalInformation;
+    public NutritionalInformationPercentage getNutritionalInformationPercentage() {
+        return nutritionalInformationPercentage;
     }
 
-    public void setNutritionalInformation(NutritionalInformation nutritionalInformation) {
-        this.nutritionalInformation = nutritionalInformation;
+    public void setNutritionalInformationPercentage(NutritionalInformationPercentage nutritionalInformationPercentage) {
+        this.nutritionalInformationPercentage = nutritionalInformationPercentage;
     }
 
     @Override
@@ -74,9 +75,9 @@ public class Ingredient {
         return "Ingredient{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", quantityType='" + quantityType + '\'' +
-                ", quantityValue='" + quantityValue + '\'' +
-                ", nutritionalInformation=" + nutritionalInformation +
+                ", quantityTypeAndValue='" + quantityTypeAndValue + '\'' +
+                ", nutritionalInformationGrams=" + nutritionalInformationGrams +
+                ", nutritionalInformationPercentage=" + nutritionalInformationPercentage +
                 '}';
     }
 }

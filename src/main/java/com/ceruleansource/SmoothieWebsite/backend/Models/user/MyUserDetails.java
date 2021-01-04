@@ -1,4 +1,4 @@
-package com.ceruleansource.SmoothieWebsite.backend.Models;
+package com.ceruleansource.SmoothieWebsite.backend.Models.user;
 
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;

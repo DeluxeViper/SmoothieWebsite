@@ -8,7 +8,6 @@ import com.vaadin.flow.router.*;
 
 import javax.servlet.http.HttpServletResponse;
 
-@ParentLayout(MainView.class)
 public class CustomRouteNotFoundError extends RouteNotFoundError {
     public CustomRouteNotFoundError() {
         RouterLink link = Component.from(ElementFactory.createRouterLink("", "Go to the front page."),

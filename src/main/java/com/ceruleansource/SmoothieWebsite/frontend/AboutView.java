@@ -1,18 +1,33 @@
 package com.ceruleansource.SmoothieWebsite.frontend;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
-import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.templatemodel.TemplateModel;
+import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.dependency.JsModule;
+import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 
-
+/**
+ * A Designer generated component for the about-view template.
+ *
+ * Designer will add and remove fields with @Id mappings but
+ * does not overwrite or otherwise change this file.
+ */
+@Tag("about-view")
+@JsModule("./src/views/about-view.js")
 @Route(value = "about", layout = MainView.class)
-@PageTitle("About")
-public class AboutView extends PolymerTemplate<TemplateModel> {
-    public AboutView(){
-        H2 aboutTitle = new H2("About View");
+public class AboutView extends PolymerTemplate<AboutView.AboutViewModel> {
 
+    /**
+     * Creates a new AboutView.
+     */
+    public AboutView() {
+        // You can initialise any data required for the connected UI components here.
+    }
+
+    /**
+     * This model binds properties between AboutView and about-view
+     */
+    public interface AboutViewModel extends TemplateModel {
+        // Add setters and getters for template properties here.
     }
 }

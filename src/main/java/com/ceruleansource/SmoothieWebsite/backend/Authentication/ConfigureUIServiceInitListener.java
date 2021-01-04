@@ -1,4 +1,4 @@
-package com.ceruleansource.SmoothieWebsite.backend.Security;
+package com.ceruleansource.SmoothieWebsite.backend.Authentication;
 
 import com.ceruleansource.SmoothieWebsite.frontend.Components.OfflineBanner;
 import com.ceruleansource.SmoothieWebsite.frontend.LoginView;

@@ -1,5 +1,6 @@
-package com.ceruleansource.SmoothieWebsite.backend.Models;
+package com.ceruleansource.SmoothieWebsite.backend.Models.user;
 
+import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.validator.constraints.Length;
 
@@ -27,6 +28,7 @@ public class User {
     private String lastName;
 
     @Email
+    @Column(unique = true)
     private String email;
 
     @NotNull
@@ -41,7 +43,7 @@ public class User {
     private boolean active;
     private String roles;
 
-    protected User() {
+    public User() {
     }
 
     public User(String firstName, String lastName, String email, String password, List<Smoothie> favouriteSmoothies, String intake, boolean active, String roles) {

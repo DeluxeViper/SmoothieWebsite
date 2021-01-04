@@ -1,4 +1,4 @@
-package com.ceruleansource.SmoothieWebsite.backend.Security;
+package com.ceruleansource.SmoothieWebsite.backend.Authentication;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -30,16 +29,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         // Vaadin has built in CSRF already
-        http.csrf().disable()
+        http.csrf().disable();
+
+        http.antMatcher("/**")
                 // Authorize requests
                 .authorizeRequests()
+                .antMatchers("/", "/home").permitAll()
                 // Allow all flow internal requests
                 .requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
                 // Allow all requests by logged in users
                 .anyRequest().authenticated()
                 // Configure login page
-                .and().formLogin().loginPage("/login").permitAll().loginProcessingUrl("/login")
-                .and().logout();
+                .and().formLogin().loginPage("/login").permitAll().defaultSuccessUrl("/home")
+                .and().logout().logoutSuccessUrl("/login")
+                // Configure login page for OAuth login
+                .and().oauth2Login().loginPage("/login").permitAll().defaultSuccessUrl("/home");
     }
 
     @Override
@@ -71,6 +75,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {
-        return new BCryptPasswordEncoder();
+        return NoOpPasswordEncoder.getInstance();
     }
 }

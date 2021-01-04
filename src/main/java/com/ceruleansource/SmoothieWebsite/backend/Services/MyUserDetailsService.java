@@ -1,11 +1,9 @@
 package com.ceruleansource.SmoothieWebsite.backend.Services;
 
-import com.ceruleansource.SmoothieWebsite.backend.Models.MyUserDetails;
-import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
-import com.ceruleansource.SmoothieWebsite.backend.Models.User;
+import com.ceruleansource.SmoothieWebsite.backend.Models.user.MyUserDetails;
+import com.ceruleansource.SmoothieWebsite.backend.Models.user.User;
 import com.ceruleansource.SmoothieWebsite.backend.Repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,7 +24,6 @@ public class MyUserDetailsService implements UserDetailsService {
 
         user.orElseThrow(() -> new UsernameNotFoundException("Not found: " + email));
 
-        System.out.println(user);
         return user.map(MyUserDetails::new).get();
     }
 

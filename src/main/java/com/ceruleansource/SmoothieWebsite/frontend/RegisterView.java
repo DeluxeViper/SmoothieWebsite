@@ -1,6 +1,6 @@
 package com.ceruleansource.SmoothieWebsite.frontend;
 
-import com.ceruleansource.SmoothieWebsite.backend.Models.MyUserDetails;
+import com.ceruleansource.SmoothieWebsite.backend.Models.user.MyUserDetails;
 import com.ceruleansource.SmoothieWebsite.backend.Services.MyUserDetailsService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -125,9 +125,9 @@ public class RegisterView extends VerticalLayout {
     }
 
     private void showSuccess(MyUserDetails detailsBean){
-        Notification notification = Notification.show("Data saved! Welcome " + detailsBean.getFirstName());
+        Notification notification = Notification.show("Welcome " + detailsBean.getFirstName());
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-        submitButton.getUI().ifPresent(ui -> ui.navigate("login"));
+        submitButton.getUI().ifPresent(ui -> ui.navigate("home"));
     }
 
     /**
