@@ -11,9 +11,11 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.tabs.Tab;
+import com.vaadin.flow.component.tabs.TabVariant;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteConfiguration;
+import com.vaadin.flow.router.Router;
 import com.vaadin.flow.router.RouterLink;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -114,7 +116,13 @@ public class MainView extends AppLayout {
     }
 
     private static Tab createTab(VaadinIcon icon, String title, Class<? extends Component> viewClass) {
-        return createTab(populateLink(new RouterLink(null, viewClass), icon, title));
+        final Tab tab = new Tab();
+        tab.add(icon.create());
+        tab.addThemeVariants(TabVariant.LUMO_ICON_ON_TOP);
+        tab.add(new RouterLink(title, viewClass));
+        ComponentUtil.setData(tab, Class.class, viewClass);
+//        return createTab(populateLink(new RouterLink(null, viewClass), icon, title));
+        return tab;
     }
 
     private static Tab createTab(Component component) {
