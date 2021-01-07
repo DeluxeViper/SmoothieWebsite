@@ -20,49 +20,28 @@ import java.util.stream.Collectors;
  */
 public class MyUserDetails implements UserDetails {
 
-    @NotNull
-    @Length(min = 1, max = 32)
-    private String firstName;
-
-    @NotNull
-    @Length(min = 1, max = 32)
-    private String lastName;
-
-    @Email
-    private String email;
-
-    @NotNull
-    @Length(min = 8, max = 64)
-    private String password;
-
-    private boolean active;
-    private List<GrantedAuthority> authorities;
+    private User user;
 
     public MyUserDetails(){
     }
 
     public MyUserDetails(User user) {
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
-        this.active = user.isActive();
-        this.authorities = Arrays.stream(user.getRoles().split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        this.user = user;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return Arrays.stream(user.getRoles().split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return user.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return email;
+        return user.getEmail();
     }
 
     @Override
@@ -82,53 +61,14 @@ public class MyUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return active;
+        return user.isActive();
     }
 
-    public String getFirstName() {
-        return firstName;
+    public User getUser() {
+        return user;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public void setAuthorities(List<GrantedAuthority> authorities) {
-        this.authorities = authorities;
-    }
-    @Override
-    public String toString() {
-        return "MyUserDetails{" +
-                "firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", active=" + active +
-                ", authorities=" + authorities +
-                '}';
+    public void setUser(User user) {
+        this.user = user;
     }
 }

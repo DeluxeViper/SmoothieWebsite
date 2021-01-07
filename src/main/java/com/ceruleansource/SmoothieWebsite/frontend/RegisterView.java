@@ -1,6 +1,7 @@
 package com.ceruleansource.SmoothieWebsite.frontend;
 
 import com.ceruleansource.SmoothieWebsite.backend.Models.user.MyUserDetails;
+import com.ceruleansource.SmoothieWebsite.backend.Models.user.User;
 import com.ceruleansource.SmoothieWebsite.backend.Services.MyUserDetailsService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -22,17 +23,17 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+
 @PageTitle("Register")
 @Route("register")
 public class RegisterView extends VerticalLayout {
-
-    private static final long serialVersionUID = 6529685098267758190L;
 
     private PasswordField passwordField;
     private PasswordField confirmPasswordField;
 
     private MyUserDetailsService userDetailsService;
-    private BeanValidationBinder<MyUserDetails> binder;
+    private BeanValidationBinder<User> binder;
     private Button submitButton;
 
     /**
@@ -92,11 +93,12 @@ public class RegisterView extends VerticalLayout {
          * Form Functionality
          */
 
-        binder = new BeanValidationBinder<MyUserDetails>(MyUserDetails.class);
+        binder = new BeanValidationBinder<>(User.class);
 
         binder.forField(firstNameField).asRequired().bind("firstName");
         binder.forField(lastNameField).asRequired().bind("lastName");
         binder.forField(emailField).asRequired(new EmailValidator("Value is not a valid email address"))
+                .withValidator(this::emailValidator)
                 .bind("email");
         binder.forField(passwordField).asRequired().withValidator(this::passwordValidator).bind("password");
 
@@ -109,9 +111,15 @@ public class RegisterView extends VerticalLayout {
 
         submitButton.addClickListener(e -> {
             try {
-                MyUserDetails detailsBean = new MyUserDetails();
+                User detailsBean = new User();
 
                 binder.writeBean(detailsBean);
+
+                // Default values
+                detailsBean.setActive(true);
+                detailsBean.setRoles("USER");
+                detailsBean.setSmoothies(new ArrayList<>());
+                detailsBean.setIntake("0");
 
                 System.out.println(detailsBean.toString());
 
@@ -124,10 +132,10 @@ public class RegisterView extends VerticalLayout {
         });
     }
 
-    private void showSuccess(MyUserDetails detailsBean){
-        Notification notification = Notification.show("Welcome " + detailsBean.getFirstName());
+    private void showSuccess(User detailsBean){
+        Notification notification = Notification.show("Successfully created account, Welcome " + detailsBean.getFirstName() + "!");
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-        submitButton.getUI().ifPresent(ui -> ui.navigate("home"));
+        submitButton.getUI().ifPresent(ui -> ui.navigate("login"));
     }
 
     /**
@@ -158,5 +166,14 @@ public class RegisterView extends VerticalLayout {
         }
 
         return ValidationResult.error("Passwords do not match");
+    }
+
+    private ValidationResult emailValidator(String email, ValueContext ctx){
+        boolean userExists = userDetailsService.userExists(email);
+        if (userExists){
+            return ValidationResult.error("Email is already registered");
+        } else {
+            return ValidationResult.ok();
+        }
     }
 }

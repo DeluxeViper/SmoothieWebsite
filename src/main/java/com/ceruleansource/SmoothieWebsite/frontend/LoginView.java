@@ -48,11 +48,10 @@ public class LoginView extends VerticalLayout
 
     public LoginView() {
         loginForm = new LoginForm();
-        H2 title = new H2("Smoothie Website Login");
+        H2 title = new H2("Smoothie Website");
         registerButton = new Button("Register");
         loginForm.setAction("login");
-        add(loginForm, registerButton);
-
+        add(title, loginForm, registerButton);
         setAlignItems(Alignment.CENTER);
 
         registerButton.addClickListener(e -> {

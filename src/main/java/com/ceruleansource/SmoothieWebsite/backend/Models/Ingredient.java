@@ -1,6 +1,9 @@
 package com.ceruleansource.SmoothieWebsite.backend.Models;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Ingredient {
@@ -18,6 +21,9 @@ public class Ingredient {
 
     @OneToOne
     private NutritionalInformationPercentage nutritionalInformationPercentage;
+
+    @ManyToMany(mappedBy = "ingredients", fetch = FetchType.EAGER)
+    private List<Smoothie> smoothies = new ArrayList<>();
 
     public Ingredient(){
     }
@@ -70,6 +76,14 @@ public class Ingredient {
         this.nutritionalInformationPercentage = nutritionalInformationPercentage;
     }
 
+    public List<Smoothie> getSmoothies() {
+        return smoothies;
+    }
+
+    public void setSmoothie(List<Smoothie> smoothies) {
+        this.smoothies = smoothies;
+    }
+
     @Override
     public String toString() {
         return "Ingredient{" +
@@ -79,5 +93,18 @@ public class Ingredient {
                 ", nutritionalInformationGrams=" + nutritionalInformationGrams +
                 ", nutritionalInformationPercentage=" + nutritionalInformationPercentage +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Ingredient that = (Ingredient) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

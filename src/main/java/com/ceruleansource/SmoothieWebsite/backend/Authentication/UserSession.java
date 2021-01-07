@@ -30,30 +30,29 @@ public class UserSession {
     MyUserDetailsService userDetailsService;
 
     /**
-     * Returns the user details of the logged in user
+     * Returns the user object of the logged in user
      *
-     * @return UserDetails object based on the type of user logging in
+     * @return User object based on the type of user logging in
      */
-    public UserDetails getUser() {
-        if (isLoggedIn()){
+    public User getUser() {
+        if (isLoggedIn()) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             System.out.println("Authentication: " + authentication);
             if (authentication instanceof OAuth2AuthenticationToken) {
                 System.out.println("Google User logged in");
                 OAuth2AuthenticatedPrincipal principal = (OAuth2AuthenticatedPrincipal) authentication.getPrincipal();
-
-                return new MyUserDetails(
-                        new User(principal.getAttribute("given_name"), principal.getAttribute("family_name"),
-                                principal.getAttribute("email"), "confidential", new ArrayList<>(), "0", true, "GOOGLE_USER"));
+                return new User(principal.getAttribute("given_name"), principal.getAttribute("family_name"),
+                                principal.getAttribute("email"), "confidential", new ArrayList<>(), "0", true, "GOOGLE_USER");
             } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
                 System.out.println("Local User logged in");
-                UserDetails userDetails = userDetailsService.loadUserByUsername(authentication.getName());
-                return userDetails;
+                MyUserDetails userDetails = (MyUserDetails) userDetailsService.loadUserByUsername(authentication.getName());
+                System.out.println("UserDetails: " + userDetails);
+                System.out.println("User: " + userDetails.getUser());
+                return userDetails.getUser();
             } else if (authentication instanceof AnonymousAuthenticationToken) {
                 System.out.println("Anonymous User logged in");
-                return new MyUserDetails(
-                        new User("guest", "guest",
-                                "guest", "confidential", new ArrayList<>(), "0", true, "GOOGLE_USER"));
+                return new User("guest", "guest",
+                                "guest", "confidential", new ArrayList<>(), "0", true, "GOOGLE_USER");
             }
         }
         return null;
@@ -74,7 +73,7 @@ public class UserSession {
     /**
      * logs out user
      */
-    public void logout(){
+    public void logout() {
         SecurityContextHolder.clearContext();
     }
 }
