@@ -3,35 +3,36 @@ package com.ceruleansource.SmoothieWebsite.backend.Models;
 import com.ceruleansource.SmoothieWebsite.backend.Models.user.User;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 public class Smoothie {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "smoothie_id")
     private Long id;
 
     private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name="smoothie_ingredients",
-            joinColumns = @JoinColumn(name = "smoothie_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "ingredient_id", referencedColumnName = "id")
+            joinColumns = @JoinColumn(name = "smoothie_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredient_id")
     )
-    private List<Ingredient> ingredients = new ArrayList<>();
+    private Set<Ingredient> ingredients = new HashSet<>();
 
-    protected Smoothie(){
+    public Smoothie(){
     }
 
-    public Smoothie(String name) {
+    public Smoothie(String name, User user) {
         this.name = name;
+        this.user = user;
     }
 
     public Long getId() {
@@ -50,15 +51,15 @@ public class Smoothie {
         this.name = name;
     }
 
-    public List<Ingredient> getIngredients() {
+    public Set<Ingredient> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<Ingredient> ingredients) {
+    public void setIngredients(Set<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
-    public User getUser() {
+        public User getUser() {
         return user;
     }
 

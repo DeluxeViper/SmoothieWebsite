@@ -10,9 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
@@ -29,13 +29,25 @@ public class MyUserDetailsService implements UserDetailsService {
         return user.map(MyUserDetails::new).get();
     }
 
-    public void store(User user) {
-        userRepository.save(user);
+    @Transactional
+    public boolean addUser(User user) {
+        User newUser = new User();
+        newUser.setFirstName(user.getFirstName());
+        newUser.setLastName(user.getLastName());
+        newUser.setEmail(user.getEmail());
+        newUser.setIntake(user.getIntake());
+        newUser.setActive(user.isActive());
+        newUser.setPassword(user.getPassword());
+        newUser.setRoles(user.getRoles());
+        newUser.setSmoothies(user.getSmoothies());
+
+        User savedUser = userRepository.save(newUser);
+        return userRepository.findById(savedUser.getId()).isPresent();
     }
 
-    public void updateUser(User user){
+    public void updateUser(User user) {
         Optional<User> userOptional = userRepository.findByEmail(user.getEmail());
-        if (userOptional.isPresent()){
+        if (userOptional.isPresent()) {
             userRepository.save(userOptional.get());
             Notification.show("Updating User");
         } else {

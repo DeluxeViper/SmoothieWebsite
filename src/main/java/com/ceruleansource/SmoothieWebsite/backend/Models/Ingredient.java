@@ -1,15 +1,14 @@
 package com.ceruleansource.SmoothieWebsite.backend.Models;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 public class Ingredient {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ingredient_id")
     private Long id;
 
     private String name;
@@ -22,8 +21,8 @@ public class Ingredient {
     @OneToOne
     private NutritionalInformationPercentage nutritionalInformationPercentage;
 
-    @ManyToMany(mappedBy = "ingredients", fetch = FetchType.EAGER)
-    private List<Smoothie> smoothies = new ArrayList<>();
+    @ManyToMany(mappedBy = "ingredients", cascade = CascadeType.ALL)
+    private Set<Smoothie> smoothies  = new HashSet<>();
 
     public Ingredient(){
     }
@@ -76,11 +75,11 @@ public class Ingredient {
         this.nutritionalInformationPercentage = nutritionalInformationPercentage;
     }
 
-    public List<Smoothie> getSmoothies() {
+    public Set<Smoothie> getSmoothies() {
         return smoothies;
     }
 
-    public void setSmoothie(List<Smoothie> smoothies) {
+    public void setSmoothies(Set<Smoothie> smoothies) {
         this.smoothies = smoothies;
     }
 

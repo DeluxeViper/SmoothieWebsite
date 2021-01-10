@@ -1,7 +1,7 @@
 package com.ceruleansource.SmoothieWebsite.frontend;
 
-import com.ceruleansource.SmoothieWebsite.backend.Authentication.SecurityUtils;
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
+import com.ceruleansource.SmoothieWebsite.frontend.CreateSmoothieView.CreateSmoothieView;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
@@ -13,14 +13,10 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabVariant;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.flow.router.Router;
 import com.vaadin.flow.router.RouterLink;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

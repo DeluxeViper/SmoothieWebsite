@@ -1,6 +1,5 @@
 package com.ceruleansource.SmoothieWebsite.frontend;
 
-import com.ceruleansource.SmoothieWebsite.backend.Models.user.MyUserDetails;
 import com.ceruleansource.SmoothieWebsite.backend.Models.user.User;
 import com.ceruleansource.SmoothieWebsite.backend.Services.MyUserDetailsService;
 import com.vaadin.flow.component.button.Button;
@@ -24,6 +23,7 @@ import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 @PageTitle("Register")
 @Route("register")
@@ -97,7 +97,7 @@ public class RegisterView extends VerticalLayout {
 
         binder.forField(firstNameField).asRequired().bind("firstName");
         binder.forField(lastNameField).asRequired().bind("lastName");
-        binder.forField(emailField).asRequired(new EmailValidator("Value is not a valid email address"))
+        binder.forField(emailField).asRequired(new EmailValidator("Please select a valid email address"))
                 .withValidator(this::emailValidator)
                 .bind("email");
         binder.forField(passwordField).asRequired().withValidator(this::passwordValidator).bind("password");
@@ -118,14 +118,17 @@ public class RegisterView extends VerticalLayout {
                 // Default values
                 detailsBean.setActive(true);
                 detailsBean.setRoles("USER");
-                detailsBean.setSmoothies(new ArrayList<>());
+                detailsBean.setSmoothies(new HashSet<>());
                 detailsBean.setIntake("0");
 
                 System.out.println(detailsBean.toString());
 
-                userDetailsService.store(detailsBean);
+                if (userDetailsService.addUser(detailsBean)){
+                    showSuccess(detailsBean);
+                } else {
+                    Notification.show("Error! Failed to add user to database").addThemeVariants(NotificationVariant.LUMO_ERROR);
+                }
 
-                showSuccess(detailsBean);
             } catch (ValidationException validationException) {
                 validationException.printStackTrace();
             }

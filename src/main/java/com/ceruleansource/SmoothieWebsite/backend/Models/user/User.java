@@ -3,12 +3,15 @@ package com.ceruleansource.SmoothieWebsite.backend.Models.user;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * JPA Model (Entity) for User
@@ -36,8 +39,8 @@ public class User {
     @Length(min = 8, max = 64)
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Smoothie> smoothies;
+    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<Smoothie> smoothies = new HashSet<>();
 
     // TODO: Double check the logic for this
     private String intake;
@@ -47,12 +50,11 @@ public class User {
     public User() {
     }
 
-    public User(String firstName, String lastName, String email, String password, List<Smoothie> smoothies, String intake, boolean active, String roles) {
+    public User(String firstName, String lastName, String email, String password, String intake, boolean active, String roles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
-        this.smoothies = smoothies;
         this.intake = intake;
         this.active = active;
         this.roles = roles;
@@ -98,23 +100,23 @@ public class User {
         this.password = password;
     }
 
-    public List<Smoothie> getSmoothies() {
+    public Set<Smoothie> getSmoothies() {
         return smoothies;
     }
 
-    public void setSmoothies(List<Smoothie> favouriteSmoothies) {
-        this.smoothies = favouriteSmoothies;
+    public void setSmoothies(Set<Smoothie> smoothies) {
+        this.smoothies = smoothies;
     }
 
-    public void addSmoothie(Smoothie smoothie) {
-        smoothies.add(smoothie);
-        smoothie.setUser(this);
-    }
-
-    public void removeComment(Smoothie smoothie){
-        smoothies.remove(smoothie);
-        smoothie.setUser(null);
-    }
+//    public void addSmoothie(Smoothie smoothie) {
+//        smoothies.add(smoothie);
+////        smoothie.setUser(this);
+//    }
+//
+//    public void removeSmoothie(Smoothie smoothie){
+//        smoothies.remove(smoothie);
+////        smoothie.setUser(null);
+//    }
 
     public String getIntake() {
         return intake;
@@ -141,6 +143,7 @@ public class User {
     }
 
     @Override
+    @Transactional
     public String toString() {
         return "User{" +
                 "id=" + id +

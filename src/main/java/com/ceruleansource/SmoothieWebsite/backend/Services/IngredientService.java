@@ -32,6 +32,10 @@ public class IngredientService {
         return ingredientList;
     }
 
+    public List<String> findAllDistinctNamedIngredients(){
+        return ingredientRepository.findAllDistinctName();
+    }
+
     public Optional<Ingredient> getIngredient(Long id){
         return ingredientRepository.findById(id);
     }
