@@ -91,7 +91,7 @@ public class CreateSmoothieView extends Div {
         SplitLayout splitLayout = new SplitLayout();
         splitLayout.setSizeFull();
 
-        createGridLayout(splitLayout);
+        createGridLayout(splitLayout, ingredientService);
         createEditorLayout(splitLayout, ingredientService);
 
         add(splitLayout);
@@ -319,64 +319,34 @@ public class CreateSmoothieView extends Div {
         editorLayoutDiv.add(buttonLayout);
     }
 
-    private void createGridLayout(SplitLayout splitLayout) {
-        Div wrapper = new Div();
-        wrapper.setId("grid-wrapper");
-        wrapper.setWidthFull();
-        userSmoothies = new ComboBox<>("Your Smoothies");
+    private void createGridLayout(SplitLayout splitLayout, IngredientService ingredientService) {
+        IngredientGridDiv ingredientGridDiv = new IngredientGridDiv(ingredientService);
 
-        // Delete smoothie button init
-        deleteSmoothieBtn = new Button("Delete Smoothie");
-        deleteSmoothieBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        if (smoothie == null){
-            deleteSmoothieBtn.setVisible(false);
-        }
 
-        // Header
-        VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.setHeightFull();
-        H2 title = new H2("Craft Your Recipe");
-        H3 subheader = new H3("Add your Ingredients");
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-        horizontalLayout.add(userSmoothies, createSmoothieBtn, deleteSmoothieBtn);
-        verticalLayout.add(title, subheader, horizontalLayout, ingredientGrid);
-
-        wrapper.add(verticalLayout);
-        splitLayout.addToPrimary(wrapper);
-
-        configureGridLayout();
-    }
-
-    private void configureGridLayout(){
-        ingredientGrid.addColumn(Ingredient::getName).setHeader("Name").setAutoWidth(true);
-        ingredientGrid.addColumn(Ingredient::getQuantityTypeAndValue)
-                .setHeader("Amount").setAutoWidth(true);
-        ingredientGrid.addColumn(Ingredient::getNutritionalInformationGrams)
-                .setHeader("Nutritional Info Grams").setAutoWidth(true);
-        ingredientGrid.addColumn(Ingredient::getNutritionalInformationPercentage)
-                .setHeader("Nutritional Info %").setAutoWidth(true);
-        // TODO: Currently fetching all items, should only display the ones added
-//        List<Ingredient> list = ingredientService.fetchAll();
-        ingredientGrid.setItems();
-        ingredientGrid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
-        ingredientGrid.setHeightFull();
-
-        // TODO: Configure ingredient grid row selection
-        ingredientGrid.asSingleSelect().addValueChangeListener(event -> {
-            if (event.getValue() != null) {
-                Optional<Ingredient> ingredientOptional = ingredientService.getIngredient(event.getValue().getId());
-                if (ingredientOptional.isPresent()) {
-                    populateForm(ingredientOptional.get());
-                    System.out.println("Selected: " + ingredientOptional.get());
-                } else {
-                    refreshGrid();
-                }
-            } else {
-                clearForm();
-            }
-        });
-
+//        Div wrapper = new Div();
+//        wrapper.setId("grid-wrapper");
+//        wrapper.setWidthFull();
+//        userSmoothies = new ComboBox<>("Your Smoothies");
+//
+//        // Delete smoothie button init
+//        deleteSmoothieBtn = new Button("Delete Smoothie");
+//        deleteSmoothieBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
+//        if (smoothie == null){
+//            deleteSmoothieBtn.setVisible(false);
+//        }
+//
+//        // Header
+//        VerticalLayout verticalLayout = new VerticalLayout();
+//        verticalLayout.setHeightFull();
+//        H2 title = new H2("Craft Your Recipe");
+//        H3 subheader = new H3("Add your Ingredients");
+//        HorizontalLayout horizontalLayout = new HorizontalLayout();
+//        horizontalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+//        horizontalLayout.add(userSmoothies, createSmoothieBtn, deleteSmoothieBtn);
+//        verticalLayout.add(title, subheader, horizontalLayout, ingredientGrid);
+//
+//        wrapper.add(verticalLayout);
+        splitLayout.addToPrimary(ingredientGridDiv);
     }
 
     /**

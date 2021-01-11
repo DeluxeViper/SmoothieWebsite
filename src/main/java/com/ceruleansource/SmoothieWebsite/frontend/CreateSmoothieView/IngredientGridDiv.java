@@ -3,15 +3,19 @@ package com.ceruleansource.SmoothieWebsite.frontend.CreateSmoothieView;
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Ingredient;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
+import com.ceruleansource.SmoothieWebsite.backend.Services.IngredientService;
 import com.ceruleansource.SmoothieWebsite.backend.Services.SmoothieService;
-import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Composite;
+import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.checkbox.GeneratedVaadinCheckbox;
 import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
@@ -19,11 +23,15 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.selection.SelectionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.Registration;
+import java.util.Optional;
+import java.util.Set;
 
+@CssImport("./src/styles/views/createsmoothie/create-smoothie-view.css")
 public class IngredientGridDiv extends Div {
 
     @Autowired
@@ -32,7 +40,7 @@ public class IngredientGridDiv extends Div {
     @Autowired
     SmoothieService smoothieService;
 
-    private Grid<Ingredient> ingredientGrid = new Grid<Ingredient>(Ingredient.class, false);
+    private Grid<Ingredient> ingredientGrid = new Grid<>(Ingredient.class, false);
 
     // Lists all the smoothies in the current user
     private ComboBox<Smoothie> userSmoothies;
@@ -40,10 +48,11 @@ public class IngredientGridDiv extends Div {
     // Current smoothie that is selected from userSmoothies
     private Smoothie selectedSmoothie;
 
-    // Opens a dialog to create smoothies
-    private Dialog createSmoothieDialog;
+    private CreateSmoothieDialog smoothieDialog;
 
-    public IngredientGridDiv() {
+    private Button deleteSmoothieBtn;
+
+    public IngredientGridDiv(@Autowired IngredientService ingredientService) {
         setId("grid-wrapper");
         setWidthFull();
 
@@ -52,12 +61,25 @@ public class IngredientGridDiv extends Div {
 
         VerticalLayout headerLayout = initHeaderLayout();
 
+        initializeIngredientGrid(ingredientService);
+
         overallVLayout.add(headerLayout, ingredientGrid);
+
     }
 
     @PostConstruct
     public void initialization(){
-        createSmoothieDialog = initCreateSmoothieDialog();
+        smoothieDialog = new CreateSmoothieDialog(userSmoothies);
+        smoothieDialog.addDetachListener(e -> {
+            System.out.println("Dialog detach listener");
+            selectedSmoothie = smoothieDialog.getSelectedSmoothie();
+        });
+
+//        smoothieDialog.addDialogCloseActionListener(dialogCloseActionEvent -> {
+//            System.out.println("Dialog close action listener");
+//            selectedSmoothie = smoothieDialog.getSelectedSmoothie();
+//            smoothieDialog.close();
+//        });
     }
 
     public VerticalLayout initHeaderLayout() {
@@ -74,46 +96,67 @@ public class IngredientGridDiv extends Div {
 
     public HorizontalLayout initSmoothieFunctionsLayout() {
         HorizontalLayout hLayout = new HorizontalLayout();
-        userSmoothies = new ComboBox("Your Smoothies");
+        userSmoothies = new ComboBox<>("Your Smoothies");
         userSmoothies.setItemLabelGenerator(Smoothie::getName);
 
         Button createSmoothieBtn = new Button("Create Smoothie");
-        Button deleteSmoothieBtn = new Button("Delete Smoothie");
+        createSmoothieBtn.addClickListener(e-> smoothieDialog.open());
+
+        deleteSmoothieBtn = new Button("Delete Smoothie");
         deleteSmoothieBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        createSmoothieBtn.addClickListener(e-> createSmoothieDialog.open());
+        deleteSmoothieBtn.addClickListener(e -> deleteSmoothieButtonOnClick());
 
         hLayout.add(userSmoothies, createSmoothieBtn, deleteSmoothieBtn);
 
         return hLayout;
     }
 
-    public Dialog initCreateSmoothieDialog() {
-        Dialog createSmoothieDialog = new Dialog();
+    private void initializeIngredientGrid(IngredientService ingredientService) {
+        // Configure Grid
+        ingredientGrid.addColumn(Ingredient::getName).setHeader("Name").setAutoWidth(true);
+        ingredientGrid.addColumn(Ingredient::getQuantityTypeAndValue)
+                .setHeader("Amount").setAutoWidth(true);
+        ingredientGrid.addColumn(Ingredient::getNutritionalInformationGrams)
+                .setHeader("Nutritional Info Grams").setAutoWidth(true);
+        ingredientGrid.addColumn(Ingredient::getNutritionalInformationPercentage)
+                .setHeader("Nutritional Info %").setAutoWidth(true);
 
-        TextField smoothieNameField = new TextField("Smoothie Name");
-        Button addSmoothieDialogBtn = new Button("Add Smoothie");
-        Button cancelDialogBtn = new Button("Cancel");
+        // Initialize ingredient grid items
+        ingredientGrid.setItems();
+        ingredientGrid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
+        ingredientGrid.setHeightFull();
 
-        addSmoothieDialogBtn.addClickListener(e -> addSmoothieDialogBtnMethod(createSmoothieDialog, smoothieNameField));
-        cancelDialogBtn.addClickListener(e -> createSmoothieDialog.close());
-
-        return createSmoothieDialog;
+        // TODO: Configure ingredient grid row selection
+        ingredientGrid.asSingleSelect().addValueChangeListener(event -> {
+            if (event.getValue() != null) {
+                Optional<Ingredient> ingredientOptional = ingredientService.getIngredient(event.getValue().getId());
+                if (ingredientOptional.isPresent()) {
+                    populateForm(ingredientOptional.get());
+                    System.out.println("Selected: " + ingredientOptional.get());
+                } else {
+                    refreshGrid();
+                }
+            } else {
+                populateForm(null);
+            }
+        });
     }
 
-    public void addSmoothieDialogBtnMethod(Dialog createSmoothieDialog, TextField smoothieNameField) {
-        Smoothie newSmoothie = new Smoothie(smoothieNameField.getValue(), userSession.getUser());
+    private void deleteSmoothieButtonOnClick() {
+        if (smoothieService.deleteSmoothie(smoothieDialog.getSelectedSmoothie())){
+            Set<Smoothie> newSmoothieSet = smoothieService.getSmoothiesForCurrentUser(userSession.getUser());
 
-        if (smoothieService.saveSmoothie(newSmoothie)) {
-            Notification.show("Successfully added " + newSmoothie.getName()).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+            if (newSmoothieSet.isEmpty()){
+                selectedSmoothie = null;
+                deleteSmoothieBtn.setVisible(false);
+            } else {
+                selectedSmoothie = newSmoothieSet.stream().findFirst().get();
+            }
+
             userSmoothies.setItems(smoothieService.getSmoothiesForCurrentUser(userSession.getUser()));
-            selectedSmoothie = newSmoothie;
             userSmoothies.setValue(selectedSmoothie);
-
-            refreshGrid();
             populateForm(null);
-            createSmoothieDialog.close();
-        } else {
-            Notification.show("Error! Failed to add " + newSmoothie.getName()).addThemeVariants(NotificationVariant.LUMO_ERROR);
+            refreshGrid();
         }
     }
 
