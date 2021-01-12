@@ -5,13 +5,9 @@ import com.ceruleansource.SmoothieWebsite.backend.Models.Ingredient;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
 import com.ceruleansource.SmoothieWebsite.backend.Services.IngredientService;
 import com.ceruleansource.SmoothieWebsite.backend.Services.SmoothieService;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.HasValue;
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.GeneratedVaadinCheckbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
@@ -19,28 +15,16 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.selection.SelectionEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.Registration;
-import java.util.Optional;
 import java.util.Set;
 
 @CssImport("./src/styles/views/createsmoothie/create-smoothie-view.css")
 public class IngredientGridDiv extends Div {
 
-    @Autowired
-    UserSession userSession;
-
-    @Autowired
-    SmoothieService smoothieService;
-
-    private Grid<Ingredient> ingredientGrid = new Grid<>(Ingredient.class, false);
+    private final Grid<Ingredient> ingredientGrid = new Grid<>(Ingredient.class, false);
 
     // Lists all the smoothies in the current user
     private ComboBox<Smoothie> userSmoothies;
@@ -52,63 +36,77 @@ public class IngredientGridDiv extends Div {
 
     private Button deleteSmoothieBtn;
 
-    public IngredientGridDiv(@Autowired IngredientService ingredientService) {
+    @Autowired
+    public IngredientGridDiv(IngredientService ingredientService, UserSession userSession, SmoothieService smoothieService) {
         setId("grid-wrapper");
         setWidthFull();
 
         VerticalLayout overallVLayout = new VerticalLayout();
         overallVLayout.setHeightFull();
 
-        VerticalLayout headerLayout = initHeaderLayout();
+        VerticalLayout headerLayout = initHeaderLayout(userSession, smoothieService);
 
         initializeIngredientGrid(ingredientService);
 
         overallVLayout.add(headerLayout, ingredientGrid);
-
+        add(overallVLayout);
     }
 
-    @PostConstruct
-    public void initialization(){
-        smoothieDialog = new CreateSmoothieDialog(userSmoothies);
-        smoothieDialog.addDetachListener(e -> {
-            System.out.println("Dialog detach listener");
-            selectedSmoothie = smoothieDialog.getSelectedSmoothie();
-        });
-
-//        smoothieDialog.addDialogCloseActionListener(dialogCloseActionEvent -> {
-//            System.out.println("Dialog close action listener");
-//            selectedSmoothie = smoothieDialog.getSelectedSmoothie();
-//            smoothieDialog.close();
-//        });
-    }
-
-    public VerticalLayout initHeaderLayout() {
+    public VerticalLayout initHeaderLayout(UserSession userSession, SmoothieService smoothieService) {
         VerticalLayout vLayout = new VerticalLayout();
 
         H2 title = new H2("Craft Your Recipe");
         H3 subheader = new H3("Add your Ingredients");
-        HorizontalLayout addSmoothieHLayout = initSmoothieFunctionsLayout();
+        HorizontalLayout addSmoothieHLayout = initSmoothieFunctionsLayout(userSession, smoothieService);
 
         vLayout.add(title, subheader, addSmoothieHLayout);
 
         return vLayout;
     }
 
-    public HorizontalLayout initSmoothieFunctionsLayout() {
+    public HorizontalLayout initSmoothieFunctionsLayout(UserSession userSession, SmoothieService smoothieService) {
         HorizontalLayout hLayout = new HorizontalLayout();
+
+        deleteSmoothieBtn = new Button("Delete Smoothie");
+        deleteSmoothieBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        deleteSmoothieBtn.addClickListener(e -> deleteSmoothieButtonOnClick(userSession, smoothieService));
+
         userSmoothies = new ComboBox<>("Your Smoothies");
         userSmoothies.setItemLabelGenerator(Smoothie::getName);
+        userSmoothies.setItems(smoothieService.getSmoothiesForCurrentUser(userSession.getUser()));
+        userSmoothies.addValueChangeListener(this::userSmoothiesValueChangeMethod);
+
+        // Initializing smoothieDialog
+        initSmoothieCreateDialog(userSession, smoothieService);
 
         Button createSmoothieBtn = new Button("Create Smoothie");
         createSmoothieBtn.addClickListener(e-> smoothieDialog.open());
 
-        deleteSmoothieBtn = new Button("Delete Smoothie");
-        deleteSmoothieBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        deleteSmoothieBtn.addClickListener(e -> deleteSmoothieButtonOnClick());
-
         hLayout.add(userSmoothies, createSmoothieBtn, deleteSmoothieBtn);
 
         return hLayout;
+    }
+
+    private void userSmoothiesValueChangeMethod(AbstractField.ComponentValueChangeEvent<ComboBox<Smoothie>, Smoothie> event) {
+        if (event.getValue() != null){
+            selectedSmoothie = event.getValue();
+            deleteSmoothieBtn.setVisible(true);
+            System.out.println("IngredientGridDiv: UserSmoothies currently selected the following smoothie:\n" + selectedSmoothie);
+            refreshGrid();
+        } else {
+            selectedSmoothie = null;
+            System.out.println("IngredientGridDiv: Currently user smoothies selected a null smoothie, will do nothing.");
+            refreshGrid();
+        }
+    }
+
+    private void initSmoothieCreateDialog(UserSession userSession, SmoothieService smoothieService) {
+        smoothieDialog = new CreateSmoothieDialog(userSmoothies, userSession, smoothieService);
+        smoothieDialog.addDetachListener(e -> {
+            System.out.println("Dialog detach listener");
+            selectedSmoothie = smoothieDialog.getSelectedSmoothie();
+            System.out.println("Getting user smoothies value after detachment of dialog: " + userSmoothies.getValue());
+        });
     }
 
     private void initializeIngredientGrid(IngredientService ingredientService) {
@@ -125,25 +123,10 @@ public class IngredientGridDiv extends Div {
         ingredientGrid.setItems();
         ingredientGrid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         ingredientGrid.setHeightFull();
-
-        // TODO: Configure ingredient grid row selection
-        ingredientGrid.asSingleSelect().addValueChangeListener(event -> {
-            if (event.getValue() != null) {
-                Optional<Ingredient> ingredientOptional = ingredientService.getIngredient(event.getValue().getId());
-                if (ingredientOptional.isPresent()) {
-                    populateForm(ingredientOptional.get());
-                    System.out.println("Selected: " + ingredientOptional.get());
-                } else {
-                    refreshGrid();
-                }
-            } else {
-                populateForm(null);
-            }
-        });
     }
 
-    private void deleteSmoothieButtonOnClick() {
-        if (smoothieService.deleteSmoothie(smoothieDialog.getSelectedSmoothie())){
+    private void deleteSmoothieButtonOnClick(UserSession userSession, SmoothieService smoothieService) {
+        if (smoothieService.deleteSmoothie(selectedSmoothie)){
             Set<Smoothie> newSmoothieSet = smoothieService.getSmoothiesForCurrentUser(userSession.getUser());
 
             if (newSmoothieSet.isEmpty()){
@@ -155,24 +138,24 @@ public class IngredientGridDiv extends Div {
 
             userSmoothies.setItems(smoothieService.getSmoothiesForCurrentUser(userSession.getUser()));
             userSmoothies.setValue(selectedSmoothie);
-            populateForm(null);
             refreshGrid();
         }
     }
 
-    private void refreshGrid(){
+    public void refreshGrid(){
         ingredientGrid.select(null);
         if (selectedSmoothie != null){
             ingredientGrid.setItems(selectedSmoothie.getIngredients());
+        } else {
+            ingredientGrid.setItems();
         }
     }
 
-    private void populateForm(Ingredient ingredient){
-        // TODO: Implement logic
-        if (ingredient != null){
+    public Grid<Ingredient> getIngredientGrid(){
+        return ingredientGrid;
+    }
 
-        } else {
-
-        }
+    public Smoothie getSelectedSmoothie(){
+        return selectedSmoothie;
     }
 }

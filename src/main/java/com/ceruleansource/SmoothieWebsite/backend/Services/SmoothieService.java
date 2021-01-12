@@ -9,9 +9,12 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class SmoothieService {
@@ -21,17 +24,24 @@ public class SmoothieService {
     @Autowired
     UserRepository userRepository;
 
+    /**
+     *
+     * @param smoothie - Smoothie to be saved in database
+     * @return - returns the smoothie saved in the database (Note: ID is NOT null)
+     */
     @Transactional
-    public boolean saveSmoothie(Smoothie smoothie) {
+    public Smoothie saveSmoothie(Smoothie smoothie) {
         Optional<User> currentUserOptional = userRepository.findByEmail(smoothie.getUser().getEmail());
         if (currentUserOptional.isPresent()) {
+            System.out.println("SmoothieService");
             User currentUser = currentUserOptional.get();
             currentUser.getSmoothies().add(smoothie);
             User savedUser = userRepository.save(currentUser);
-            System.out.println("smoothieService: saveSmoothie: User: " + currentUser);
-            return savedUser.getSmoothies().contains(smoothie);
+            System.out.println("smoothieService: saveSmoothie: User: " + savedUser);
+            System.out.println("Saved smoothie: " );
+            return smoothieRepository.findByNameAndUser(smoothie.getName(), smoothie.getUser());
         } else {
-            return false;
+            return null;
         }
     }
 
@@ -42,74 +52,20 @@ public class SmoothieService {
      * @param smoothie   - smoothie to add ingredient to
      * @param ingredient - ingredient to add to the smoothie
      */
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRED)
     public void addIngredient(Smoothie smoothie, Ingredient ingredient) {
-        Optional<User> currentUserOptional = userRepository.findByEmail(smoothie.getUser().getEmail());
-        if (currentUserOptional.isPresent()) {
-            System.out.println("Hey");
-            User currentUser = currentUserOptional.get();
-            if (currentUser.getSmoothies().contains(smoothie)) {
-                System.out.println("User contained smoothie");
-                // smoothie is saved in user
-                if (!smoothie.getIngredients().contains(ingredient)) {
-                    System.out.println("Smoothie didn't contain ingredient --> adding ingredient");
-                    System.out.println("Trying to insert: " + ingredient);
-                    System.out.println("Smoothe before adding ingredient: ");
-                    smoothie.getIngredients().forEach(ingr -> System.out.print(ingr.getName() + ", "));
-                    System.out.println();
-                    smoothie.getIngredients().add(ingredient);
-//                    smoothieRepository.save(smoothie);
-                    System.out.println("Smoothie after adding ingredient: ");
-                    smoothie.getIngredients().forEach(ingr -> System.out.print(ingr.getName() + ", "));
-                    System.out.println();
-                } else {
-                    Notification.show("Smoothie already contains that ingredient!").addThemeVariants(NotificationVariant.LUMO_ERROR);
-                }
-            } else {
-                // If smoothie is not saved in user
-                currentUser.getSmoothies().add(smoothie);
-                userRepository.save(currentUser);
-                System.out.println("Smoothie did not exist in user so saved it");
-                smoothie.getIngredients().add(ingredient);
-                smoothieRepository.save(smoothie);
-            }
-        }
+        Set<Ingredient> ingredientSet = new HashSet<>(smoothie.getIngredients());
+        ingredientSet.add(ingredient);
+        smoothie.setIngredients(ingredientSet);
+        smoothieRepository.save(smoothie);
     }
 
     @Transactional
     public void removeIngredient(Smoothie smoothie, Ingredient ingredient) {
-        Optional<User> currentUserOptional = userRepository.findByEmail(smoothie.getUser().getEmail());
-        if (currentUserOptional.isPresent()) {
-            System.out.println("User is present");
-            User currentUser = currentUserOptional.get();
-            if (currentUser.getSmoothies().contains(smoothie)) {
-                System.out.println("Current user conatins smoothie");
-                // Current user has smoothie to remove ingredient from
-                System.out.println("Smoothie before removing ingredient: ");
-                smoothie.getIngredients().forEach(ingr -> System.out.print(ingr.getName() + ", "));
-                System.out.println();
-
-                if (smoothie.getIngredients().contains(ingredient)) {
-                    System.out.println("smoothie contains ingredient");
-                    smoothie.getIngredients().remove(ingredient);
-//                    smoothieRepository.save(smoothie);
-                } else {
-                    System.out.println("smoothie does not contain ingredient");
-                    System.out.println("-------------------------");
-                    System.out.println("Ingredient we're trying to remove: " + ingredient);
-                    System.out.println("Ingredients in smoothie: " + smoothie.getIngredients());
-                }
-                System.out.println("Smoothie after removing ingredient: " + smoothie);
-                smoothie.getIngredients().forEach(ingr -> System.out.print(ingr.getName() + ", "));
-                System.out.println();
-            } else {
-                System.out.println("Current user does not contain smoothie");
-                // Current user does not have smoothie to remove ingredient from
-                // Probably wont need this
-            }
-        } else {
-            System.out.println("User is not present");
-        }
+        Set<Ingredient> ingredientSet = new HashSet<>(smoothie.getIngredients());
+        ingredientSet.remove(ingredient);
+        smoothie.setIngredients(ingredientSet);
+        smoothieRepository.save(smoothie);
     }
 
     /**

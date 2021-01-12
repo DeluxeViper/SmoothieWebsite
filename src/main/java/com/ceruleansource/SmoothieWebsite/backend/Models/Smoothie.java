@@ -6,6 +6,9 @@ import javax.persistence.*;
 import java.util.*;
 
 @Entity
+@Table(uniqueConstraints={
+        @UniqueConstraint(columnNames = {"name", "user_id"})
+})
 public class Smoothie {
 
     @Id
@@ -13,6 +16,7 @@ public class Smoothie {
     @Column(name = "smoothie_id")
     private Long id;
 
+    @Column(name = "name")
     private String name;
 
     @ManyToOne
