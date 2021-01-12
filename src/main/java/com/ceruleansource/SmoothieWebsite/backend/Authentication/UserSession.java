@@ -39,20 +39,16 @@ public class UserSession {
     public User getUser() {
         if (isLoggedIn()) {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            System.out.println("Authentication: " + authentication);
             if (authentication instanceof OAuth2AuthenticationToken) {
-//                System.out.println("Google User logged in");
+                // Google user login
                 OAuth2AuthenticatedPrincipal principal = (OAuth2AuthenticatedPrincipal) authentication.getPrincipal();
-                return new User(principal.getAttribute("given_name"), principal.getAttribute("family_name"),
-                        principal.getAttribute("email"), "confidential", "0", true, "GOOGLE_USER");
+                return userDetailsService.getUserByEmailAndRole(principal.getAttribute("email"), "GOOGLE_USER");
             } else if (authentication instanceof UsernamePasswordAuthenticationToken) {
-//                System.out.println("Local User logged in");
+                // Normal use login
                 MyUserDetails userDetails = (MyUserDetails) userDetailsService.loadUserByUsername(authentication.getName());
-//                System.out.println("UserDetails: " + userDetails);
-//                System.out.println("User: " + userDetails.getUser());
                 return userDetails.getUser();
             } else if (authentication instanceof AnonymousAuthenticationToken) {
-                System.out.println("Anonymous User logged in");
+                // Anonymous user login
                 return new User("guest", "guest",
                         "guest", "confidential", "0", true, "GOOGLE_USER");
             }

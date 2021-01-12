@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
-public interface SmoothieRepository extends CrudRepository<Smoothie, Long> {
+public interface SmoothieRepository extends JpaRepository<Smoothie, Long> {
 
     Smoothie findByNameAndUser(String name, User user);
 }

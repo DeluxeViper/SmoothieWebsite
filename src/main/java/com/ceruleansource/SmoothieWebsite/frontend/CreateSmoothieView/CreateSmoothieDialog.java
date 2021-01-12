@@ -37,9 +37,9 @@ public class CreateSmoothieDialog extends Dialog {
 
     public void addSmoothieDialogBtnMethod(TextField smoothieNameField, UserSession userSession, SmoothieService smoothieService) {
         Smoothie newSmoothie = new Smoothie(smoothieNameField.getValue(), userSession.getUser());
-        Smoothie savedSmoothie = smoothieService.saveSmoothie(newSmoothie);
+        smoothieService.saveSmoothie(newSmoothie);
+        Smoothie savedSmoothie = smoothieService.getSmoothie(smoothieNameField.getValue(), userSession.getUser());
         if (savedSmoothie != null) {
-            System.out.println("CreateSmoothieDialog: " + savedSmoothie);
             Notification.show("Successfully added " + savedSmoothie.getName()).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
             userSmoothies.setItems(smoothieService.getSmoothiesForCurrentUser(userSession.getUser()));
             selectedSmoothie = savedSmoothie;

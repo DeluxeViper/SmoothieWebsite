@@ -17,6 +17,9 @@ import java.util.Set;
  * JPA Model (Entity) for User
  */
 @Entity
+@Table(uniqueConstraints={
+        @UniqueConstraint(columnNames = {"email", "roles"})
+})
 public class User {
 
     @Id
@@ -39,7 +42,7 @@ public class User {
     @Length(min = 8, max = 64)
     private String password;
 
-    @OneToMany(mappedBy = "user", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Smoothie> smoothies = new HashSet<>();
 
     // TODO: Double check the logic for this
@@ -107,16 +110,6 @@ public class User {
     public void setSmoothies(Set<Smoothie> smoothies) {
         this.smoothies = smoothies;
     }
-
-//    public void addSmoothie(Smoothie smoothie) {
-//        smoothies.add(smoothie);
-////        smoothie.setUser(this);
-//    }
-//
-//    public void removeSmoothie(Smoothie smoothie){
-//        smoothies.remove(smoothie);
-////        smoothie.setUser(null);
-//    }
 
     public String getIntake() {
         return intake;

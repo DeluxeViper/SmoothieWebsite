@@ -1,5 +1,6 @@
 package com.ceruleansource.SmoothieWebsite.backend.Authentication;
 
+import com.ceruleansource.SmoothieWebsite.backend.Services.CustomOidcUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
 
 import javax.transaction.Transactional;
 
@@ -21,7 +23,10 @@ import javax.transaction.Transactional;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    UserDetailsService userDetailsService;
+    OidcUserService oidcUserService;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -45,7 +50,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and().formLogin().loginPage("/login").permitAll().defaultSuccessUrl("/home")
                 .and().logout().logoutSuccessUrl("/login")
                 // Configure login page for OAuth login
-                .and().oauth2Login().loginPage("/login").permitAll().defaultSuccessUrl("/home");
+                .and().oauth2Login().loginPage("/login").permitAll().defaultSuccessUrl("/home")
+                .userInfoEndpoint().oidcUserService(oidcUserService);
     }
 
     @Override

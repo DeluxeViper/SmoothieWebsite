@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class CustomRouteNotFoundError extends RouteNotFoundError {
     public CustomRouteNotFoundError() {
-        RouterLink link = Component.from(ElementFactory.createRouterLink("", "Go to the front page."),
+        RouterLink link = Component.from(ElementFactory.createRouterLink("home", "Go to the front page."),
                 RouterLink.class);
         getElement().appendChild(new Text("Oops you hit a 404. ").getElement(), link.getElement());
     }

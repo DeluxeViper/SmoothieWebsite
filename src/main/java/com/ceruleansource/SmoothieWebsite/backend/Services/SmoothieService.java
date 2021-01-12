@@ -30,18 +30,16 @@ public class SmoothieService {
      * @return - returns the smoothie saved in the database (Note: ID is NOT null)
      */
     @Transactional
-    public Smoothie saveSmoothie(Smoothie smoothie) {
-        Optional<User> currentUserOptional = userRepository.findByEmail(smoothie.getUser().getEmail());
+    public void saveSmoothie(Smoothie smoothie) {
+        Optional<User> currentUserOptional = userRepository.findByEmailAndRoles(smoothie.getUser().getEmail(), smoothie.getUser().getRoles());
+
         if (currentUserOptional.isPresent()) {
-            System.out.println("SmoothieService");
+            System.out.println(currentUserOptional.get());
             User currentUser = currentUserOptional.get();
-            currentUser.getSmoothies().add(smoothie);
-            User savedUser = userRepository.save(currentUser);
-            System.out.println("smoothieService: saveSmoothie: User: " + savedUser);
-            System.out.println("Saved smoothie: " );
-            return smoothieRepository.findByNameAndUser(smoothie.getName(), smoothie.getUser());
-        } else {
-            return null;
+            Set<Smoothie> smoothieSet = new HashSet<>(currentUser.getSmoothies());
+            smoothieSet.add(smoothie);
+            currentUser.setSmoothies(smoothieSet);
+            userRepository.save(currentUser);
         }
     }
 
@@ -76,7 +74,7 @@ public class SmoothieService {
      */
     @Transactional
     public Set<Smoothie> getSmoothiesForCurrentUser(User user) {
-        Optional<User> currentUserOptional = userRepository.findByEmail(user.getEmail());
+        Optional<User> currentUserOptional = userRepository.findByEmailAndRoles(user.getEmail(), user.getRoles());
         Set<Smoothie> smoothieSet = new HashSet<>();
         if (currentUserOptional.isPresent()) {
 //            System.out.println("User is present");
@@ -102,7 +100,7 @@ public class SmoothieService {
      */
     @Transactional
     public boolean deleteSmoothie(Smoothie smoothie) {
-        Optional<User> currentUserOptional = userRepository.findByEmail(smoothie.getUser().getEmail());
+        Optional<User> currentUserOptional = userRepository.findByEmailAndRoles(smoothie.getUser().getEmail(), smoothie.getUser().getRoles());
         if (currentUserOptional.isPresent()) {
             User currentUser = currentUserOptional.get();
             if (currentUser.getSmoothies().contains(smoothie)) {
@@ -117,5 +115,10 @@ public class SmoothieService {
             return false;
         }
         return false;
+    }
+
+    @Transactional
+    public Smoothie getSmoothie(String name, User user){
+        return smoothieRepository.findByNameAndUser(name, user);
     }
 }
