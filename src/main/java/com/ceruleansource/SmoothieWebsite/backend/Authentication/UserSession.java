@@ -71,7 +71,7 @@ public class UserSession {
     /**
      * logs out user
      */
-    public void logout() {
+    public static void logout() {
         SecurityContextHolder.clearContext();
     }
 }

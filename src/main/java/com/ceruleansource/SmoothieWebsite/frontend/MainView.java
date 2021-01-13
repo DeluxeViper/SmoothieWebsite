@@ -2,10 +2,13 @@ package com.ceruleansource.SmoothieWebsite.frontend;
 
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
 import com.ceruleansource.SmoothieWebsite.frontend.CreateSmoothieView.CreateSmoothieView;
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentUtil;
+import com.vaadin.flow.component.HasComponents;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -13,9 +16,7 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabVariant;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.router.RouteConfiguration;
 import com.vaadin.flow.router.RouterLink;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,9 +36,6 @@ public class MainView extends AppLayout {
     private static Tabs tabs;
     private Button logoutButton, loginButton;
 
-    @Autowired
-    UserSession userSession;
-
     /**
      * Creates a new MainView.
      */
@@ -47,7 +45,7 @@ public class MainView extends AppLayout {
         loginButton = new Button("Login");
         loginButton.setThemeName("tertiary");
         loginButton.addClickListener(e -> {
-            if (userSession.isLoggedIn()){
+            if (UserSession.isLoggedIn()){
                 Notification.show("You're already logged in!").addThemeVariants(NotificationVariant.LUMO_PRIMARY);
             } else {
                 getUI().ifPresent(ui -> { ui.navigate("login");});
@@ -57,9 +55,8 @@ public class MainView extends AppLayout {
         logoutButton.setVisible(false);
 
         logoutButton.addClickListener(e -> {
-            if (userSession.isLoggedIn()){
-                userSession.logout();
-//                getUI().ifPresent(ui -> ui.navigate("home"));
+            if (UserSession.isLoggedIn()){
+                UserSession.logout();
                 loginButton.setVisible(true);
                 logoutButton.setVisible(false);
                 if(!getUI().equals(HomeView.class)){
@@ -113,48 +110,19 @@ public class MainView extends AppLayout {
 
     private static Tab createTab(VaadinIcon icon, String title, Class<? extends Component> viewClass) {
         final Tab tab = new Tab();
-        tab.add(icon.create());
         tab.addThemeVariants(TabVariant.LUMO_ICON_ON_TOP);
-        tab.add(new RouterLink(title, viewClass));
+        RouterLink routerLink = new RouterLink(null, viewClass);
+        routerLink.add(icon.create());
+        routerLink.add(new Span(title));
+        tab.add(routerLink);
         ComponentUtil.setData(tab, Class.class, viewClass);
-//        return createTab(populateLink(new RouterLink(null, viewClass), icon, title));
         return tab;
-    }
-
-    private static Tab createTab(Component component) {
-        final Tab tab = new Tab();
-        tab.add(component);
-        return tab;
-    }
-
-    private static <T extends HasComponents> T populateLink(T a, VaadinIcon icon, String title) {
-        a.add(icon.create());
-        a.add(title);
-        return a;
     }
 
     @Override
     protected void afterNavigation() {
         super.afterNavigation();
-//        getTabForComponent(getContent()).ifPresent(mainMenu::setSelectedTab);
-        RouteConfiguration configuration = RouteConfiguration.forSessionScope();
-        if (configuration.isRouteRegistered(this.getContent().getClass())) {
-            String target = configuration.getUrl(this.getContent().getClass());
-            Optional<Component> tabToSelect = mainMenu.getChildren().filter(tab -> {
-                Component child = tab.getChildren().findFirst().get();
-                return child instanceof RouterLink && ((RouterLink) child).getHref().equals(target);
-            }).findFirst();
-            tabToSelect.ifPresent(tab -> mainMenu.setSelectedTab((Tab) tab));
-        } else {
-            mainMenu.setSelectedTab(null);
-        }
-        if (userSession.isLoggedIn()){
-            loginButton.setVisible(false);
-            logoutButton.setVisible(true);
-        } else {
-            loginButton.setVisible(true);
-            logoutButton.setVisible(false);
-        }
+        getTabForComponent(getContent()).ifPresent(mainMenu::setSelectedTab);
     }
 
     private Optional<Tab> getTabForComponent(Component component) {
