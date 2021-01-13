@@ -33,8 +33,8 @@ import java.util.Optional;
 public class MainView extends AppLayout {
 
     private static Tabs mainMenu;
-    private static Tabs tabs;
-    private Button logoutButton, loginButton;
+    private final Button logoutButton;
+    private final Button loginButton;
 
     /**
      * Creates a new MainView.
@@ -80,7 +80,7 @@ public class MainView extends AppLayout {
     }
 
     private static Tabs createMenuTabs() {
-        tabs = new Tabs();
+        Tabs tabs = new Tabs();
         tabs.setOrientation(Tabs.Orientation.HORIZONTAL);
         tabs.add(getAvailableTabs());
         return tabs;
