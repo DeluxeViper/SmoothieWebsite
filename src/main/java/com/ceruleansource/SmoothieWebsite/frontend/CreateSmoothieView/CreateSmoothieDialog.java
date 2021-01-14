@@ -19,6 +19,8 @@ public class CreateSmoothieDialog extends Dialog {
 
     private Smoothie selectedSmoothie;
 
+    private final TextField smoothieNameField = new TextField("Smoothie Name");
+
     @Autowired
     public CreateSmoothieDialog(ComboBox<Smoothie> userSmoothies, UserSession userSession, SmoothieService smoothieService) {
         this.userSmoothies = userSmoothies;
@@ -26,7 +28,8 @@ public class CreateSmoothieDialog extends Dialog {
     }
 
     public void initCreateSmoothieDialog(UserSession userSession, SmoothieService smoothieService) {
-        TextField smoothieNameField = new TextField("Smoothie Name");
+        smoothieNameField.setMinLength(1);
+        smoothieNameField.setMaxLength(30);
         Button addSmoothieDialogBtn = new Button("Add Smoothie");
         Button cancelDialogBtn = new Button("Cancel");
 
@@ -36,17 +39,23 @@ public class CreateSmoothieDialog extends Dialog {
     }
 
     public void addSmoothieDialogBtnMethod(TextField smoothieNameField, UserSession userSession, SmoothieService smoothieService) {
-        Smoothie newSmoothie = new Smoothie(smoothieNameField.getValue(), userSession.getUser());
-        smoothieService.saveSmoothie(newSmoothie);
-        Smoothie savedSmoothie = smoothieService.getSmoothie(smoothieNameField.getValue(), userSession.getUser());
-        if (savedSmoothie != null) {
-            Notification.show("Successfully added " + savedSmoothie.getName()).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            userSmoothies.setItems(smoothieService.getSmoothiesForCurrentUser(userSession.getUser()));
-            selectedSmoothie = savedSmoothie;
-            userSmoothies.setValue(selectedSmoothie);
-            close();
+        if (smoothieNameField.getValue().equals("")){
+            Notification.show("Error. Smoothie name cannot be empty!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+        } else if (smoothieService.checkIfSmoothieNameisTaken(smoothieNameField.getValue(), userSession.getUser())) {
+            Notification.show("Error. Smoothie name already exists!").addThemeVariants(NotificationVariant.LUMO_ERROR);
         } else {
-            Notification.show("Error! Failed to add " + newSmoothie.getName()).addThemeVariants(NotificationVariant.LUMO_ERROR);
+            Smoothie newSmoothie = new Smoothie(smoothieNameField.getValue(), userSession.getUser());
+            smoothieService.saveSmoothie(newSmoothie);
+            Smoothie savedSmoothie = smoothieService.getSmoothie(smoothieNameField.getValue(), userSession.getUser());
+            if (savedSmoothie != null) {
+                Notification.show("Successfully added " + savedSmoothie.getName()).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                userSmoothies.setItems(smoothieService.getSmoothiesForCurrentUser(userSession.getUser()));
+                selectedSmoothie = savedSmoothie;
+                userSmoothies.setValue(selectedSmoothie);
+                close();
+            } else {
+                Notification.show("Error! Failed to add " + newSmoothie.getName()).addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
         }
     }
 

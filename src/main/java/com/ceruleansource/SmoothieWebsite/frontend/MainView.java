@@ -2,9 +2,7 @@ package com.ceruleansource.SmoothieWebsite.frontend;
 
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
 import com.ceruleansource.SmoothieWebsite.frontend.CreateSmoothieView.CreateSmoothieView;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.flow.component.HasComponents;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Div;
@@ -16,7 +14,9 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabVariant;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.PWA;
+import com.vaadin.flow.shared.Registration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,11 @@ import java.util.Optional;
  */
 //@Tag("main-view")
 //@JsModule("./src/views/main-view.js")
-public class MainView extends AppLayout {
+//@PWA(name = "Smoothie Website Application",
+//        shortName = "Smoothie Web",
+//        startPath = "home",
+//        description = "This is a smoothie website application.")
+public class MainView extends AppLayout implements AfterNavigationObserver {
 
     private static Tabs mainMenu;
     private final Button logoutButton;
@@ -44,23 +48,28 @@ public class MainView extends AppLayout {
         mainMenu.setOrientation(Tabs.Orientation.HORIZONTAL);
         loginButton = new Button("Login");
         loginButton.setThemeName("tertiary");
-        loginButton.addClickListener(e -> {
-            if (UserSession.isLoggedIn()){
-                Notification.show("You're already logged in!").addThemeVariants(NotificationVariant.LUMO_PRIMARY);
-            } else {
-                getUI().ifPresent(ui -> { ui.navigate("login");});
-            }
-        });
+
         logoutButton = new Button("Logout", new Icon(VaadinIcon.ARROW_RIGHT));
         logoutButton.setVisible(false);
 
+        loginButton.addClickListener(e -> {
+            if (UserSession.isLoggedIn()) {
+                loginButton.setVisible(false);
+                logoutButton.setVisible(true);
+                Notification.show("You're already logged in!").addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+            } else {
+                getUI().ifPresent(ui -> ui.navigate("login"));
+            }
+        });
+
+
         logoutButton.addClickListener(e -> {
-            if (UserSession.isLoggedIn()){
+            if (UserSession.isLoggedIn()) {
                 UserSession.logout();
                 loginButton.setVisible(true);
                 logoutButton.setVisible(false);
-                if(!getUI().equals(HomeView.class)){
-                    getUI().ifPresent(ui-> ui.navigate("login"));
+                if (!getUI().equals(HomeView.class)) {
+                    getUI().ifPresent(ui -> ui.navigate("login"));
                 }
             } else {
                 Notification.show("You're not logged in!").addThemeVariants(NotificationVariant.LUMO_ERROR);
@@ -127,6 +136,14 @@ public class MainView extends AppLayout {
 
     private Optional<Tab> getTabForComponent(Component component) {
         return mainMenu.getChildren().filter(tab -> ComponentUtil.getData(tab, Class.class).equals(component.getClass()))
-            .findFirst().map(Tab.class::cast);
+                .findFirst().map(Tab.class::cast);
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
+        if (UserSession.isLoggedIn()){
+            logoutButton.setVisible(true);
+            loginButton.setVisible(false);
+        }
     }
 }

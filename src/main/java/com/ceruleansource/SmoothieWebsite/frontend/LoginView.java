@@ -31,14 +31,12 @@ import java.util.Collections;
 
 @PageTitle("Login")
 @Route("login")
-@Push(transport= Transport.LONG_POLLING)
+@Push(transport = Transport.LONG_POLLING)
 public class LoginView extends VerticalLayout
-        implements Serializable, BeforeEnterObserver
-{
+        implements BeforeEnterObserver {
     @Autowired
     UserSession userSession;
 
-    private static final long serialVersionUID = 5225695098267758100L;
     private Button registerButton;
     private LoginForm loginForm;
     private static final String googleAuthUrl = "/oauth2/authorization/google";
@@ -60,9 +58,9 @@ public class LoginView extends VerticalLayout
     }
 
     @PostConstruct
-    public void initView(){
+    public void initView() {
         // Check that oauth keys are present
-        if (clientkey == null || clientkey.isEmpty() || clientkey.length() < 16){
+        if (clientkey == null || clientkey.isEmpty() || clientkey.length() < 16) {
             Paragraph text = new Paragraph("Could not find OAuth client key in application.properties. ");
             add(text);
         } else {
@@ -75,7 +73,7 @@ public class LoginView extends VerticalLayout
     public void beforeEnter(BeforeEnterEvent event) {
         // inform the user about an authentication error
         // (yes, the API for resolving query parameters is annoying...)
-        if(!event.getLocation().getQueryParameters().getParameters().getOrDefault("error", Collections.emptyList()).isEmpty()) {
+        if (!event.getLocation().getQueryParameters().getParameters().getOrDefault("error", Collections.emptyList()).isEmpty()) {
             loginForm.setError(true);
         }
     }

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 
@@ -89,6 +90,21 @@ public class SmoothieService {
 //            System.out.println("Current user not found");
         }
         return smoothieSet;
+    }
+
+    @Transactional
+    public boolean checkIfSmoothieNameisTaken(String name, User user){
+        Optional<User> userOptional = userRepository.findById(user.getId());
+        if (userOptional.isPresent()){
+            Set<Smoothie> smoothieSet = new HashSet<>(userOptional.get().getSmoothies());
+            for (Smoothie smoothie : smoothieSet){
+                if (smoothie.getName().equals(name)){
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     /**

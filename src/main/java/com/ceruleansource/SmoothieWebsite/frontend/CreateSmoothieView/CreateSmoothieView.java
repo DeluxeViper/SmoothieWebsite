@@ -77,10 +77,14 @@ public class CreateSmoothieView extends Div {
 
     private void saveIngredientEditorMethod(SmoothieService smoothieService) {
         if (ingredientGridDiv.getSelectedSmoothie() != null){
-            smoothieService.addIngredient(ingredientGridDiv.getSelectedSmoothie(), ingredientAmount.getValue());
-            Notification.show("Added " + ingredientAmount.getValue().getName()).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-            ingredientGridDiv.refreshGrid();
-            clearForm();
+            if (ingredientAmount.getValue() != null){
+                smoothieService.addIngredient(ingredientGridDiv.getSelectedSmoothie(), ingredientAmount.getValue());
+                Notification.show("Added " + ingredientAmount.getValue().getName()).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                ingredientGridDiv.refreshGrid();
+                clearForm();
+            } else {
+                Notification.show("Error. Please select an ingredient first!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
         } else {
             Notification.show("Please create/select a smoothie first!").addThemeVariants(NotificationVariant.LUMO_ERROR);
         }
@@ -97,7 +101,6 @@ public class CreateSmoothieView extends Div {
             } else {
                 Notification.show("Please create/select a smoothie first!").addThemeVariants(NotificationVariant.LUMO_ERROR);
             }
-
         } else {
             Notification.show("Please select an ingredient!").addThemeVariants(NotificationVariant.LUMO_ERROR);
         }
