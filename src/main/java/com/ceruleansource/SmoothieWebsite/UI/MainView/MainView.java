@@ -1,11 +1,8 @@
 package com.ceruleansource.SmoothieWebsite.UI.MainView;
 
+import com.ceruleansource.SmoothieWebsite.UI.*;
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
-import com.ceruleansource.SmoothieWebsite.UI.AboutView;
-import com.ceruleansource.SmoothieWebsite.UI.CaloriesBurnoutPlanView;
 import com.ceruleansource.SmoothieWebsite.UI.CreateSmoothieView.CreateSmoothieView;
-import com.ceruleansource.SmoothieWebsite.UI.ForumView;
-import com.ceruleansource.SmoothieWebsite.UI.HomeView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -25,6 +22,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.RouterLink;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,6 +131,8 @@ public class MainView extends AppLayout implements AfterNavigationObserver {
 
         // About Tab
         tabs.add(createTab(VaadinIcon.INFO, "About", AboutView.class));
+
+        tabs.add(createTab(VaadinIcon.CUTLERY, "My Smoothies", MySmoothiesView.class));
 
         tabs.forEach(tab -> {
             tab.setId("tab");

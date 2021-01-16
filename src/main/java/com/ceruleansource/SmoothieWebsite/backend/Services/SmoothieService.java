@@ -175,4 +175,15 @@ public class SmoothieService {
     public Smoothie getSmoothie(String name, User user){
         return smoothieRepository.findByNameAndUser(name, user);
     }
+
+    public boolean updateSmoothie(Smoothie smoothie){
+        Optional<Smoothie> smoothieOpt = smoothieRepository.findById(smoothie.getId());
+        if (smoothieOpt.isPresent()){
+            smoothieRepository.save(smoothie);
+            return true;
+        } else {
+            Notification.show("Oops, smoothie did not update in our database!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
+        return false;
+    }
 }

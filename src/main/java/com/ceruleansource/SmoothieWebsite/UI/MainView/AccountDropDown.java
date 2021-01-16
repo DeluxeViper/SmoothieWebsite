@@ -1,13 +1,19 @@
 package com.ceruleansource.SmoothieWebsite.UI.MainView;
 
+import com.ceruleansource.SmoothieWebsite.UI.MySmoothiesView;
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
 import com.ceruleansource.SmoothieWebsite.UI.HomeView;
+import com.ceruleansource.SmoothieWebsite.backend.Services.SmoothieService;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.router.Router;
+import com.vaadin.flow.router.RouterLink;
+import org.springframework.beans.factory.annotation.Autowired;
 
 //@CssImport("./styles/views/main/main-view.css")
 //@CssImport(value = "./styles/views/main/main-view.css", themeFor = "vaadin-app-layout")
@@ -21,8 +27,9 @@ public class AccountDropDown extends Div {
         ContextMenu contextMenu = new ContextMenu();
         contextMenu.setOpenOnClick(true);
         contextMenu.setEnabled(true);
-        contextMenu.addItem("Account Settings", e -> accountSettingsOnClick());
-        contextMenu.addItem("My Smoothies", e -> mySmoothiesOnClick());
+        contextMenu.addItem("Account Settings", e -> accountSettingsOnClick())
+        .add(new RouterLink(null, MySmoothiesView.class));
+//        contextMenu.addItem("My Smoothies", e -> mySmoothiesOnClick());
         contextMenu.addItem("Logout", e -> logoutOnClick());
 
         contextMenu.setTarget(this);
@@ -31,6 +38,10 @@ public class AccountDropDown extends Div {
     }
 
     private void mySmoothiesOnClick() {
+        System.out.println("UI page: " + UI.getCurrent().getClass().getSimpleName());
+        if (!UI.getCurrent().getClass().getName().equals("MySmoothiesView")){
+            getUI().ifPresent(ui -> ui.navigate("my-smoothies"));
+        }
     }
 
     private void accountSettingsOnClick() {

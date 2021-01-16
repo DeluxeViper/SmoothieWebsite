@@ -6,9 +6,10 @@ import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Stream;
 
 @Entity
-@Table(uniqueConstraints={
+@Table(uniqueConstraints = {
         @UniqueConstraint(columnNames = {"name", "user_id"})
 })
 public class Smoothie {
@@ -28,7 +29,7 @@ public class Smoothie {
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
-            name="smoothie_ingredients",
+            name = "smoothie_ingredients",
             joinColumns = @JoinColumn(name = "smoothie_id"),
             inverseJoinColumns = @JoinColumn(name = "ingredient_id")
     )
@@ -42,7 +43,7 @@ public class Smoothie {
     @JoinColumn(name = "totalPercentageInfo_id")
     private NutritionalInformationPercentage totalNutritionalInfoPercentage;
 
-    public Smoothie(){
+    public Smoothie() {
         this.totalNutritionalInfoGrams = new NutritionalInformationGrams();
         this.totalNutritionalInfoPercentage = new NutritionalInformationPercentage();
     }
@@ -74,11 +75,17 @@ public class Smoothie {
         return ingredients;
     }
 
+    public Set<String> getIngredientNames() {
+        Set<String> ingredientNames = new HashSet<>();
+        getIngredients().forEach(ingredient -> ingredientNames.add(ingredient.getName()));
+        return ingredientNames;
+    }
+
     public void setIngredients(Set<Ingredient> ingredients) {
         this.ingredients = ingredients;
     }
 
-        public User getUser() {
+    public User getUser() {
         return user;
     }
 
