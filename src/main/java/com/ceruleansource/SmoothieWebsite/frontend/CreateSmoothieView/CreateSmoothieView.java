@@ -4,16 +4,20 @@ import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Ingredient;
 import com.ceruleansource.SmoothieWebsite.backend.Services.IngredientService;
 import com.ceruleansource.SmoothieWebsite.backend.Services.SmoothieService;
-import com.ceruleansource.SmoothieWebsite.frontend.MainView;
+import com.ceruleansource.SmoothieWebsite.frontend.MainView.MainView;
+import com.ceruleansource.SmoothieWebsite.frontend.NutritionalInfoView;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -43,16 +47,15 @@ public class CreateSmoothieView extends Div {
     // Editor layout fields
     private ComboBox<String> ingredientName;
     private ComboBox<Ingredient> ingredientAmount;
-    private H3 nutritionalInfoGrams;
-    private H3 nutritionalInfoPercentage;
     private final Button ingredientSaveBtn = new Button("Save");
     private final Button cancelIngredientBtn = new Button("Cancel");
     private final Button removeIngredientBtn = new Button("Remove");
+    private NutritionalInfoView nutritionalInfoView = new NutritionalInfoView();
 
     @Autowired
     public CreateSmoothieView(IngredientService ingredientService, UserSession userSession, SmoothieService smoothieService) {
         setId("create-smoothie-view");
-
+        nutritionalInfoView.setVisible(false);
         // Create UI
         SplitLayout splitLayout = new SplitLayout();
         splitLayout.setSizeFull();
@@ -76,8 +79,8 @@ public class CreateSmoothieView extends Div {
     }
 
     private void saveIngredientEditorMethod(SmoothieService smoothieService) {
-        if (ingredientGridDiv.getSelectedSmoothie() != null){
-            if (ingredientAmount.getValue() != null){
+        if (ingredientGridDiv.getSelectedSmoothie() != null) {
+            if (ingredientAmount.getValue() != null) {
                 smoothieService.addIngredient(ingredientGridDiv.getSelectedSmoothie(), ingredientAmount.getValue());
                 Notification.show("Added " + ingredientAmount.getValue().getName()).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
                 ingredientGridDiv.refreshGrid();
@@ -92,8 +95,8 @@ public class CreateSmoothieView extends Div {
     }
 
     private void removeIngredientEditorMethod(SmoothieService smoothieService) {
-        if (ingredientAmount.getValue() != null){
-            if (ingredientGridDiv.getSelectedSmoothie() != null){
+        if (ingredientAmount.getValue() != null) {
+            if (ingredientGridDiv.getSelectedSmoothie() != null) {
                 smoothieService.removeIngredient(ingredientGridDiv.getSelectedSmoothie(), ingredientAmount.getValue());
                 Notification.show(ingredientAmount.getValue().getName() + " removed!");
                 refreshGrid();
@@ -120,9 +123,6 @@ public class CreateSmoothieView extends Div {
 
         ingredientAmount = new ComboBox<>("Ingredient Amount");
 
-        nutritionalInfoGrams = new H3();
-        nutritionalInfoPercentage = new H3();
-
         List<String> ingredientDistinctNamesList = ingredientService.findAllDistinctNamedIngredients();
 
         // Populating the form combo boxes
@@ -144,27 +144,26 @@ public class CreateSmoothieView extends Div {
         ingredientAmount.addValueChangeListener(this::editorIngrAmountChangeListener);
 
         // Setting form layout
-        Component[] fields = new Component[]{ingredientName, ingredientAmount, nutritionalInfoGrams, nutritionalInfoPercentage};
+        Component[] fields = new Component[]{ingredientName, ingredientAmount};
 //        for (Component field : fields) {
 //            ((HasStyle) field).addClassName("");
 //        }
         formLayout.add(fields);
-        editorDiv.add(formLayout);
+        editorDiv.add(formLayout, nutritionalInfoView);
         createButtonLayout(editorLayoutDiv);
-
         splitLayout.addToSecondary(editorLayoutDiv);
     }
 
     private void editorIngrAmountChangeListener(AbstractField.ComponentValueChangeEvent<ComboBox<Ingredient>, Ingredient> event) {
         if (event.getValue() == null) {
             // No ingredient amount selected
-            nutritionalInfoGrams.setText("Nutritional Info Grams: Empty");
-            nutritionalInfoPercentage.setText("Nutritional Info %: Empty");
+            nutritionalInfoView.setVisible(false);
         } else {
             // Ingredient amount selected
-            nutritionalInfoGrams.setText(event.getValue().getNutritionalInformationGrams().toString());
-            nutritionalInfoPercentage.setText(event.getValue().getNutritionalInformationPercentage().toString());
-            System.out.println(ingredientAmount.getValue());
+//            System.out.println(ingredientAmount.getValue());
+            nutritionalInfoView.setVisible(true);
+            nutritionalInfoView.setNutritionalInformation(event.getValue().getNutritionalInformationGrams(), event.getValue().getNutritionalInformationPercentage());
+            nutritionalInfoView.setCalories(String.valueOf(event.getValue().getNutritionalInformationGrams().getCalories()));
         }
     }
 
@@ -172,6 +171,7 @@ public class CreateSmoothieView extends Div {
         if (event.getValue() == null) {
             // No ingredient selected
             ingredientAmount.setItems();
+            nutritionalInfoView.setVisible(false);
         } else {
             // Ingredient selected
             System.out.println("Selected: " + event.getValue());
@@ -220,20 +220,20 @@ public class CreateSmoothieView extends Div {
 
     /**
      * Fills in the ingredient form
+     *
      * @param ingredient - populates form depending on the ingredient selected
      *                   - or populates the form null if no ingredient is passed in
      */
     private void populateForm(Ingredient ingredient) {
-        if (ingredient != null){
+        if (ingredient != null) {
             ingredientName.setValue(ingredient.getName());
             ingredientAmount.setValue(ingredient);
-            nutritionalInfoGrams.setText(ingredient.getNutritionalInformationGrams().toString());
-            nutritionalInfoPercentage.setText(ingredient.getNutritionalInformationPercentage().toString());
+            nutritionalInfoView.setVisible(true);
+            nutritionalInfoView.setNutritionalInformation(ingredient.getNutritionalInformationGrams(), ingredient.getNutritionalInformationPercentage());
         } else {
             ingredientName.setValue(null);
             ingredientAmount.setValue(null);
-            nutritionalInfoGrams.setText("");
-            nutritionalInfoPercentage.setText("");
+            nutritionalInfoView.setVisible(false);
         }
     }
 
@@ -242,7 +242,7 @@ public class CreateSmoothieView extends Div {
      */
     private void refreshGrid() {
         ingredientGridDiv.getIngredientGrid().select(null);
-        if (ingredientGridDiv.getSelectedSmoothie() != null){
+        if (ingredientGridDiv.getSelectedSmoothie() != null) {
             ingredientGridDiv.getIngredientGrid().setItems(ingredientGridDiv.getSelectedSmoothie().getIngredients());
         }
     }

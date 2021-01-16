@@ -1,6 +1,8 @@
 package com.ceruleansource.SmoothieWebsite.backend.Models;
 
 import com.ceruleansource.SmoothieWebsite.backend.Models.user.User;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.*;
 import java.util.*;
@@ -19,8 +21,9 @@ public class Smoothie {
     @Column(name = "name")
     private String name;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "user_id")
+    @NotFound(action = NotFoundAction.IGNORE)
     private User user;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

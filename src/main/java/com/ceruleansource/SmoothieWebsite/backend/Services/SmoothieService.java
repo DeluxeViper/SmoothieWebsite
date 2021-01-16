@@ -51,7 +51,7 @@ public class SmoothieService {
      * @param smoothie   - smoothie to add ingredient to
      * @param ingredient - ingredient to add to the smoothie
      */
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public void addIngredient(Smoothie smoothie, Ingredient ingredient) {
         Set<Ingredient> ingredientSet = new HashSet<>(smoothie.getIngredients());
         ingredientSet.add(ingredient);

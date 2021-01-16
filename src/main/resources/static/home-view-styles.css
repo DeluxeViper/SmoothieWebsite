@@ -1,0 +1,7 @@
+#welcomeDiv {
+}
+
+#welcomeDiv:hover {
+    transform: translateX(200px);
+    transition: all 10s ease-in-out;
+}

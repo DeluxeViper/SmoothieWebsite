@@ -1,0 +1,45 @@
+#header {
+    height: var(--lumo-size-xl);
+    padding: 10px;
+}
+
+#main-menu {
+    padding: 5px;
+}
+
+#tab {
+    padding: 10px;
+}
+#header h1 {
+    font-size: var(--lumo-font-size-l);
+    margin: 0;
+}
+
+#header img#logo {
+    height: var(--lumo-size-l);
+    margin: 0 var(--lumo-space-s);
+}
+
+#header img#avatar {
+    border-radius: 50%;
+    height: var(--lumo-size-l);
+    vertical-align: center;
+    background-color: #ffffff;
+    margin-right: -5px;
+    transition: width 0.2s ease;
+}
+
+#header img#avatar:hover {
+}
+
+#navbar-right-div {
+    padding-right: 10px;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+}
+
+/*vaadin-app-layout[dir='rtl'] vaadin-horizontal-layout #header img#avatar {*/
+/*    margin-left: var(--lumo-space-m);*/
+/*    margin-right: auto;*/
+/*}*/

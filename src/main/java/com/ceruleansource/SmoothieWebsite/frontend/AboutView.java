@@ -1,5 +1,6 @@
 package com.ceruleansource.SmoothieWebsite.frontend;
 
+import com.ceruleansource.SmoothieWebsite.frontend.MainView.MainView;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.templatemodel.TemplateModel;
 import com.vaadin.flow.component.Tag;

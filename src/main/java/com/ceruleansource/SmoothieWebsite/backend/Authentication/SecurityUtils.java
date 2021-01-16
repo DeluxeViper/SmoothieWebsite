@@ -4,7 +4,7 @@ import com.ceruleansource.SmoothieWebsite.frontend.Error.AccessDeniedView;
 import com.ceruleansource.SmoothieWebsite.frontend.Error.CustomRouteNotFoundError;
 import com.ceruleansource.SmoothieWebsite.frontend.HomeView;
 import com.ceruleansource.SmoothieWebsite.frontend.LoginView;
-import com.ceruleansource.SmoothieWebsite.frontend.MainView;
+import com.ceruleansource.SmoothieWebsite.frontend.MainView.MainView;
 import com.ceruleansource.SmoothieWebsite.frontend.RegisterView;
 import com.vaadin.flow.server.ServletHelper;
 import com.vaadin.flow.shared.ApplicationConstants;

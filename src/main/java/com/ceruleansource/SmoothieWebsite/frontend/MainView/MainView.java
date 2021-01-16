@@ -1,22 +1,32 @@
-package com.ceruleansource.SmoothieWebsite.frontend;
+package com.ceruleansource.SmoothieWebsite.frontend.MainView;
 
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
+import com.ceruleansource.SmoothieWebsite.frontend.AboutView;
+import com.ceruleansource.SmoothieWebsite.frontend.CaloriesBurnoutPlanView;
 import com.ceruleansource.SmoothieWebsite.frontend.CreateSmoothieView.CreateSmoothieView;
-import com.vaadin.flow.component.*;
+import com.ceruleansource.SmoothieWebsite.frontend.ForumView;
+import com.ceruleansource.SmoothieWebsite.frontend.HomeView;
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabVariant;
 import com.vaadin.flow.component.tabs.Tabs;
-import com.vaadin.flow.router.*;
-import com.vaadin.flow.server.PWA;
-import com.vaadin.flow.shared.Registration;
+import com.vaadin.flow.router.AfterNavigationEvent;
+import com.vaadin.flow.router.AfterNavigationObserver;
+import com.vaadin.flow.router.RouterLink;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +44,11 @@ import java.util.Optional;
 //        shortName = "Smoothie Web",
 //        startPath = "home",
 //        description = "This is a smoothie website application.")
+@CssImport("./src/styles/views/main/main-view.css")
 public class MainView extends AppLayout implements AfterNavigationObserver {
 
     private static Tabs mainMenu;
+    private AccountDropDown accountDropDown;
     private final Button logoutButton;
     private final Button loginButton;
 
@@ -44,8 +56,10 @@ public class MainView extends AppLayout implements AfterNavigationObserver {
      * Creates a new MainView.
      */
     public MainView() {
+        accountDropDown = new AccountDropDown();
         mainMenu = createMenuTabs();
         mainMenu.setOrientation(Tabs.Orientation.HORIZONTAL);
+        mainMenu.setId("main-menu");
         loginButton = new Button("Login");
         loginButton.setThemeName("tertiary");
 
@@ -62,7 +76,6 @@ public class MainView extends AppLayout implements AfterNavigationObserver {
             }
         });
 
-
         logoutButton.addClickListener(e -> {
             if (UserSession.isLoggedIn()) {
                 UserSession.logout();
@@ -78,14 +91,23 @@ public class MainView extends AppLayout implements AfterNavigationObserver {
         mainMenu.getStyle().set("padding", "5px");
         mainMenu.getStyle().set("padding-right", "10px");
         mainMenu.getStyle().set("align-self", "stretch");
-        Div div = new Div(loginButton, logoutButton);
-        div.getStyle().set("margin-left", "auto");
-        div.getStyle().set("padding", "5px");
+        Div div = new Div(loginButton, accountDropDown);
+        div.setId("navbar-right-div");
 
         loginButton.getStyle().set("margin", "5px");
         mainMenu.add(div);
         mainMenu.setSizeFull();
         addToNavbar(true, mainMenu);
+    }
+
+    private VerticalLayout createTopBar(AccountDropDown accountDropDown, Tabs mainMenu) {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setWidthFull();
+        layout.setSpacing(false);
+        layout.setPadding(false);
+        layout.setAlignItems(FlexComponent.Alignment.CENTER);
+        layout.add(accountDropDown, mainMenu);
+        return layout;
     }
 
     private static Tabs createMenuTabs() {
@@ -114,6 +136,9 @@ public class MainView extends AppLayout implements AfterNavigationObserver {
         // About Tab
         tabs.add(createTab(VaadinIcon.INFO, "About", AboutView.class));
 
+        tabs.forEach(tab -> {
+            tab.setId("tab");
+        });
         return tabs.toArray(new Tab[tabs.size()]);
     }
 
@@ -141,9 +166,14 @@ public class MainView extends AppLayout implements AfterNavigationObserver {
 
     @Override
     public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
-        if (UserSession.isLoggedIn()){
-            logoutButton.setVisible(true);
+        if (UserSession.isLoggedIn()) {
+            accountDropDown.setVisible(true);
+//            logoutButton.setVisible(true);
             loginButton.setVisible(false);
+            accountDropDown.setVisible(true);
+        } else {
+            accountDropDown.setVisible(false);
         }
+//        System.out.println(accountDropDown.isVisible());
     }
 }
