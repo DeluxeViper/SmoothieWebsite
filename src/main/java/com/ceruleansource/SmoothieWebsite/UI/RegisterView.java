@@ -1,4 +1,4 @@
-package com.ceruleansource.SmoothieWebsite.frontend;
+package com.ceruleansource.SmoothieWebsite.UI;
 
 import com.ceruleansource.SmoothieWebsite.backend.Models.user.User;
 import com.ceruleansource.SmoothieWebsite.backend.Services.MyUserDetailsService;
@@ -22,7 +22,6 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 @PageTitle("Register")

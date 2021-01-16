@@ -1,4 +1,4 @@
-package com.ceruleansource.SmoothieWebsite.frontend.Error;
+package com.ceruleansource.SmoothieWebsite.UI.Error;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;

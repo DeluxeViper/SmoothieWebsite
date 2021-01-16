@@ -1,7 +1,7 @@
 package com.ceruleansource.SmoothieWebsite.backend.Authentication;
 
-import com.ceruleansource.SmoothieWebsite.frontend.Components.OfflineBanner;
-import com.ceruleansource.SmoothieWebsite.frontend.LoginView;
+import com.ceruleansource.SmoothieWebsite.UI.Components.OfflineBanner;
+import com.ceruleansource.SmoothieWebsite.UI.LoginView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.router.BeforeEnterEvent;
 import com.vaadin.flow.server.ServiceInitEvent;

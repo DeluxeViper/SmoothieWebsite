@@ -1,10 +1,10 @@
-package com.ceruleansource.SmoothieWebsite.frontend.CreateSmoothieView;
+package com.ceruleansource.SmoothieWebsite.UI.CreateSmoothieView;
 
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Ingredient;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
 import com.ceruleansource.SmoothieWebsite.backend.Services.SmoothieService;
-import com.ceruleansource.SmoothieWebsite.frontend.NutritionalInfoView;
+import com.ceruleansource.SmoothieWebsite.UI.NutritionalInfoView;
 import com.vaadin.componentfactory.Tooltip;
 import com.vaadin.componentfactory.TooltipAlignment;
 import com.vaadin.flow.component.button.Button;

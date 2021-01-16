@@ -1,4 +1,4 @@
-package com.ceruleansource.SmoothieWebsite.frontend;
+package com.ceruleansource.SmoothieWebsite.UI;
 
 import com.ceruleansource.SmoothieWebsite.backend.Models.NutritionalInformationGrams;
 import com.ceruleansource.SmoothieWebsite.backend.Models.NutritionalInformationPercentage;

@@ -1,19 +1,17 @@
-package com.ceruleansource.SmoothieWebsite.frontend.MainView;
+package com.ceruleansource.SmoothieWebsite.UI.MainView;
 
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
-import com.ceruleansource.SmoothieWebsite.frontend.AboutView;
-import com.ceruleansource.SmoothieWebsite.frontend.CaloriesBurnoutPlanView;
-import com.ceruleansource.SmoothieWebsite.frontend.CreateSmoothieView.CreateSmoothieView;
-import com.ceruleansource.SmoothieWebsite.frontend.ForumView;
-import com.ceruleansource.SmoothieWebsite.frontend.HomeView;
+import com.ceruleansource.SmoothieWebsite.UI.AboutView;
+import com.ceruleansource.SmoothieWebsite.UI.CaloriesBurnoutPlanView;
+import com.ceruleansource.SmoothieWebsite.UI.CreateSmoothieView.CreateSmoothieView;
+import com.ceruleansource.SmoothieWebsite.UI.ForumView;
+import com.ceruleansource.SmoothieWebsite.UI.HomeView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;

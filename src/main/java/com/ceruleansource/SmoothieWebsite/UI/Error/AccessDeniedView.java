@@ -1,6 +1,5 @@
-package com.ceruleansource.SmoothieWebsite.frontend.Error;
+package com.ceruleansource.SmoothieWebsite.UI.Error;
 
-import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.polymertemplate.PolymerTemplate;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.templatemodel.TemplateModel;

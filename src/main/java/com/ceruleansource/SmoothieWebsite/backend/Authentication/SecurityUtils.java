@@ -1,11 +1,11 @@
 package com.ceruleansource.SmoothieWebsite.backend.Authentication;
 
-import com.ceruleansource.SmoothieWebsite.frontend.Error.AccessDeniedView;
-import com.ceruleansource.SmoothieWebsite.frontend.Error.CustomRouteNotFoundError;
-import com.ceruleansource.SmoothieWebsite.frontend.HomeView;
-import com.ceruleansource.SmoothieWebsite.frontend.LoginView;
-import com.ceruleansource.SmoothieWebsite.frontend.MainView.MainView;
-import com.ceruleansource.SmoothieWebsite.frontend.RegisterView;
+import com.ceruleansource.SmoothieWebsite.UI.Error.AccessDeniedView;
+import com.ceruleansource.SmoothieWebsite.UI.Error.CustomRouteNotFoundError;
+import com.ceruleansource.SmoothieWebsite.UI.HomeView;
+import com.ceruleansource.SmoothieWebsite.UI.LoginView;
+import com.ceruleansource.SmoothieWebsite.UI.MainView.MainView;
+import com.ceruleansource.SmoothieWebsite.UI.RegisterView;
 import com.vaadin.flow.server.ServletHelper;
 import com.vaadin.flow.shared.ApplicationConstants;
 import org.springframework.core.annotation.AnnotationUtils;

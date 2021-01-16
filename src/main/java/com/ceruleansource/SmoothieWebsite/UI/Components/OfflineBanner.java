@@ -1,4 +1,4 @@
-package com.ceruleansource.SmoothieWebsite.frontend.Components;
+package com.ceruleansource.SmoothieWebsite.UI.Components;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;

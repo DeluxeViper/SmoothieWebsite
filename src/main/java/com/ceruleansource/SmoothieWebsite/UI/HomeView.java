@@ -1,14 +1,10 @@
-package com.ceruleansource.SmoothieWebsite.frontend;
+package com.ceruleansource.SmoothieWebsite.UI;
 
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.SecurityUtils;
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
-import com.ceruleansource.SmoothieWebsite.frontend.MainView.MainView;
-import com.vaadin.flow.component.Component;
+import com.ceruleansource.SmoothieWebsite.UI.MainView.MainView;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.polymertemplate.Id;

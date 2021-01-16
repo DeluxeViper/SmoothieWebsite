@@ -1,4 +1,4 @@
-package com.ceruleansource.SmoothieWebsite.frontend.CreateSmoothieView;
+package com.ceruleansource.SmoothieWebsite.UI.CreateSmoothieView;
 
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
