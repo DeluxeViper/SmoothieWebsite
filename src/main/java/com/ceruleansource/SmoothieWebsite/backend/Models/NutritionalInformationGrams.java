@@ -45,6 +45,21 @@ public class NutritionalInformationGrams {
     private String caffeine;
 
     public NutritionalInformationGrams() {
+        this.calories = 0;
+        this.totalFat = "0 g";
+        this.saturatedFat = "0 g";
+        this.polyunsaturatedFat = "0 g";
+        this.monounsaturatedFat = "0 g";
+        this.transFatRegulation = "0 g";
+        this.cholesterol = "0 mg";
+        this.sodium = "0 mg";
+        this.potassium = "0 mg";
+        this.totalCarbohydrates = "0 g";
+        this.dietaryFiber = "0 g";
+        this.sugars = "0 g";
+        this.protein = "0 g";
+        this.caffeine = "0 g";
+
     }
 
     public NutritionalInformationGrams(Long id, int calories, String totalFat, String saturatedFat, String polyunsaturatedFat, String monounsaturatedFat, String transFatRegulation, String cholesterol, String sodium, String potassium, String totalCarbohydrates, String dietaryFiber, String sugars, String protein, String caffeine) {
@@ -185,6 +200,59 @@ public class NutritionalInformationGrams {
         this.caffeine = caffeine;
     }
 
+    public void addGrams(NutritionalInformationGrams nutrGram) throws Exception {
+        this.calories = calories + nutrGram.getCalories();
+        this.totalFat = addGramValue(totalFat, nutrGram.getTotalFat());
+        this.saturatedFat = addGramValue(saturatedFat, nutrGram.getSaturatedFat());
+        this.polyunsaturatedFat = addGramValue(polyunsaturatedFat, nutrGram.getPolyunsaturatedFat());
+        this.monounsaturatedFat = addGramValue(monounsaturatedFat, nutrGram.getMonounsaturatedFat());
+        this.transFatRegulation = addGramValue(transFatRegulation, nutrGram.getTransFatRegulation());
+        this.cholesterol = addGramValue(cholesterol, nutrGram.getCholesterol());
+        this.sodium = addGramValue(sodium, nutrGram.getSodium());
+        this.potassium = addGramValue(potassium, nutrGram.getPotassium());
+        this.totalCarbohydrates = addGramValue(totalCarbohydrates, nutrGram.getTotalCarbohydrates());
+        this.dietaryFiber = addGramValue(dietaryFiber, nutrGram.getDietaryFiber());
+        this.sugars = addGramValue(sugars, nutrGram.getSugars());
+        this.protein = addGramValue(protein, nutrGram.getProtein());
+        this.caffeine = addGramValue(caffeine, nutrGram.getCaffeine());
+    }
+
+    public void subtractGrams(NutritionalInformationGrams nutrGram) throws Exception {
+        this.calories = calories - nutrGram.getCalories();
+        this.totalFat = subtractGramValue(totalFat, nutrGram.getTotalFat());
+        this.saturatedFat = subtractGramValue(saturatedFat, nutrGram.getSaturatedFat());
+        this.polyunsaturatedFat = subtractGramValue(polyunsaturatedFat, nutrGram.getPolyunsaturatedFat());
+        this.monounsaturatedFat = subtractGramValue(monounsaturatedFat, nutrGram.getMonounsaturatedFat());
+        this.transFatRegulation = subtractGramValue(transFatRegulation, nutrGram.getTransFatRegulation());
+        this.cholesterol = subtractGramValue(cholesterol, nutrGram.getCholesterol());
+        this.sodium = subtractGramValue(sodium, nutrGram.getSodium());
+        this.potassium = subtractGramValue(potassium, nutrGram.getPotassium());
+        this.totalCarbohydrates = subtractGramValue(totalCarbohydrates, nutrGram.getTotalCarbohydrates());
+        this.dietaryFiber = subtractGramValue(dietaryFiber, nutrGram.getDietaryFiber());
+        this.sugars = subtractGramValue(sugars, nutrGram.getSugars());
+        this.protein = subtractGramValue(protein, nutrGram.getProtein());
+        this.caffeine = subtractGramValue(caffeine, nutrGram.getCaffeine());
+    }
+    
+    public String addGramValue(String gram1, String gram2) throws Exception {
+//        System.out.println("Adding: " + gram1 + " and " + gram2);
+        String [] gram1s = gram1.split(" ");
+        String [] gram2s = gram2.split(" ");
+        if (!gram1s[1].equals(gram2s[1])) {
+            throw new Exception("Error adding gram values. Not in equal measurements: " + gram1s[1] + " and " + gram2s[1]);
+        }
+        return Math.round((Double.parseDouble(gram1s[0]) + Double.parseDouble(gram2s[0])) * 100)/ 100.0 + " " + gram1s[1];
+    }
+
+    public String subtractGramValue(String gram1, String gram2) throws Exception {
+        String [] gram1s = gram1.split(" ");
+        String [] gram2s = gram2.split(" ");
+        if (!gram1s[1].equals(gram2s[1])) {
+            throw new Exception("Error adding gram values. Not in equal measurements: " + gram1s[1] + " and " + gram2s[1]);
+        }
+        return Math.round((Double.parseDouble(gram1s[0]) - Double.parseDouble(gram2s[0])) * 100)/ 100.0 + " " + gram1s[1];
+    }
+    
     @Override
     public String toString() {
         return "NutritionalInformation{" +

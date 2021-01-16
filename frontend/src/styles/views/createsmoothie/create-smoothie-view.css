@@ -1,7 +1,7 @@
 #create-smoothie-view {
     display: block;
     height: 100%;
-    flex-direction: column;
+    flex-direction: row;
 }
 
 :host {
@@ -21,14 +21,18 @@
 }
 
 #editor-layout {
-    width: 400px;
     display: flex;
     flex-direction: column;
 }
 
 #editor {
-    padding: var(--lumo-space-l);
+    margin-top: 3%;
     flex-grow: 1;
+    width: 100%;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
 }
 
 #button-layout {
@@ -36,4 +40,9 @@
     flex-wrap: wrap;
     background-color: var(--lumo-contrast-5pct);
     padding: var(--lumo-space-s) var(--lumo-space-l);
+}
+
+#form-layout {
+    width: 90%;
+    margin: auto;
 }

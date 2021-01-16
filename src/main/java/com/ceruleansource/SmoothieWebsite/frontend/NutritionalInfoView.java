@@ -25,6 +25,11 @@ public class NutritionalInfoView extends PolymerTemplate<NutritionalInfoView.Nut
         // You can initialise any data required for the connected UI components here.
     }
 
+    public NutritionalInfoView(NutritionalInformationGrams nutritionalInformationGrams, NutritionalInformationPercentage nutritionalInformationPercentage){
+        getModel().setNutritionalInformationGrams(nutritionalInformationGrams);
+        getModel().setNutritionalInformationPercentage(nutritionalInformationPercentage);
+    }
+
     public void setCalories(String calories){
         getModel().setCalories(calories);
     }

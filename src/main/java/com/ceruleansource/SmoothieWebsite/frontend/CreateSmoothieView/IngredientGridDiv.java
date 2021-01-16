@@ -3,9 +3,10 @@ package com.ceruleansource.SmoothieWebsite.frontend.CreateSmoothieView;
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Ingredient;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
-import com.ceruleansource.SmoothieWebsite.backend.Services.IngredientService;
 import com.ceruleansource.SmoothieWebsite.backend.Services.SmoothieService;
-import com.vaadin.flow.component.AbstractField;
+import com.ceruleansource.SmoothieWebsite.frontend.NutritionalInfoView;
+import com.vaadin.componentfactory.Tooltip;
+import com.vaadin.componentfactory.TooltipAlignment;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -15,11 +16,10 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Set;
 
 @CssImport("./src/styles/views/createsmoothie/create-smoothie-view.css")
 public class IngredientGridDiv extends Div {
@@ -32,21 +32,19 @@ public class IngredientGridDiv extends Div {
     // Current smoothie that is selected from userSmoothies
     private Smoothie selectedSmoothie;
 
+    // Create smoothie dialog
     private CreateSmoothieDialog smoothieDialog;
 
-    private Button deleteSmoothieBtn;
-
     @Autowired
-    public IngredientGridDiv(IngredientService ingredientService, UserSession userSession, SmoothieService smoothieService) {
+    public IngredientGridDiv(UserSession userSession, SmoothieService smoothieService) {
         setId("grid-wrapper");
-        setWidthFull();
 
         VerticalLayout overallVLayout = new VerticalLayout();
         overallVLayout.setHeightFull();
 
         VerticalLayout headerLayout = initHeaderLayout(userSession, smoothieService);
 
-        initializeIngredientGrid(ingredientService);
+        initializeIngredientGrid();
 
         overallVLayout.add(headerLayout, ingredientGrid);
         add(overallVLayout);
@@ -67,37 +65,19 @@ public class IngredientGridDiv extends Div {
     public HorizontalLayout initSmoothieFunctionsLayout(UserSession userSession, SmoothieService smoothieService) {
         HorizontalLayout hLayout = new HorizontalLayout();
 
-        deleteSmoothieBtn = new Button("Delete Smoothie");
-        deleteSmoothieBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        deleteSmoothieBtn.addClickListener(e -> deleteSmoothieButtonOnClick(userSession, smoothieService));
-
         userSmoothies = new ComboBox<>("Your Smoothies");
         userSmoothies.setItemLabelGenerator(Smoothie::getName);
         userSmoothies.setItems(smoothieService.getSmoothiesForCurrentUser(userSession.getUser()));
-        userSmoothies.addValueChangeListener(this::userSmoothiesValueChangeMethod);
 
         // Initializing smoothieDialog
         initSmoothieCreateDialog(userSession, smoothieService);
 
         Button createSmoothieBtn = new Button("Create Smoothie");
-        createSmoothieBtn.addClickListener(e-> smoothieDialog.open());
+        createSmoothieBtn.addClickListener(e -> smoothieDialog.open());
 
-        hLayout.add(userSmoothies, createSmoothieBtn, deleteSmoothieBtn);
+        hLayout.add(userSmoothies, createSmoothieBtn);
 
         return hLayout;
-    }
-
-    private void userSmoothiesValueChangeMethod(AbstractField.ComponentValueChangeEvent<ComboBox<Smoothie>, Smoothie> event) {
-        if (event.getValue() != null){
-            selectedSmoothie = event.getValue();
-            deleteSmoothieBtn.setVisible(true);
-            System.out.println("IngredientGridDiv: UserSmoothies currently selected the following smoothie:\n" + selectedSmoothie);
-            refreshGrid();
-        } else {
-            selectedSmoothie = null;
-            System.out.println("IngredientGridDiv: Currently user smoothies selected a null smoothie, will do nothing.");
-            refreshGrid();
-        }
     }
 
     private void initSmoothieCreateDialog(UserSession userSession, SmoothieService smoothieService) {
@@ -109,15 +89,15 @@ public class IngredientGridDiv extends Div {
         });
     }
 
-    private void initializeIngredientGrid(IngredientService ingredientService) {
+    private void initializeIngredientGrid() {
         // Configure Grid
-        ingredientGrid.addColumn(Ingredient::getName).setHeader("Name").setAutoWidth(true);
+        ingredientGrid.addColumn(Ingredient::getName)
+                .setHeader("Name").setAutoWidth(true)
+                .setSortable(true);
         ingredientGrid.addColumn(Ingredient::getQuantityTypeAndValue)
                 .setHeader("Amount").setAutoWidth(true);
-        ingredientGrid.addColumn(Ingredient::getNutritionalInformationGrams)
-                .setHeader("Nutritional Info Grams").setAutoWidth(true);
-        ingredientGrid.addColumn(Ingredient::getNutritionalInformationPercentage)
-                .setHeader("Nutritional Info %").setAutoWidth(true);
+        ingredientGrid.addComponentColumn(this::getViewNutrFactsButton).setHeader("Nutritional Info");
+        ingredientGrid.setHeightByRows(true);
 
         // Initialize ingredient grid items
         ingredientGrid.setItems();
@@ -125,37 +105,43 @@ public class IngredientGridDiv extends Div {
         ingredientGrid.setHeightFull();
     }
 
-    private void deleteSmoothieButtonOnClick(UserSession userSession, SmoothieService smoothieService) {
-        if (smoothieService.deleteSmoothie(selectedSmoothie)){
-            Set<Smoothie> newSmoothieSet = smoothieService.getSmoothiesForCurrentUser(userSession.getUser());
-
-            if (newSmoothieSet.isEmpty()){
-                selectedSmoothie = null;
-                deleteSmoothieBtn.setVisible(false);
-            } else {
-                selectedSmoothie = newSmoothieSet.stream().findFirst().get();
-            }
-
-            userSmoothies.setItems(smoothieService.getSmoothiesForCurrentUser(userSession.getUser()));
-            userSmoothies.setValue(selectedSmoothie);
-            refreshGrid();
-        }
+    private Button getViewNutrFactsButton(Ingredient ingredient) {
+        Button viewFactsBtn = new Button(VaadinIcon.EYE.create());
+        viewFactsBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        Tooltip tooltip = new Tooltip();
+        tooltip.setThemeName("light");
+        tooltip.setAlignment(TooltipAlignment.CENTER);
+        NutritionalInfoView nutritionalInfoView = new NutritionalInfoView();
+        nutritionalInfoView.setNutritionalInformation(ingredient.getNutritionalInformationGrams(), ingredient.getNutritionalInformationPercentage());
+        tooltip.add(nutritionalInfoView);
+        tooltip.setCloseButtonVisible(true);
+        add(tooltip);
+        viewFactsBtn.addClickListener(e -> tooltip.open());
+        return viewFactsBtn;
     }
 
-    public void refreshGrid(){
+    public void refreshGrid() {
         ingredientGrid.select(null);
-        if (selectedSmoothie != null){
+        if (selectedSmoothie != null) {
             ingredientGrid.setItems(selectedSmoothie.getIngredients());
         } else {
             ingredientGrid.setItems();
         }
     }
 
-    public Grid<Ingredient> getIngredientGrid(){
+    public Grid<Ingredient> getIngredientGrid() {
         return ingredientGrid;
     }
 
-    public Smoothie getSelectedSmoothie(){
+    public Smoothie getSelectedSmoothie() {
         return selectedSmoothie;
+    }
+
+    public void setSelectedSmoothie(Smoothie smoothie){
+        this.selectedSmoothie = smoothie;
+    }
+
+    public ComboBox<Smoothie> getUserSmoothies() {
+        return userSmoothies;
     }
 }

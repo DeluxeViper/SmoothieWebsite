@@ -120,8 +120,10 @@ public class SmoothieService {
         if (currentUserOptional.isPresent()) {
             User currentUser = currentUserOptional.get();
             if (currentUser.getSmoothies().contains(smoothie)) {
-                currentUser.getSmoothies().remove(smoothie);
+                Set<Smoothie> smoothieSet = currentUser.getSmoothies();
+                smoothieSet.remove(smoothie);
                 userRepository.save(currentUser);
+                System.out.println("Deleted smoothie? : " + currentUser);
                 return !currentUser.getSmoothies().contains(smoothie);
             } else {
                 Notification.show("Error! Smoothie was not found in user").addThemeVariants(NotificationVariant.LUMO_ERROR);

@@ -58,6 +58,27 @@ public class NutritionalInformationPercentage {
     private String magnesium;
 
     public NutritionalInformationPercentage() {
+        this.totalFat = "0%";
+        this.saturatedFat = "0%";
+        this.polyunsaturatedFat = "0%";
+        this.monounsaturatedFat = "0%";
+        this.transFatRegulation = "0%";
+        this.cholesterol = "0%";
+        this.sodium = "0%";
+        this.potassium = "0%";
+        this.totalCarbohydrates = "0%";
+        this.dietaryFiber = "0%";
+        this.sugars = "0%";
+        this.protein = "0%";
+        this.caffeine = "0%";
+        this.vitaminA = "0%";
+        this.vitaminC = "0%";
+        this.calcium = "0%";
+        this.iron = "0%";
+        this.vitaminD = "0%";
+        this.vitaminB6 = "0%";
+        this.cobalamin = "0%";
+        this.magnesium = "0%";
     }
 
     public NutritionalInformationPercentage(Long id, String totalFat, String saturatedFat, String polyunsaturatedFat, String monounsaturatedFat, String transFatRegulation, String cholesterol, String sodium, String potassium, String totalCarbohydrates, String dietaryFiber, String sugars, String protein, String caffeine, String vitaminA, String vitaminC, String calcium, String iron, String vitaminD, String vitaminB6, String cobalamin, String magnesium) {
@@ -259,6 +280,66 @@ public class NutritionalInformationPercentage {
 
     public void setMagnesium(String magnesium) {
         this.magnesium = magnesium;
+    }
+
+    public void addPercentage(NutritionalInformationPercentage nutrPercentage){
+        this.totalFat = addPercentageValue(totalFat, nutrPercentage.getTotalFat());
+        this.saturatedFat = addPercentageValue(saturatedFat, nutrPercentage.getSaturatedFat());
+        this.polyunsaturatedFat = addPercentageValue(polyunsaturatedFat, nutrPercentage.getPolyunsaturatedFat());
+        this.monounsaturatedFat = addPercentageValue(monounsaturatedFat, nutrPercentage.getMonounsaturatedFat());
+        this.transFatRegulation = addPercentageValue(transFatRegulation, nutrPercentage.getTransFatRegulation());
+        this.cholesterol = addPercentageValue(cholesterol, nutrPercentage.getCholesterol());
+        this.sodium = addPercentageValue(sodium, nutrPercentage.getSodium());
+        this.potassium = addPercentageValue(potassium, nutrPercentage.getPotassium());
+        this.totalCarbohydrates = addPercentageValue(totalCarbohydrates, nutrPercentage.getTotalCarbohydrates());
+        this.dietaryFiber = addPercentageValue(dietaryFiber, nutrPercentage.getDietaryFiber());
+        this.sugars = addPercentageValue(sugars, nutrPercentage.getSugars());
+        this.protein = addPercentageValue(protein, nutrPercentage.getProtein());
+        this.caffeine = addPercentageValue(caffeine, nutrPercentage.getCaffeine());
+        this.vitaminA = addPercentageValue(vitaminA, nutrPercentage.getVitaminA());
+        this.vitaminC = addPercentageValue(vitaminC, nutrPercentage.getVitaminC());
+        this.calcium = addPercentageValue(calcium, nutrPercentage.getCalcium());
+        this.iron = addPercentageValue(iron, nutrPercentage.getIron());
+        this.vitaminD = addPercentageValue(vitaminD, nutrPercentage.getVitaminD());
+        this.vitaminB6 = addPercentageValue(vitaminB6, nutrPercentage.getVitaminB6());
+        this.cobalamin = addPercentageValue(cobalamin, nutrPercentage.getCobalamin());
+        this.magnesium = addPercentageValue(magnesium, nutrPercentage.getMagnesium());
+    }
+
+    public void subtractPercentage(NutritionalInformationPercentage nutrPercentage){
+        this.totalFat = subtractPercentageValue(totalFat, nutrPercentage.getTotalFat());
+        this.saturatedFat = subtractPercentageValue(saturatedFat, nutrPercentage.getSaturatedFat());
+        this.polyunsaturatedFat = subtractPercentageValue(polyunsaturatedFat, nutrPercentage.getPolyunsaturatedFat());
+        this.monounsaturatedFat = subtractPercentageValue(monounsaturatedFat, nutrPercentage.getMonounsaturatedFat());
+        this.transFatRegulation = subtractPercentageValue(transFatRegulation, nutrPercentage.getTransFatRegulation());
+        this.cholesterol = subtractPercentageValue(cholesterol, nutrPercentage.getCholesterol());
+        this.sodium = subtractPercentageValue(sodium, nutrPercentage.getSodium());
+        this.potassium = subtractPercentageValue(potassium, nutrPercentage.getPotassium());
+        this.totalCarbohydrates = subtractPercentageValue(totalCarbohydrates, nutrPercentage.getTotalCarbohydrates());
+        this.dietaryFiber = subtractPercentageValue(dietaryFiber, nutrPercentage.getDietaryFiber());
+        this.sugars = subtractPercentageValue(sugars, nutrPercentage.getSugars());
+        this.protein = subtractPercentageValue(protein, nutrPercentage.getProtein());
+        this.caffeine = subtractPercentageValue(caffeine, nutrPercentage.getCaffeine());
+        this.vitaminA = subtractPercentageValue(vitaminA, nutrPercentage.getVitaminA());
+        this.vitaminC = subtractPercentageValue(vitaminC, nutrPercentage.getVitaminC());
+        this.calcium = subtractPercentageValue(calcium, nutrPercentage.getCalcium());
+        this.iron = subtractPercentageValue(iron, nutrPercentage.getIron());
+        this.vitaminD = subtractPercentageValue(vitaminD, nutrPercentage.getVitaminD());
+        this.vitaminB6 = subtractPercentageValue(vitaminB6, nutrPercentage.getVitaminB6());
+        this.cobalamin = subtractPercentageValue(cobalamin, nutrPercentage.getCobalamin());
+        this.magnesium = subtractPercentageValue(magnesium, nutrPercentage.getMagnesium());
+    }
+
+    public int getInt(String perc){
+        return Integer.parseInt(perc.split("%")[0]);
+    }
+
+    public String addPercentageValue(String perc1, String perc2){
+        return (Integer.parseInt(perc1.split("%")[0]) + Integer.parseInt(perc2.split("%")[0])) + "%";
+    }
+
+    public String subtractPercentageValue(String perc1, String perc2){
+        return (Integer.parseInt(perc1.split("%")[0]) - Integer.parseInt(perc2.split("%")[0])) + "%";
     }
 
     @Override

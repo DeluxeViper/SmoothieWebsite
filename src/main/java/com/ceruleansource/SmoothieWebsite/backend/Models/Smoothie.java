@@ -23,7 +23,7 @@ public class Smoothie {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @NotFound(action = NotFoundAction.IGNORE)
+    @NotFound(action = NotFoundAction.EXCEPTION)
     private User user;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

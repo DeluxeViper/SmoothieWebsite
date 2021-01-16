@@ -22,10 +22,10 @@ class NutritionalInfoView extends PolymerElement {
  margin: 0;
 }
  .performance-facts {
+width: min-content;
 border: 1px solid black;
  margin: 20px;
  float: left;
- width: 280px;
  padding: 0.5rem;
 }
  .performance-facts table {
@@ -105,7 +105,7 @@ border: 1px solid black;
  border-bottom: 1px solid black;
 }
             </style>
-<section class="performance-facts" style="width: 350px;">
+<section class="performance-facts">
  <header class="performance-facts__header">
   <h1 class="performance-facts__title">Nutrition Facts</h1>
   <p>Serving Size 1/2 cup (about 82g)</p>
@@ -119,7 +119,7 @@ border: 1px solid black;
   </thead>
   <tbody>
    <tr>
-    <th colspan="2"><b>Calories</b> [[nutritionalInformationGrams.calories]] </th>
+    <th colspan="2"><b>Calories</b>[[nutritionalInformationGrams.calories]] </th>
     <td> Calories from Fat 130 </td>
    </tr>
    <tr class="thick-row">
@@ -134,7 +134,7 @@ border: 1px solid black;
     <th> Saturated Fat [[nutritionalInformationGrams.saturatedFat]] </th>
     <td>[[nutritionalInformationPercentage.saturatedFat]]</td>
    </tr>
-    <tr>
+   <tr>
     <td class="blank-cell"></td>
     <th> Polyunsaturated Fat [[nutritionalInformationGrams.polyunsaturatedFat]] </th>
     <td>[[nutritionalInformationPercentage.polyunsaturatedFat]]</td>

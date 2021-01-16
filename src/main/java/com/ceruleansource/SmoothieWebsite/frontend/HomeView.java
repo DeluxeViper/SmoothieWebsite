@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 @JsModule("./src/views/home-view.js")
 @Route(value = "home", layout = MainView.class)
 public class HomeView extends PolymerTemplate<HomeView.HomeViewModel> implements AfterNavigationObserver {
-
     @Id("createSmoothieButton")
     private Button createSmoothieButton;
     @Id("loginHomeButton")
