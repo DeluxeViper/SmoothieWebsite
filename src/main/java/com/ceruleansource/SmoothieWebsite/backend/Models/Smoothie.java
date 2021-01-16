@@ -34,12 +34,24 @@ public class Smoothie {
     )
     private Set<Ingredient> ingredients = new HashSet<>();
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "totalGramsInfo_id")
+    private NutritionalInformationGrams totalNutritionalInfoGrams;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "totalPercentageInfo_id")
+    private NutritionalInformationPercentage totalNutritionalInfoPercentage;
+
     public Smoothie(){
+        this.totalNutritionalInfoGrams = new NutritionalInformationGrams();
+        this.totalNutritionalInfoPercentage = new NutritionalInformationPercentage();
     }
 
     public Smoothie(String name, User user) {
         this.name = name;
         this.user = user;
+        this.totalNutritionalInfoPercentage = new NutritionalInformationPercentage();
+        this.totalNutritionalInfoGrams = new NutritionalInformationGrams();
     }
 
     public Long getId() {
@@ -74,12 +86,31 @@ public class Smoothie {
         this.user = user;
     }
 
+    public NutritionalInformationGrams getTotalNutritionalInfoGrams() {
+        return totalNutritionalInfoGrams;
+    }
+
+    public void setTotalNutritionalInfoGrams(NutritionalInformationGrams totalNutritionalInfoGrams) {
+        this.totalNutritionalInfoGrams = totalNutritionalInfoGrams;
+    }
+
+    public NutritionalInformationPercentage getTotalNutritionalInfoPercentage() {
+        return totalNutritionalInfoPercentage;
+    }
+
+    public void setTotalNutritionalInfoPercentage(NutritionalInformationPercentage totalNutritionalInfoPercentage) {
+        this.totalNutritionalInfoPercentage = totalNutritionalInfoPercentage;
+    }
+
     @Override
     public String toString() {
         return "Smoothie{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", userEmail=" + user.getEmail() +
                 ", ingredients=" + ingredients +
+                ", totalNutritionalInfoGrams=" + totalNutritionalInfoGrams +
+                ", totalNutritionalInfoPercentage=" + totalNutritionalInfoPercentage +
                 '}';
     }
 

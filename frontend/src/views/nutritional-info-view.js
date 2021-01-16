@@ -119,7 +119,7 @@ border: 1px solid black;
   </thead>
   <tbody>
    <tr>
-    <th colspan="2"><b>Calories</b>[[nutritionalInformationGrams.calories]] </th>
+    <th colspan="2"><b>Calories</b> [[nutritionalInformationGrams.calories]] </th>
     <td> Calories from Fat 130 </td>
    </tr>
    <tr class="thick-row">

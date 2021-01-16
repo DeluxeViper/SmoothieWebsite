@@ -1,6 +1,8 @@
 package com.ceruleansource.SmoothieWebsite.backend.Services;
 
 import com.ceruleansource.SmoothieWebsite.backend.Models.Ingredient;
+import com.ceruleansource.SmoothieWebsite.backend.Models.NutritionalInformationGrams;
+import com.ceruleansource.SmoothieWebsite.backend.Models.NutritionalInformationPercentage;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
 import com.ceruleansource.SmoothieWebsite.backend.Models.user.User;
 import com.ceruleansource.SmoothieWebsite.backend.Repositories.SmoothieRepository;
@@ -9,11 +11,9 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 
@@ -46,25 +46,61 @@ public class SmoothieService {
 
     /**
      * UPDATE: Updates smoothie with ingredient added
-     * If smoothie is not contained in current user, then save smoothie to user
      *
      * @param smoothie   - smoothie to add ingredient to
      * @param ingredient - ingredient to add to the smoothie
      */
     @Transactional
-    public void addIngredient(Smoothie smoothie, Ingredient ingredient) {
+    public void addIngredient(Smoothie smoothie, Ingredient ingredient) throws Exception {
         Set<Ingredient> ingredientSet = new HashSet<>(smoothie.getIngredients());
         ingredientSet.add(ingredient);
         smoothie.setIngredients(ingredientSet);
+        calcNutriWithAddition(smoothie, ingredient);
         smoothieRepository.save(smoothie);
     }
 
+    /**
+     *
+     * @param smoothie - Smoothie to add ingredient to
+     * @param ingredient - ingredient to add to smoothie
+     * @throws Exception - exception for two nutriGram values that have different units
+     */
+    private void calcNutriWithAddition(Smoothie smoothie, Ingredient ingredient) throws Exception {
+        // Calculate total nutrition
+        NutritionalInformationGrams totalGrams = smoothie.getTotalNutritionalInfoGrams();
+        totalGrams.addGrams(ingredient.getNutritionalInformationGrams());
+        NutritionalInformationPercentage totalPerc = smoothie.getTotalNutritionalInfoPercentage();
+        totalPerc.addPercentage(ingredient.getNutritionalInformationPercentage());
+    }
+
+    /**
+     * UPDATE: Update smoothie with ingredient removed
+     *
+     * @param smoothie - smoothie to remove ingredient from
+     * @param ingredient - ingredient to remove from smoothie
+     * @throws Exception
+     */
     @Transactional
-    public void removeIngredient(Smoothie smoothie, Ingredient ingredient) {
+    public void removeIngredient(Smoothie smoothie, Ingredient ingredient) throws Exception {
         Set<Ingredient> ingredientSet = new HashSet<>(smoothie.getIngredients());
         ingredientSet.remove(ingredient);
         smoothie.setIngredients(ingredientSet);
+        calcNutriWithSubtraction(smoothie, ingredient);
         smoothieRepository.save(smoothie);
+    }
+
+    /**
+     *
+     * @param smoothie - Smoothie to subtract ingredient from
+     * @param ingredient - ingredient to subtract from smoothie
+     * @throws Exception - exception for two nutriGram values that have different units
+     */
+    private void calcNutriWithSubtraction(Smoothie smoothie, Ingredient ingredient) throws Exception {
+        // Calculate total nutrition
+        NutritionalInformationGrams totalGrams = smoothie.getTotalNutritionalInfoGrams();
+        totalGrams.subtractGrams(ingredient.getNutritionalInformationGrams());
+        NutritionalInformationPercentage totalPerc = smoothie.getTotalNutritionalInfoPercentage();
+        totalPerc.subtractPercentage(ingredient.getNutritionalInformationPercentage());
     }
 
     /**

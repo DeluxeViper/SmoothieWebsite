@@ -49,7 +49,7 @@ public class CreateSmoothieView extends Div {
     private final Button ingredientSaveBtn = new Button("Save");
     private final Button cancelIngredientBtn = new Button("Cancel");
     private final Button removeIngredientBtn = new Button("Remove");
-    private NutritionalInfoView nutritionalInfoView = new NutritionalInfoView();
+    private NutritionalInfoView ingrNutritionalInfoView = new NutritionalInfoView();
 
     // Total info
     private NutritionalInformationGrams totalNutrGrams;
@@ -65,7 +65,7 @@ public class CreateSmoothieView extends Div {
         setId("create-smoothie-view");
 
         // Initializing views & fields
-        nutritionalInfoView.setVisible(false);
+        ingrNutritionalInfoView.setVisible(false);
         totalNutrGrams = new NutritionalInformationGrams();
         totalNutrPercentage = new NutritionalInformationPercentage();
 
@@ -108,10 +108,9 @@ public class CreateSmoothieView extends Div {
         if (ingredientGridDiv.getSelectedSmoothie() != null) {
             if (ingredientAmount.getValue() != null) {
                 smoothieService.addIngredient(ingredientGridDiv.getSelectedSmoothie(), ingredientAmount.getValue());
-                totalNutrGrams.addGrams(ingredientAmount.getValue().getNutritionalInformationGrams());
-                totalNutrPercentage.addPercentage(ingredientAmount.getValue().getNutritionalInformationPercentage());
                 Notification.show("Added " + ingredientAmount.getValue().getName()).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                totalNutrInfoView.setNutritionalInformation(totalNutrGrams, totalNutrPercentage);
+                totalNutrInfoView.setNutritionalInformation(
+                        ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoGrams(), ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoPercentage());
                 ingredientGridDiv.refreshGrid();
                 clearForm();
             } else {
@@ -126,11 +125,10 @@ public class CreateSmoothieView extends Div {
         if (ingredientAmount.getValue() != null) {
             if (ingredientGridDiv.getSelectedSmoothie() != null) {
                 smoothieService.removeIngredient(ingredientGridDiv.getSelectedSmoothie(), ingredientAmount.getValue());
-                totalNutrGrams.subtractGrams(ingredientAmount.getValue().getNutritionalInformationGrams());
-                totalNutrPercentage.subtractPercentage(ingredientAmount.getValue().getNutritionalInformationPercentage());
                 Notification.show(ingredientAmount.getValue().getName() + " removed!");
-                totalNutrInfoView.setNutritionalInformation(totalNutrGrams, totalNutrPercentage);
-                refreshGrid();
+                totalNutrInfoView.setNutritionalInformation(
+                        ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoGrams(), ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoPercentage());
+                ingredientGridDiv.refreshGrid();
                 clearForm();
             } else {
                 Notification.show("Please create/select a smoothie first!").addThemeVariants(NotificationVariant.LUMO_ERROR);
@@ -179,7 +177,7 @@ public class CreateSmoothieView extends Div {
 //            ((HasStyle) field).addClassName("");
 //        }
         formLayout.add(fields);
-        editorDiv.add(formLayout, nutritionalInfoView);
+        editorDiv.add(formLayout, ingrNutritionalInfoView);
         editorLayoutDiv.add(editorDiv, createButtonLayout());
         splitLayout.addToSecondary(editorLayoutDiv);
     }
@@ -187,12 +185,12 @@ public class CreateSmoothieView extends Div {
     private void editorIngrAmountChangeListener(AbstractField.ComponentValueChangeEvent<ComboBox<Ingredient>, Ingredient> event) {
         if (event.getValue() == null) {
             // No ingredient amount selected
-            nutritionalInfoView.setVisible(false);
+            ingrNutritionalInfoView.setVisible(false);
         } else {
             // Ingredient amount selected
-            nutritionalInfoView.setVisible(true);
-            nutritionalInfoView.setNutritionalInformation(event.getValue().getNutritionalInformationGrams(), event.getValue().getNutritionalInformationPercentage());
-            nutritionalInfoView.setCalories(String.valueOf(event.getValue().getNutritionalInformationGrams().getCalories()));
+            ingrNutritionalInfoView.setVisible(true);
+            ingrNutritionalInfoView.setNutritionalInformation(event.getValue().getNutritionalInformationGrams(), event.getValue().getNutritionalInformationPercentage());
+            ingrNutritionalInfoView.setCalories(String.valueOf(event.getValue().getNutritionalInformationGrams().getCalories()));
         }
     }
 
@@ -200,7 +198,7 @@ public class CreateSmoothieView extends Div {
         if (event.getValue() == null) {
             // No ingredient selected
             ingredientAmount.setItems();
-            nutritionalInfoView.setVisible(false);
+            ingrNutritionalInfoView.setVisible(false);
         } else {
             // Ingredient selected
             System.out.println("Selected: " + event.getValue());
@@ -266,20 +264,23 @@ public class CreateSmoothieView extends Div {
     private void populateTotalNutritionInfo() {
         resetTotalNutrInfo();
         if (ingredientGridDiv.getSelectedSmoothie() != null){
-            Set<Ingredient> selectedSmoothieIngr = ingredientGridDiv.getSelectedSmoothie().getIngredients();
-            System.out.println("Smoothie selected: resetting info: " + selectedSmoothieIngr);
-
-            selectedSmoothieIngr.forEach(ingr -> {
-                try {
-                    System.out.println("CreateSmoothieView: Ingredient nutr info: " + ingr.getNutritionalInformationGrams());
-                    totalNutrGrams.addGrams(ingr.getNutritionalInformationGrams());
-                    totalNutrPercentage.addPercentage(ingr.getNutritionalInformationPercentage());
-                    totalNutrInfoView.setNutritionalInformation(totalNutrGrams, totalNutrPercentage);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-            });
+            totalNutrInfoView.setNutritionalInformation(
+                    ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoGrams(), ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoPercentage());
+            System.out.println("Smoothie selected: resetting info: " + ingredientGridDiv.getSelectedSmoothie());
+//            Set<Ingredient> selectedSmoothieIngr = ingredientGridDiv.getSelectedSmoothie().getIngredients();
+//            System.out.println("Smoothie selected: resetting info: " + selectedSmoothieIngr);
+//
+//            selectedSmoothieIngr.forEach(ingr -> {
+//                try {
+//                    System.out.println("CreateSmoothieView: Ingredient nutr info: " + ingr.getNutritionalInformationGrams());
+//                    totalNutrGrams.addGrams(ingr.getNutritionalInformationGrams());
+//                    totalNutrPercentage.addPercentage(ingr.getNutritionalInformationPercentage());
+//                    totalNutrInfoView.setNutritionalInformation(totalNutrGrams, totalNutrPercentage);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//
+//            });
         }
     }
 
@@ -320,12 +321,12 @@ public class CreateSmoothieView extends Div {
         if (ingredient != null) {
             ingredientName.setValue(ingredient.getName());
             ingredientAmount.setValue(ingredient);
-            nutritionalInfoView.setVisible(true);
-            nutritionalInfoView.setNutritionalInformation(ingredient.getNutritionalInformationGrams(), ingredient.getNutritionalInformationPercentage());
+            ingrNutritionalInfoView.setVisible(true);
+            ingrNutritionalInfoView.setNutritionalInformation(ingredient.getNutritionalInformationGrams(), ingredient.getNutritionalInformationPercentage());
         } else {
             ingredientName.setValue(null);
             ingredientAmount.setValue(null);
-            nutritionalInfoView.setVisible(false);
+            ingrNutritionalInfoView.setVisible(false);
         }
     }
 

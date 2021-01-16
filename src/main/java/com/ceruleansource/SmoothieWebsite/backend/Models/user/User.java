@@ -138,13 +138,15 @@ public class User {
     @Override
     @Transactional
     public String toString() {
+        Set<String> setNames = new HashSet<>();
+        smoothies.forEach(smoothie -> setNames.add(firstName+" "+lastName));
         return "User{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", favouriteSmoothies=" + smoothies +
+                ", smoothieNames=" + setNames +
                 ", intake='" + intake + '\'' +
                 ", active=" + active +
                 ", roles='" + roles + '\'' +
