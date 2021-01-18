@@ -15,15 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 @CssImport("./src/styles/views/createsmoothie/create-smoothie-view.css")
 public class CreateSmoothieDialog extends Dialog {
 
-    private final ComboBox<Smoothie> userSmoothies;
-
     private Smoothie selectedSmoothie;
 
     private final TextField smoothieNameField = new TextField("Smoothie Name");
 
     @Autowired
-    public CreateSmoothieDialog(ComboBox<Smoothie> userSmoothies, UserSession userSession, SmoothieService smoothieService) {
-        this.userSmoothies = userSmoothies;
+    public CreateSmoothieDialog(UserSession userSession, SmoothieService smoothieService) {
         initCreateSmoothieDialog(userSession, smoothieService);
     }
 
@@ -49,9 +46,7 @@ public class CreateSmoothieDialog extends Dialog {
             Smoothie savedSmoothie = smoothieService.getSmoothie(smoothieNameField.getValue(), userSession.getUser());
             if (savedSmoothie != null) {
                 Notification.show("Successfully added " + savedSmoothie.getName()).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                userSmoothies.setItems(smoothieService.getSmoothiesForCurrentUser(userSession.getUser()));
                 selectedSmoothie = savedSmoothie;
-                userSmoothies.setValue(selectedSmoothie);
                 close();
             } else {
                 Notification.show("Error! Failed to add " + newSmoothie.getName()).addThemeVariants(NotificationVariant.LUMO_ERROR);

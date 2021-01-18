@@ -1,6 +1,7 @@
 package com.ceruleansource.SmoothieWebsite.backend.Models.user;
 
 import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +43,7 @@ public class User {
     @Length(min = 8, max = 64)
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Smoothie> smoothies = new HashSet<>();
 
     // TODO: Double check the logic for this
@@ -107,8 +108,18 @@ public class User {
         return smoothies;
     }
 
+    public Set<String> getSmoothieNames(){
+        Set<String> smoothieNames = new HashSet<>();
+        smoothies.forEach(smoothie -> smoothieNames.add(smoothie.getName()));
+        return smoothieNames;
+    }
+
     public void setSmoothies(Set<Smoothie> smoothies) {
-        this.smoothies = smoothies;
+        this.smoothies.clear();
+        if (smoothies != null){
+            this.smoothies.addAll(smoothies);
+        }
+        System.out.println("Set smoothies: " + this.smoothies);
     }
 
     public String getIntake() {
@@ -139,7 +150,7 @@ public class User {
     @Transactional
     public String toString() {
         Set<String> setNames = new HashSet<>();
-        smoothies.forEach(smoothie -> setNames.add(firstName+" "+lastName));
+        smoothies.forEach(smoothie -> setNames.add(smoothie.getName()));
         return "User{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +

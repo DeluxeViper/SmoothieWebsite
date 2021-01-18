@@ -21,6 +21,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Set;
+
 @CssImport("./src/styles/views/createsmoothie/create-smoothie-view.css")
 public class IngredientGridDiv extends Div {
 
@@ -81,10 +83,12 @@ public class IngredientGridDiv extends Div {
     }
 
     private void initSmoothieCreateDialog(UserSession userSession, SmoothieService smoothieService) {
-        smoothieDialog = new CreateSmoothieDialog(userSmoothies, userSession, smoothieService);
+        smoothieDialog = new CreateSmoothieDialog(userSession, smoothieService);
         smoothieDialog.addDetachListener(e -> {
             System.out.println("Dialog detach listener");
             selectedSmoothie = smoothieDialog.getSelectedSmoothie();
+            userSmoothies.setItems(smoothieService.getSmoothiesForCurrentUser(userSession.getUser()));
+            userSmoothies.setValue(smoothieDialog.getSelectedSmoothie());
             System.out.println("Getting user smoothies value after detachment of dialog: " + userSmoothies.getValue());
         });
     }
@@ -139,9 +143,14 @@ public class IngredientGridDiv extends Div {
 
     public void setSelectedSmoothie(Smoothie smoothie){
         this.selectedSmoothie = smoothie;
+        userSmoothies.setValue(selectedSmoothie);
     }
 
     public ComboBox<Smoothie> getUserSmoothies() {
         return userSmoothies;
+    }
+
+    public void setUserSmoothies(Set<Smoothie> smoothieSet){
+        userSmoothies.setItems(smoothieSet);
     }
 }

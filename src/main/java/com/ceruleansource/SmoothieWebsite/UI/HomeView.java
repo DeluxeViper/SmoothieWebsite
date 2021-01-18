@@ -45,9 +45,7 @@ public class HomeView extends PolymerTemplate<HomeView.HomeViewModel> implements
             if (SecurityUtils.isUserLoggedIn()) {
                 Notification.show("You're already logged in!").addThemeVariants(NotificationVariant.LUMO_PRIMARY);
             } else {
-                getUI().ifPresent(ui -> {
-                    ui.navigate("login");
-                });
+                loginHomeButton.getUI().ifPresent(ui -> ui.navigate("login"));
             }
         });
     }

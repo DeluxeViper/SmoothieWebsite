@@ -96,16 +96,6 @@ public class MainView extends AppLayout implements AfterNavigationObserver {
         addToNavbar(true, mainMenu);
     }
 
-    private VerticalLayout createTopBar(AccountDropDown accountDropDown, Tabs mainMenu) {
-        VerticalLayout layout = new VerticalLayout();
-        layout.setWidthFull();
-        layout.setSpacing(false);
-        layout.setPadding(false);
-        layout.setAlignItems(FlexComponent.Alignment.CENTER);
-        layout.add(accountDropDown, mainMenu);
-        return layout;
-    }
-
     private static Tabs createMenuTabs() {
         Tabs tabs = new Tabs();
         tabs.setOrientation(Tabs.Orientation.HORIZONTAL);

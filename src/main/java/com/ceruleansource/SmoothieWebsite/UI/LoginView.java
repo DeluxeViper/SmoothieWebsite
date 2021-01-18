@@ -63,6 +63,7 @@ public class LoginView extends VerticalLayout
     public void beforeEnter(BeforeEnterEvent event) {
         // inform the user about an authentication error
         // (yes, the API for resolving query parameters is annoying...)
+        System.out.println("Parameters: " + event.getLocation().getQueryParameters().getParameters());
         if (!event.getLocation().getQueryParameters().getParameters().getOrDefault("error", Collections.emptyList()).isEmpty()) {
             loginForm.setError(true);
         }

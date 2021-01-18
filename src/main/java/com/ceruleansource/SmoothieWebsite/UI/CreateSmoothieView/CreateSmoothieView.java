@@ -26,6 +26,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -56,9 +57,8 @@ public class CreateSmoothieView extends Div {
     private NutritionalInformationPercentage totalNutrPercentage;
     private NutritionalInfoView totalNutrInfoView = new NutritionalInfoView();
 
-    // Smoothie delete button
+    // Smoothie delete button: Here because UserSmoothies.asSelect() is here
     private Button deleteSmoothieBtn;
-
 
     @Autowired
     public CreateSmoothieView(IngredientService ingredientService, UserSession userSession, SmoothieService smoothieService) {
@@ -104,40 +104,6 @@ public class CreateSmoothieView extends Div {
         });
     }
 
-    private void saveIngredientEditorMethod(SmoothieService smoothieService) throws Exception {
-        if (ingredientGridDiv.getSelectedSmoothie() != null) {
-            if (ingredientAmount.getValue() != null) {
-                smoothieService.addIngredient(ingredientGridDiv.getSelectedSmoothie(), ingredientAmount.getValue());
-                Notification.show("Added " + ingredientAmount.getValue().getName()).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                totalNutrInfoView.setNutritionalInformation(
-                        ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoGrams(), ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoPercentage());
-                ingredientGridDiv.refreshGrid();
-                clearForm();
-            } else {
-                Notification.show("Error. Please select an ingredient first!").addThemeVariants(NotificationVariant.LUMO_ERROR);
-            }
-        } else {
-            Notification.show("Please create/select a smoothie first!").addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }
-    }
-
-    private void removeIngredientEditorMethod(SmoothieService smoothieService) throws Exception {
-        if (ingredientAmount.getValue() != null) {
-            if (ingredientGridDiv.getSelectedSmoothie() != null) {
-                smoothieService.removeIngredient(ingredientGridDiv.getSelectedSmoothie(), ingredientAmount.getValue());
-                Notification.show(ingredientAmount.getValue().getName() + " removed!");
-                totalNutrInfoView.setNutritionalInformation(
-                        ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoGrams(), ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoPercentage());
-                ingredientGridDiv.refreshGrid();
-                clearForm();
-            } else {
-                Notification.show("Please create/select a smoothie first!").addThemeVariants(NotificationVariant.LUMO_ERROR);
-            }
-        } else {
-            Notification.show("Please select an ingredient!").addThemeVariants(NotificationVariant.LUMO_ERROR);
-        }
-    }
-
     private void createEditorLayout(SplitLayout splitLayout, IngredientService ingredientService) {
         Div editorLayoutDiv = new Div();
         editorLayoutDiv.setId("editor-layout");
@@ -178,8 +144,79 @@ public class CreateSmoothieView extends Div {
 //        }
         formLayout.add(fields);
         editorDiv.add(formLayout, ingrNutritionalInfoView);
-        editorLayoutDiv.add(editorDiv, createButtonLayout());
+        editorLayoutDiv.add(editorDiv, createEditorButtonLayout());
         splitLayout.addToSecondary(editorLayoutDiv);
+    }
+
+    private HorizontalLayout createEditorButtonLayout() {
+        HorizontalLayout buttonLayout = new HorizontalLayout();
+        buttonLayout.setId("button-layout");
+        buttonLayout.setWidthFull();
+        buttonLayout.setSpacing(true);
+        ingredientSaveBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        cancelIngredientBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        removeIngredientBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        buttonLayout.add(ingredientSaveBtn, cancelIngredientBtn, removeIngredientBtn);
+        return buttonLayout;
+    }
+
+    private void createGridLayout(SplitLayout splitLayout, IngredientService ingredientService, UserSession userSession, SmoothieService smoothieService) {
+        ingredientGridDiv = new IngredientGridDiv(userSession, smoothieService);
+        ingredientGridDiv.getUserSmoothies().addValueChangeListener(this::userSmoothiesValueChangeMethod);
+        ingredientGridDiv.setWidthFull();
+        ingredientGridDiv.getIngredientGrid().asSingleSelect().addValueChangeListener(event -> onIngredientRowSelect(ingredientService, event));
+        deleteSmoothieBtn = new Button("Delete Smoothie");
+        deleteSmoothieBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
+        deleteSmoothieBtn.setVisible(false);
+        deleteSmoothieBtn.addClickListener(event -> deleteSmoothieButtonOnClick(userSession, smoothieService));
+        splitLayout.addToPrimary(ingredientGridDiv, deleteSmoothieBtn, totalNutrInfoView);
+    }
+
+    private void deleteSmoothieButtonOnClick(UserSession userSession, SmoothieService smoothieService) {
+        if (ingredientGridDiv.getUserSmoothies().getValue() != null){
+            smoothieService.deleteSmoothie(ingredientGridDiv.getUserSmoothies().getValue());
+            Set<Smoothie> smoothieSetInUser = new HashSet<>(userSession.getUser().getSmoothies());
+            ingredientGridDiv.getUserSmoothies().setItems(smoothieSetInUser);
+            if (!smoothieSetInUser.isEmpty()) {
+                ingredientGridDiv.getUserSmoothies().setValue(smoothieSetInUser.iterator().next());
+            }
+            clearForm();
+            refreshGrid();
+        }
+    }
+
+    private void saveIngredientEditorMethod(SmoothieService smoothieService) throws Exception {
+        if (ingredientGridDiv.getSelectedSmoothie() != null) {
+            if (ingredientAmount.getValue() != null) {
+                smoothieService.addIngredient(ingredientGridDiv.getSelectedSmoothie(), ingredientAmount.getValue());
+                Notification.show("Added " + ingredientAmount.getValue().getName()).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                totalNutrInfoView.setNutritionalInformation(
+                        ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoGrams(), ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoPercentage());
+                ingredientGridDiv.refreshGrid();
+                clearForm();
+            } else {
+                Notification.show("Error. Please select an ingredient first!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
+        } else {
+            Notification.show("Please create/select a smoothie first!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
+    }
+
+    private void removeIngredientEditorMethod(SmoothieService smoothieService) throws Exception {
+        if (ingredientAmount.getValue() != null) {
+            if (ingredientGridDiv.getSelectedSmoothie() != null) {
+                smoothieService.removeIngredient(ingredientGridDiv.getSelectedSmoothie(), ingredientAmount.getValue());
+                Notification.show(ingredientAmount.getValue().getName() + " removed!");
+                totalNutrInfoView.setNutritionalInformation(
+                        ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoGrams(), ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoPercentage());
+                ingredientGridDiv.refreshGrid();
+                clearForm();
+            } else {
+                Notification.show("Please create/select a smoothie first!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
+        } else {
+            Notification.show("Please select an ingredient!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+        }
     }
 
     private void editorIngrAmountChangeListener(AbstractField.ComponentValueChangeEvent<ComboBox<Ingredient>, Ingredient> event) {
@@ -207,29 +244,6 @@ public class CreateSmoothieView extends Div {
         }
     }
 
-    private HorizontalLayout createButtonLayout() {
-        HorizontalLayout buttonLayout = new HorizontalLayout();
-        buttonLayout.setId("button-layout");
-        buttonLayout.setWidthFull();
-        buttonLayout.setSpacing(true);
-        ingredientSaveBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        cancelIngredientBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        removeIngredientBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        buttonLayout.add(ingredientSaveBtn, cancelIngredientBtn, removeIngredientBtn);
-        return buttonLayout;
-    }
-
-    private void createGridLayout(SplitLayout splitLayout, IngredientService ingredientService, UserSession userSession, SmoothieService smoothieService) {
-        ingredientGridDiv = new IngredientGridDiv(userSession, smoothieService);
-        ingredientGridDiv.getUserSmoothies().addValueChangeListener(this::userSmoothiesValueChangeMethod);
-        ingredientGridDiv.setWidthFull();
-        ingredientGridDiv.getIngredientGrid().asSingleSelect().addValueChangeListener(event -> onIngredientRowSelect(ingredientService, event));
-        deleteSmoothieBtn = new Button("Delete Smoothie");
-        deleteSmoothieBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
-        deleteSmoothieBtn.addClickListener(event -> deleteSmoothieButtonOnClick(userSession, smoothieService));
-        splitLayout.addToPrimary(deleteSmoothieBtn, ingredientGridDiv, totalNutrInfoView);
-    }
-
     private void userSmoothiesValueChangeMethod(AbstractField.ComponentValueChangeEvent<ComboBox<Smoothie>, Smoothie> event) {
         if (event.getValue() != null) {
             ingredientGridDiv.setSelectedSmoothie(event.getValue());
@@ -237,54 +251,23 @@ public class CreateSmoothieView extends Div {
             populateTotalNutritionInfo();
             System.out.println("IngredientGridDiv: UserSmoothies currently selected the following smoothie:\n" + ingredientGridDiv.getSelectedSmoothie());
         } else {
+            deleteSmoothieBtn.setVisible(false);
             ingredientGridDiv.setSelectedSmoothie(null);
             System.out.println("IngredientGridDiv: Currently user smoothies selected a null smoothie, will do nothing.");
         }
         refreshGrid();
     }
 
-    private void deleteSmoothieButtonOnClick(UserSession userSession, SmoothieService smoothieService) {
-        if (smoothieService.deleteSmoothie(ingredientGridDiv.getSelectedSmoothie())) {
-            Set<Smoothie> newSmoothieSet = smoothieService.getSmoothiesForCurrentUser(userSession.getUser());
-            System.out.println("New Smoothie set after deletion: " + newSmoothieSet);
-            if (newSmoothieSet.isEmpty()) {
-                ingredientGridDiv.setSelectedSmoothie(null);
-                deleteSmoothieBtn.setVisible(false);
-            } else {
-                ingredientGridDiv.setSelectedSmoothie(newSmoothieSet.stream().findFirst().get());
-            }
-
-            ingredientGridDiv.getUserSmoothies().setItems(newSmoothieSet);
-            ingredientGridDiv.getUserSmoothies().setValue(ingredientGridDiv.getSelectedSmoothie());
-            refreshGrid();
-            populateTotalNutritionInfo();
-        }
-    }
-
     private void populateTotalNutritionInfo() {
         resetTotalNutrInfo();
-        if (ingredientGridDiv.getSelectedSmoothie() != null){
+        if (ingredientGridDiv.getSelectedSmoothie() != null) {
             totalNutrInfoView.setNutritionalInformation(
                     ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoGrams(), ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoPercentage());
             System.out.println("Smoothie selected: resetting info: " + ingredientGridDiv.getSelectedSmoothie());
-//            Set<Ingredient> selectedSmoothieIngr = ingredientGridDiv.getSelectedSmoothie().getIngredients();
-//            System.out.println("Smoothie selected: resetting info: " + selectedSmoothieIngr);
-//
-//            selectedSmoothieIngr.forEach(ingr -> {
-//                try {
-//                    System.out.println("CreateSmoothieView: Ingredient nutr info: " + ingr.getNutritionalInformationGrams());
-//                    totalNutrGrams.addGrams(ingr.getNutritionalInformationGrams());
-//                    totalNutrPercentage.addPercentage(ingr.getNutritionalInformationPercentage());
-//                    totalNutrInfoView.setNutritionalInformation(totalNutrGrams, totalNutrPercentage);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//            });
         }
     }
 
-    public void resetTotalNutrInfo(){
+    public void resetTotalNutrInfo() {
         totalNutrGrams = new NutritionalInformationGrams();
         totalNutrPercentage = new NutritionalInformationPercentage();
         totalNutrInfoView.setNutritionalInformation(totalNutrGrams, totalNutrPercentage);

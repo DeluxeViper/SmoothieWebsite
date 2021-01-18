@@ -54,6 +54,7 @@ public class MyUserDetailsService implements UserDetailsService {
         return user.isPresent();
     }
 
+    @Transactional
     public User getUserByEmailAndRole(String email, String role){
         Optional<User> userOptional = userRepository.findByEmailAndRoles(email, role);
         if (userOptional.isPresent()){

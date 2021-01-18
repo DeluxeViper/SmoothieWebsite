@@ -7,6 +7,7 @@ import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
 import com.ceruleansource.SmoothieWebsite.backend.Models.user.User;
 import com.ceruleansource.SmoothieWebsite.backend.Repositories.SmoothieRepository;
 import com.ceruleansource.SmoothieWebsite.backend.Repositories.UserRepository;
+import com.helger.commons.annotation.NoTranslationRequired;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,22 +27,16 @@ public class SmoothieService {
     UserRepository userRepository;
 
     /**
-     *
      * @param smoothie - Smoothie to be saved in database
      * @return - returns the smoothie saved in the database (Note: ID is NOT null)
      */
     @Transactional
     public void saveSmoothie(Smoothie smoothie) {
-        Optional<User> currentUserOptional = userRepository.findByEmailAndRoles(smoothie.getUser().getEmail(), smoothie.getUser().getRoles());
+        Optional<User> userOpt = userRepository.findByEmailAndRoles(smoothie.getUser().getEmail(), smoothie.getUser().getRoles());
 
-        if (currentUserOptional.isPresent()) {
-            System.out.println(currentUserOptional.get());
-            User currentUser = currentUserOptional.get();
-            Set<Smoothie> smoothieSet = new HashSet<>(currentUser.getSmoothies());
-            smoothieSet.add(smoothie);
-            currentUser.setSmoothies(smoothieSet);
-            userRepository.save(currentUser);
-        }
+        userOpt.ifPresentOrElse(user -> user.getSmoothies().add(smoothie), () -> {
+            Notification.show("Smoothie Save Service: User not found!").addThemeVariants(NotificationVariant.LUMO_ERROR);
+        });
     }
 
     /**
@@ -60,8 +55,7 @@ public class SmoothieService {
     }
 
     /**
-     *
-     * @param smoothie - Smoothie to add ingredient to
+     * @param smoothie   - Smoothie to add ingredient to
      * @param ingredient - ingredient to add to smoothie
      * @throws Exception - exception for two nutriGram values that have different units
      */
@@ -76,7 +70,7 @@ public class SmoothieService {
     /**
      * UPDATE: Update smoothie with ingredient removed
      *
-     * @param smoothie - smoothie to remove ingredient from
+     * @param smoothie   - smoothie to remove ingredient from
      * @param ingredient - ingredient to remove from smoothie
      * @throws Exception
      */
@@ -90,8 +84,7 @@ public class SmoothieService {
     }
 
     /**
-     *
-     * @param smoothie - Smoothie to subtract ingredient from
+     * @param smoothie   - Smoothie to subtract ingredient from
      * @param ingredient - ingredient to subtract from smoothie
      * @throws Exception - exception for two nutriGram values that have different units
      */
@@ -116,11 +109,12 @@ public class SmoothieService {
         if (currentUserOptional.isPresent()) {
 //            System.out.println("User is present");
             User currentUser = currentUserOptional.get();
+            System.out.println("SmoothieService: " + currentUser);
             if (!currentUser.getSmoothies().isEmpty()) {
+                System.out.println("SmoothieService: getUserSmoothies: " + currentUser.getSmoothieNames());
                 smoothieSet.addAll(currentUser.getSmoothies());
-            } else {
-//                System.out.println("User does not have any smoothies");
             }
+            //                System.out.println("User does not have any smoothies");
         } else {
             Notification.show("Error! Current user not found.").addThemeVariants(NotificationVariant.LUMO_ERROR);
 //            System.out.println("Current user not found");
@@ -129,56 +123,49 @@ public class SmoothieService {
     }
 
     @Transactional
-    public boolean checkIfSmoothieNameisTaken(String name, User user){
+    public boolean checkIfSmoothieNameisTaken(String name, User user) {
         Optional<User> userOptional = userRepository.findById(user.getId());
-        if (userOptional.isPresent()){
+        if (userOptional.isPresent()) {
             Set<Smoothie> smoothieSet = new HashSet<>(userOptional.get().getSmoothies());
-            for (Smoothie smoothie : smoothieSet){
-                if (smoothie.getName().equals(name)){
+            for (Smoothie smoothie : smoothieSet) {
+                if (smoothie.getName().equals(name)) {
                     return true;
                 }
             }
         }
-
         return false;
     }
 
     /**
-     *
      * @param smoothie - smoothie to delete
      * @return - a boolean representing the success of the delete function
-     *              True = deleted smoothie
-     *              False = error deleting smoothie
+     * True = deleted smoothie
+     * False = error deleting smoothie
      */
     @Transactional
-    public boolean deleteSmoothie(Smoothie smoothie) {
-        Optional<User> currentUserOptional = userRepository.findByEmailAndRoles(smoothie.getUser().getEmail(), smoothie.getUser().getRoles());
-        if (currentUserOptional.isPresent()) {
-            User currentUser = currentUserOptional.get();
-            if (currentUser.getSmoothies().contains(smoothie)) {
-                Set<Smoothie> smoothieSet = currentUser.getSmoothies();
-                smoothieSet.remove(smoothie);
-                userRepository.save(currentUser);
-                System.out.println("Deleted smoothie? : " + currentUser);
-                return !currentUser.getSmoothies().contains(smoothie);
-            } else {
-                Notification.show("Error! Smoothie was not found in user").addThemeVariants(NotificationVariant.LUMO_ERROR);
-            }
-        } else {
-            Notification.show("Error! User was not found").addThemeVariants(NotificationVariant.LUMO_ERROR);
-            return false;
-        }
-        return false;
+    public void deleteSmoothie(Smoothie smoothie) {
+        Optional<User> userOpt = userRepository.findByEmailAndRoles(smoothie.getUser().getEmail(), smoothie.getUser().getRoles());
+        userOpt.ifPresentOrElse(
+                user -> user.getSmoothies().remove(smoothie),
+                () -> Notification.show("Smoothie Deletion Service: User not found!").addThemeVariants(NotificationVariant.LUMO_ERROR));
     }
 
     @Transactional
-    public Smoothie getSmoothie(String name, User user){
+    public void deleteSmoothies(Set<Smoothie> smoothieSet) {
+        Smoothie firstSmoothie = smoothieSet.iterator().next();
+        Optional<User> userOpt = userRepository.findByEmailAndRoles(firstSmoothie.getUser().getEmail(), firstSmoothie.getUser().getRoles());
+        userOpt.ifPresentOrElse(user -> user.getSmoothies().removeAll(smoothieSet),
+                () -> Notification.show("Smoothie Deletion Service: User not found!").addThemeVariants(NotificationVariant.LUMO_ERROR));
+    }
+
+    @Transactional
+    public Smoothie getSmoothie(String name, User user) {
         return smoothieRepository.findByNameAndUser(name, user);
     }
 
-    public boolean updateSmoothie(Smoothie smoothie){
+    public boolean updateSmoothie(Smoothie smoothie) {
         Optional<Smoothie> smoothieOpt = smoothieRepository.findById(smoothie.getId());
-        if (smoothieOpt.isPresent()){
+        if (smoothieOpt.isPresent()) {
             smoothieRepository.save(smoothie);
             return true;
         } else {
