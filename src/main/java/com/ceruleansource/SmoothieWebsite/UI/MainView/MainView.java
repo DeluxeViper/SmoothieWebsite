@@ -1,6 +1,7 @@
 package com.ceruleansource.SmoothieWebsite.UI.MainView;
 
 import com.ceruleansource.SmoothieWebsite.UI.*;
+import com.ceruleansource.SmoothieWebsite.UI.MySmoothiesView.MySmoothiesView;
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
 import com.ceruleansource.SmoothieWebsite.UI.CreateSmoothieView.CreateSmoothieView;
 import com.vaadin.flow.component.Component;
@@ -14,15 +15,12 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.TabVariant;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.RouterLink;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;

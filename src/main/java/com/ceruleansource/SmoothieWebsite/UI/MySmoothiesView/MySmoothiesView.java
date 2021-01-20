@@ -1,7 +1,8 @@
-package com.ceruleansource.SmoothieWebsite.UI;
+package com.ceruleansource.SmoothieWebsite.UI.MySmoothiesView;
 
 import com.ceruleansource.SmoothieWebsite.UI.CreateSmoothieView.CreateSmoothieDialog;
 import com.ceruleansource.SmoothieWebsite.UI.MainView.MainView;
+import com.ceruleansource.SmoothieWebsite.UI.NutritionalInfoView;
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
 import com.ceruleansource.SmoothieWebsite.backend.Services.SmoothieService;

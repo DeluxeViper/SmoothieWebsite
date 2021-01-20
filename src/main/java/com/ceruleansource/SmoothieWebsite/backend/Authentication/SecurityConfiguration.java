@@ -41,7 +41,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.antMatcher("/**")
                 // Authorize requests
                 .authorizeRequests()
-                .antMatchers("/", "/home").permitAll()
+                .antMatchers("/", "/home", "/forum").permitAll()
                 // Allow all flow internal requests
                 .requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
                 // Allow all requests by logged in users

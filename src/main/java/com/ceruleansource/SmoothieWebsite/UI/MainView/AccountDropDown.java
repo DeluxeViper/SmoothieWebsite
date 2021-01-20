@@ -1,9 +1,8 @@
 package com.ceruleansource.SmoothieWebsite.UI.MainView;
 
-import com.ceruleansource.SmoothieWebsite.UI.MySmoothiesView;
+import com.ceruleansource.SmoothieWebsite.UI.MySmoothiesView.MySmoothiesView;
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
 import com.ceruleansource.SmoothieWebsite.UI.HomeView;
-import com.ceruleansource.SmoothieWebsite.backend.Services.SmoothieService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -11,9 +10,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
-import com.vaadin.flow.router.Router;
 import com.vaadin.flow.router.RouterLink;
-import org.springframework.beans.factory.annotation.Autowired;
 
 //@CssImport("./styles/views/main/main-view.css")
 //@CssImport(value = "./styles/views/main/main-view.css", themeFor = "vaadin-app-layout")
