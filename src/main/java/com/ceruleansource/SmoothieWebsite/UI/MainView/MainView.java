@@ -1,6 +1,7 @@
 package com.ceruleansource.SmoothieWebsite.UI.MainView;
 
 import com.ceruleansource.SmoothieWebsite.UI.*;
+import com.ceruleansource.SmoothieWebsite.UI.MySmoothiesView.CreatePostView;
 import com.ceruleansource.SmoothieWebsite.UI.MySmoothiesView.MySmoothiesView;
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
 import com.ceruleansource.SmoothieWebsite.UI.CreateSmoothieView.CreateSmoothieView;
@@ -122,6 +123,8 @@ public class MainView extends AppLayout implements AfterNavigationObserver {
 
         tabs.add(createTab(VaadinIcon.CUTLERY, "My Smoothies", MySmoothiesView.class));
 
+        tabs.add(createTab(VaadinIcon.CUTLERY, "Create Post", CreatePostView.class));
+
         tabs.forEach(tab -> {
             tab.setId("tab");
         });
@@ -130,12 +133,16 @@ public class MainView extends AppLayout implements AfterNavigationObserver {
 
     private static Tab createTab(VaadinIcon icon, String title, Class<? extends Component> viewClass) {
         final Tab tab = new Tab();
+
         tab.addThemeVariants(TabVariant.LUMO_ICON_ON_TOP);
         RouterLink routerLink = new RouterLink(null, viewClass);
         routerLink.add(icon.create());
         routerLink.add(new Span(title));
         tab.add(routerLink);
         ComponentUtil.setData(tab, Class.class, viewClass);
+        if (title.equals("Create Post")){
+            tab.setVisible(false);
+        }
         return tab;
     }
 

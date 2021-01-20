@@ -7,7 +7,6 @@ import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
 import com.ceruleansource.SmoothieWebsite.backend.Models.user.User;
 import com.ceruleansource.SmoothieWebsite.backend.Repositories.SmoothieRepository;
 import com.ceruleansource.SmoothieWebsite.backend.Repositories.UserRepository;
-import com.helger.commons.annotation.NoTranslationRequired;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,6 +160,12 @@ public class SmoothieService {
     @Transactional
     public Smoothie getSmoothie(String name, User user) {
         return smoothieRepository.findByNameAndUser(name, user);
+    }
+
+    @Transactional
+    public Smoothie getSmoothie(Long id){
+        Optional<Smoothie> smoothieOptional = smoothieRepository.findById(id);
+        return smoothieOptional.orElse(null);
     }
 
     public boolean updateSmoothie(Smoothie smoothie) {

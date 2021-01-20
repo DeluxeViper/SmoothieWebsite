@@ -68,20 +68,28 @@ public class MySmoothiesView extends Div {
         smoothieGrid.addComponentColumn(smoothie -> {
             Button postButton = new Button("Post");
             postButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+            postButton.addClickListener(buttonClickEvent -> {
+                getUI().ifPresent(ui -> ui.navigate(CreatePostView.class, smoothie.getId()));
+            });
             return postButton;
         }).setAutoWidth(true);
         smoothieGrid.setItems(smoothieService.getSmoothiesForCurrentUser(userSession.getUser()));
         smoothieGrid.asMultiSelect().addValueChangeListener(this::gridOnMultiSelect);
+//        smoothieGrid.addSelectionListener(selectionEvent -> System.out.println("SelectionListener: " + selectionEvent));
+//        smoothieGrid.addItemClickListener(smoothieItemClickEvent -> {
+//            System.out.println("ItemClickListener: " + smoothieItemClickEvent);
+//            System.out.println(smoothieItemClickEvent.getItem());
+//        });
         return smoothieGrid;
     }
 
     private void gridOnMultiSelect(AbstractField.ComponentValueChangeEvent<Grid<Smoothie>, Set<Smoothie>> gridSetComponentValueChangeEvent) {
-        if (smoothieGrid.getSelectedItems().size() > 1){
+        if (gridSetComponentValueChangeEvent.getValue().size() > 1) {
             deleteSmoothiesBtn.setText("Delete Smoothies");
         } else {
             deleteSmoothiesBtn.setText("Delete Smoothie");
         }
-        if (gridSetComponentValueChangeEvent.getValue() != null) {
+        if (!gridSetComponentValueChangeEvent.getValue().isEmpty()) {
             deleteSmoothiesBtn.setText("Delete Smoothies");
             deleteSmoothiesBtn.setVisible(true);
             selectedSmoothies = gridSetComponentValueChangeEvent.getValue();
