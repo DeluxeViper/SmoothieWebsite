@@ -71,8 +71,11 @@ public class MySmoothiesView extends Div {
             postButton.addClickListener(buttonClickEvent -> {
                 getUI().ifPresent(ui -> ui.navigate(CreatePostView.class, smoothie.getId()));
             });
+            if (smoothie.getPost() != null){
+                postButton.setEnabled(false);
+            }
             return postButton;
-        }).setAutoWidth(true);
+        }).setAutoWidth(true).setKey("post_column");
         smoothieGrid.setItems(smoothieService.getSmoothiesForCurrentUser(userSession.getUser()));
         smoothieGrid.asMultiSelect().addValueChangeListener(this::gridOnMultiSelect);
 //        smoothieGrid.addSelectionListener(selectionEvent -> System.out.println("SelectionListener: " + selectionEvent));

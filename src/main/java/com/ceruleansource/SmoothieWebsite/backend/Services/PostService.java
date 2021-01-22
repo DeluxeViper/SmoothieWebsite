@@ -1,7 +1,9 @@
 package com.ceruleansource.SmoothieWebsite.backend.Services;
 
 import com.ceruleansource.SmoothieWebsite.backend.Models.Post;
+import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
 import com.ceruleansource.SmoothieWebsite.backend.Repositories.PostRepository;
+import com.ceruleansource.SmoothieWebsite.backend.Repositories.SmoothieRepository;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.server.StreamResource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +17,19 @@ import java.util.Set;
 
 @Service
 public class PostService {
+
+    public static final String TAG = "PostService";
+
     @Autowired
     PostRepository postRepository;
 
+    @Autowired
+    SmoothieRepository smoothieRepository;
+
+    /**
+     *
+     * @return - returns all posts (primarily to display in the forum page)
+     */
     @Transactional
     public Set<Post> retrieveAllPosts() {
         Iterable<Post> posts = postRepository.findAll();
@@ -27,9 +39,18 @@ public class PostService {
         return postSet;
     }
 
+    /**
+     *
+     * @param post - saves this into database
+     * @return - boolean: true if save was successful - otherwise returns false.
+     */
     @Transactional
-    public void savePost(Post post) {
-
+    public boolean savePost(Post post) {
+        post.getSmoothie().setPost(post);
+        Smoothie savedSmoothie = smoothieRepository.save(post.getSmoothie());
+//        System.out.println(TAG + ": savedSmoothie: " + savedSmoothie);
+//        System.out.println(TAG + ": savedPost: " + savedSmoothie.getPost());
+        return postRepository.findById(savedSmoothie.getPost().getId()).isPresent();
     }
 
     @Transactional

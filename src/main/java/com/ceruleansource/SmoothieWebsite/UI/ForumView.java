@@ -50,7 +50,10 @@ public class ForumView extends Div {
         postsGrid.addColumn(Post::getPostImage).setHeader("Image").setAutoWidth(true);
 
         postsGrid.setItems(postService.retrieveAllPosts());
+        postsGrid.setHeightByRows(true);
+        postsGrid.setWidthFull();
 
+        add(postsGrid);
 //        Page page;
 //        Optional<UI> ui = this.getUI();
 //        if (ui.isPresent()){

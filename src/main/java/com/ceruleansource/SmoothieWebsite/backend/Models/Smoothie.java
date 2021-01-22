@@ -1,6 +1,7 @@
 package com.ceruleansource.SmoothieWebsite.backend.Models;
 
 import com.ceruleansource.SmoothieWebsite.backend.Models.user.User;
+import com.sun.istack.Nullable;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -43,9 +44,14 @@ public class Smoothie {
     @JoinColumn(name = "totalPercentageInfo_id")
     private NutritionalInformationPercentage totalNutritionalInfoPercentage;
 
+    @OneToOne(mappedBy = "smoothie", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Nullable
+    private Post post;
+
     public Smoothie() {
         this.totalNutritionalInfoGrams = new NutritionalInformationGrams();
         this.totalNutritionalInfoPercentage = new NutritionalInformationPercentage();
+        post = null;
     }
 
     public Smoothie(String name, User user) {
@@ -53,6 +59,7 @@ public class Smoothie {
         this.user = user;
         this.totalNutritionalInfoPercentage = new NutritionalInformationPercentage();
         this.totalNutritionalInfoGrams = new NutritionalInformationGrams();
+        post = null;
     }
 
     public Long getId() {
@@ -109,8 +116,27 @@ public class Smoothie {
         this.totalNutritionalInfoPercentage = totalNutritionalInfoPercentage;
     }
 
+    public Post getPost() {
+        return post;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
+
     @Override
     public String toString() {
+        if (post != null){
+            return "Smoothie{" +
+                    "id=" + id +
+                    ", name='" + name + '\'' +
+                    ", userEmail=" + user.getEmail() +
+                    ", ingredients=" + ingredients +
+                    ", post=" + post.getTitle() +
+                    ", totalNutritionalInfoGrams=" + totalNutritionalInfoGrams +
+                    ", totalNutritionalInfoPercentage=" + totalNutritionalInfoPercentage +
+                    '}';
+        }
         return "Smoothie{" +
                 "id=" + id +
                 ", name='" + name + '\'' +

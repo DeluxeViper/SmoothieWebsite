@@ -1,5 +1,7 @@
 package com.ceruleansource.SmoothieWebsite.backend.Models;
 
+import com.sun.istack.Nullable;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -7,13 +9,10 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"title", "smoothie_id"})
-})
 public class Post {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String title;
@@ -24,10 +23,11 @@ public class Post {
 
     @Lob
     @Basic
+    @Nullable
     private byte[] postImage;
 
     @OneToOne
-    @JoinColumn(name = "smoothie_id")
+    @MapsId
     private Smoothie smoothie;
 
     public Post(){
@@ -96,7 +96,6 @@ public class Post {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", dateTime=" + dateTime +
-                ", postImage=" + Arrays.toString(postImage) +
                 ", smoothie=" + smoothie.getName() +
                 '}';
     }

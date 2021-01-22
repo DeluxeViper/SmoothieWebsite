@@ -4,6 +4,7 @@ import com.ceruleansource.SmoothieWebsite.UI.MainView.MainView;
 import com.ceruleansource.SmoothieWebsite.UI.NutritionalInfoView;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Post;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
+import com.ceruleansource.SmoothieWebsite.backend.Services.PostService;
 import com.ceruleansource.SmoothieWebsite.backend.Services.SmoothieService;
 import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.UI;
@@ -16,6 +17,8 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -32,6 +35,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @CssImport("./src/styles/views/createpost/create-post-view.css")
 @Route(value = "create-post", layout = MainView.class)
@@ -62,7 +66,7 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
     private Button backBtn;
 
 
-    public CreatePostView(){
+    public CreatePostView(@Autowired PostService postService){
         setId("create-post-view");
         postToCreate = new Post();
 
@@ -79,7 +83,20 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
         submitPostBtn.addThemeName("primary");
         submitPostBtn.addClickListener(buttonClickEvent -> {
            // Save Post
-
+            postToCreate.setTitle(postTitle.getValue());
+            postToCreate.setDescription(description.getValue());
+            // Note: Post image is already set within uploader -> see initUploader()
+            postToCreate.setDateTime(LocalDateTime.now());
+            postToCreate.setSmoothie(smoothie);
+            if (postService.savePost(postToCreate)){
+                System.out.println("All posts: " + postService.retrieveAllPosts());
+                getUI().ifPresent(ui -> {
+                    ui.navigate("my-smoothies");
+                    Notification.show("Successfully added post!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                });
+            } else {
+                Notification.show("Error occurred while trying to save post").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
         });
 
         backBtn = new Button(new Icon(VaadinIcon.ARROW_LEFT));
@@ -118,6 +135,7 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
                 ByteArrayOutputStream pngContent = new ByteArrayOutputStream();
                 ImageIO.write(inputImage, "png", pngContent);
                 saveProfilePicture(pngContent.toByteArray());
+                postToCreate.setPostImage(pngContent.toByteArray());
                 showImage();
             } catch (IOException e) {
                 e.printStackTrace();
