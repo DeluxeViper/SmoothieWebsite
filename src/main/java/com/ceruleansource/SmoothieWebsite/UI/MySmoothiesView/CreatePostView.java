@@ -5,10 +5,17 @@ import com.ceruleansource.SmoothieWebsite.UI.NutritionalInfoView;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Post;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
 import com.ceruleansource.SmoothieWebsite.backend.Services.SmoothieService;
+import com.vaadin.flow.component.Html;
+import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -33,40 +40,76 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
     @Autowired
     private SmoothieService smoothieService;
 
-    private H1 title;
-
+    // Overall info reference fields
     private Long smoothieId;
     private Smoothie smoothie;
     private Post postToCreate;
 
+    // RHS - Uploading/Image fields
     private VerticalLayout imageContainer;
     private Image postImage;
+    private Upload uploadPostImage;
 
+    // LHS - vertical layout, nutritional view fields
+    private TextField postTitle;
+    private TextArea description;
+    private Details nutrViewDetails;
     private NutritionalInfoView nutritionalInfoView;
     private VerticalLayout overallVLayout;
+
+    // Submit/Go back button fields
+    private Button submitPostBtn;
+    private Button backBtn;
 
 
     public CreatePostView(){
         setId("create-post-view");
-        setHeight("100vh");
-        setWidth("100vw");
+        postToCreate = new Post();
+
         HorizontalLayout overallHLayout = new HorizontalLayout();
         overallHLayout.setId("overall-h-layout");
-        overallHLayout.setSizeFull();
-        overallVLayout = new VerticalLayout();
-        overallVLayout.setId("overall-v-layout");
-        overallVLayout.setHeightFull();
 
-        postToCreate = new Post();
+        initOverallVLayout();
         initImageContainer();
-        TextField postTitle = new TextField("Title");
+        initUploader();
+
+        submitPostBtn = new Button("Submit");
+        submitPostBtn.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
+        submitPostBtn.setId("submit-post-btn");
+        submitPostBtn.addThemeName("primary");
+        submitPostBtn.addClickListener(buttonClickEvent -> {
+           // Save Post
+
+        });
+
+        backBtn = new Button(new Icon(VaadinIcon.ARROW_LEFT));
+        backBtn.setId("back-btn");
+        backBtn.addThemeName("icon");
+        backBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        backBtn.addClickListener(buttonClickEvent -> UI.getCurrent().getPage().getHistory().back());
+
+        VerticalLayout imageVLayout = new VerticalLayout(imageContainer, uploadPostImage);
+        imageVLayout.setId("image-v-layout");
+        overallHLayout.add(overallVLayout, imageVLayout);
+        H1 title = new H1("Create Your Smoothie Post");
+        title.setId("post-title");
+        add(backBtn, title, overallHLayout);
+    }
+
+    private void initOverallVLayout(){
+        overallVLayout = new VerticalLayout();
+        postTitle = new TextField("Title");
         postTitle.setClassName("text-field");
-        TextArea description = new TextArea("Description");
+        description = new TextArea("Description");
         description.setClassName("text-field");
         description.setId("post-description");
+        overallVLayout.add(postTitle, description);
+        overallVLayout.setId("overall-v-layout");
+    }
 
+    private void initUploader() {
         MemoryBuffer buffer = new MemoryBuffer();
-        Upload uploadPostImage = new Upload(buffer);
+        uploadPostImage = new Upload(buffer);
         uploadPostImage.setId("uploader");
         uploadPostImage.setAcceptedFileTypes("image/jpeg", "image/jpg", "image/png");
         uploadPostImage.addSucceededListener(succeededEvent -> {
@@ -84,15 +127,6 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
             postToCreate.setPostImage(null);
             imageContainer.removeAll();
         });
-        overallVLayout.add(postTitle, description);
-
-        VerticalLayout imageVLayout = new VerticalLayout(imageContainer, uploadPostImage);
-        imageVLayout.setId("image-v-layout");
-        imageVLayout.setHeightFull();
-        overallHLayout.add(overallVLayout, imageVLayout);
-        title = new H1("Create Your Smoothie Post");
-        title.setId("post-title");
-        add(title, overallHLayout);
     }
 
     private void showImage() {
@@ -121,12 +155,40 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
     }
 
 
+    // Note: This gets called after @PostConstruct
     @Override
     public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
         smoothie = smoothieService.getSmoothie(smoothieId);
         System.out.println("CreatePostView: Smoothie: " + smoothie);
 
+        postTitle.setPlaceholder(smoothie.getName());
+
+        initNutrViewDetails();
+
         nutritionalInfoView = new NutritionalInfoView(smoothie.getTotalNutritionalInfoGrams(), smoothie.getTotalNutritionalInfoPercentage());
+        nutritionalInfoView.setId("nutrition-facts-view");
         overallVLayout.add(nutritionalInfoView);
+        add(submitPostBtn);
+    }
+
+    private void initNutrViewDetails() {
+        String smoothieIngredients = smoothie.getIngredientNames().toString();
+        String smoothieName = smoothie.getName();
+        Html smoothieNameText = new Html("<span><b>Name:</b> " + smoothieName + "</span>");
+        smoothieNameText.setId("smoothie-name-text");
+        Html smoothieIngredientsText = new Html("<span></br><b>Ingredients:</b> " + smoothieIngredients + "</span>");
+        smoothieIngredientsText.setId("smoothie-ingredients-text");
+        nutrViewDetails = new Details();
+        nutrViewDetails.setSummaryText("Show Smoothie Details");
+        nutrViewDetails.addContent(smoothieNameText, smoothieIngredientsText);
+        overallVLayout.addComponentAsFirst(nutrViewDetails);
+        nutrViewDetails.addOpenedChangeListener(openedChangeEvent -> {
+            if (openedChangeEvent.isOpened()){
+                nutrViewDetails.setSummary(new Html("<b>Hide Smoothie Details</b>"));
+            } else {
+                nutrViewDetails.setSummaryText("Show Smoothie Details");
+            }
+        });
+        nutrViewDetails.setId("nutr-view-details");
     }
 }
