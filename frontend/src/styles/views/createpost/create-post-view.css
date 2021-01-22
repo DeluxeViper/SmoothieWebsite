@@ -1,0 +1,57 @@
+#create-post-view {
+    align-items: center;
+    text-align: center;
+}
+
+#overall-h-layout {
+    align-items: center;
+}
+
+#overall-v-layout {
+    align-items: center;
+}
+
+#image-v-layout {
+    align-items: center;
+}
+
+.text-field {
+    width: 80%;
+}
+
+textarea.text-field {
+}
+
+#post-title {
+    font-weight: 700;
+    font-family: Palatino, serif;
+    font-size: 50px;
+}
+
+#post-image {
+    max-width: 100%;
+    overflow-x: scroll;
+}
+
+#image-container {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    border-style: dashed;
+}
+
+#uploader {
+    width: 100%;
+}
+
+@media (max-width: 600px) {
+    #overall-h-layout {
+        align-items: center;
+        height: 20%;
+        flex-wrap: wrap;
+    }
+
+    #post-title {
+        font-weight: 100;
+    }
+}

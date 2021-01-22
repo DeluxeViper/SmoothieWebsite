@@ -4,6 +4,7 @@ import com.ceruleansource.SmoothieWebsite.backend.Authentication.SecurityUtils;
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
 import com.ceruleansource.SmoothieWebsite.UI.MainView.MainView;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 @Tag("home-view")
 @JsModule("./src/views/home-view.js")
+@CssImport("./src/styles/views/homeview/home-view-styles.css")
 @Route(value = "home", layout = MainView.class)
 public class HomeView extends PolymerTemplate<HomeView.HomeViewModel> implements AfterNavigationObserver {
     @Id("createSmoothieButton")
