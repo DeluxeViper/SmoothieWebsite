@@ -34,6 +34,8 @@
     font-weight: 700;
     font-family: Palatino, serif;
     font-size: 50px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 #post-image {
@@ -72,11 +74,15 @@
 
 #back-btn {
     position: absolute;
-    top: 50px;
-    left: 0;
-    width: 300px;
-    height: 100px;
-    background-size: 100%;
+    top: 100px;
+    left: -20px;
+    width: 150px;
+    height: 25px;
+}
+
+#left-arrow-icon {
+    width: 25%;
+    height: 25%;
 }
 
 #submit-post-btn {

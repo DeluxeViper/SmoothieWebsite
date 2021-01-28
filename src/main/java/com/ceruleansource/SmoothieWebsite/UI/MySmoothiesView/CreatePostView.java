@@ -51,6 +51,8 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
     @Autowired
     private SmoothieService smoothieService;
 
+    private H1 title;
+
     // Overall info reference fields
     private Long smoothieId;
     private Smoothie smoothie;
@@ -124,10 +126,13 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
 
         });
 
-        backBtn = new Button(new Icon(VaadinIcon.ARROW_LEFT));
+        Icon leftArrowIcon = VaadinIcon.ARROW_LONG_LEFT.create();
+        leftArrowIcon.setId("left-arrow-icon");
+        backBtn = new Button();
         backBtn.setId("back-btn");
         backBtn.addThemeName("icon");
         backBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        backBtn.setIcon(leftArrowIcon);
         backBtn.addClickListener(buttonClickEvent -> getUI().ifPresent(ui -> {
             ui.navigate("my-smoothies");
         }));
@@ -135,7 +140,7 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
         VerticalLayout imageVLayout = new VerticalLayout(imageContainer, uploadPostImage);
         imageVLayout.setId("image-v-layout");
         overallHLayout.add(LHSVLayout, imageVLayout);
-        H1 title = new H1("Create Your Smoothie Post");
+        title = new H1("Create Your Smoothie Post");
         title.setId("post-title");
         add(backBtn, title, overallHLayout);
     }
@@ -205,9 +210,9 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
         postTitle.setPlaceholder(smoothie.getName());
 
         if (smoothie.getPost() != null){
+            title.setText("Edit Your Post");
             postToCreate = smoothie.getPost();
             submitPostBtn.setText("Update Post");
-            setText("Edit Your Post");
             initPostView();
         }
 

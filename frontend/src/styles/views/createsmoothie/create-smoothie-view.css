@@ -4,6 +4,13 @@
     flex-direction: row;
 }
 
+#split-layout {
+}
+
+#ingredient-grid-div {
+
+}
+
 :host {
     display: flex;
     height: 100%;

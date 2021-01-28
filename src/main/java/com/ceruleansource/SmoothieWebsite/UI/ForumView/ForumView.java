@@ -1,4 +1,4 @@
-package com.ceruleansource.SmoothieWebsite.UI;
+package com.ceruleansource.SmoothieWebsite.UI.ForumView;
 
 import com.ceruleansource.SmoothieWebsite.UI.MainView.MainView;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Post;
@@ -48,6 +48,7 @@ public class ForumView extends Div {
     @Autowired
     public ForumView(PostService postService) {
         H2 title = new H2("Forum View");
+        title.getStyle().set("margin", "15px");
 
         postsGrid = new PaginatedGrid<>();
         postsGrid.addColumn(Post::getTitle).setHeader("Post Name").setAutoWidth(true);
@@ -58,6 +59,13 @@ public class ForumView extends Div {
         postsGrid.setItems(postService.retrieveAllPosts());
         postsGrid.setHeightByRows(true);
         postsGrid.setWidthFull();
+
+        postsGrid.addSelectionListener(selectionEvent -> {
+            if (selectionEvent.getFirstSelectedItem().isPresent()){
+//                System.out.println(selectionEvent.getFirstSelectedItem().get());
+                getUI().ifPresent(ui -> ui.navigate(PostView.class, selectionEvent.getFirstSelectedItem().get().getId()));
+            }
+        });
 
         add(title, postsGrid);
 //        Page page;

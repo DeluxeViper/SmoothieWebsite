@@ -2,7 +2,7 @@ package com.ceruleansource.SmoothieWebsite.backend.Authentication;
 
 import com.ceruleansource.SmoothieWebsite.UI.Error.AccessDeniedView;
 import com.ceruleansource.SmoothieWebsite.UI.Error.CustomRouteNotFoundError;
-import com.ceruleansource.SmoothieWebsite.UI.ForumView;
+import com.ceruleansource.SmoothieWebsite.UI.ForumView.ForumView;
 import com.ceruleansource.SmoothieWebsite.UI.HomeView;
 import com.ceruleansource.SmoothieWebsite.UI.LoginView;
 import com.ceruleansource.SmoothieWebsite.UI.MainView.MainView;

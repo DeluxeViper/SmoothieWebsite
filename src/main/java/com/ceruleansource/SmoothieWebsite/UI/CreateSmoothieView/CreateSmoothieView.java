@@ -31,12 +31,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-/**
- * A Designer generated component for the create-smoothie-view template.
- * <p>
- * Designer will add and remove fields with @Id mappings but
- * does not overwrite or otherwise change this file.
- */
 @PageTitle("Create Smoothie")
 @CssImport("./src/styles/views/createsmoothie/create-smoothie-view.css")
 @Route(value = "create-smoothie", layout = MainView.class)
@@ -71,8 +65,9 @@ public class CreateSmoothieView extends Div {
 
         // Create UI
         SplitLayout splitLayout = new SplitLayout();
+        splitLayout.setId("split-layout");
         splitLayout.setSizeFull();
-        splitLayout.setOrientation(SplitLayout.Orientation.VERTICAL);
+        splitLayout.setOrientation(SplitLayout.Orientation.HORIZONTAL);
 
         createGridLayout(splitLayout, ingredientService, userSession, smoothieService);
         createEditorLayout(splitLayout, ingredientService);
@@ -162,18 +157,26 @@ public class CreateSmoothieView extends Div {
 
     private void createGridLayout(SplitLayout splitLayout, IngredientService ingredientService, UserSession userSession, SmoothieService smoothieService) {
         ingredientGridDiv = new IngredientGridDiv(userSession, smoothieService);
+        ingredientGridDiv.setId("ingredient-grid-div");
         ingredientGridDiv.getUserSmoothies().addValueChangeListener(this::userSmoothiesValueChangeMethod);
         ingredientGridDiv.setWidthFull();
         ingredientGridDiv.getIngredientGrid().asSingleSelect().addValueChangeListener(event -> onIngredientRowSelect(ingredientService, event));
+
         deleteSmoothieBtn = new Button("Delete Smoothie");
         deleteSmoothieBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
         deleteSmoothieBtn.setVisible(false);
         deleteSmoothieBtn.addClickListener(event -> deleteSmoothieButtonOnClick(userSession, smoothieService));
+
+        // Automatically selecting first smoothie available on arriving to CreateSmoothieView page
+        Set<Smoothie> smoothieSet = smoothieService.getSmoothiesForCurrentUser(userSession.getUser());
+        if (!smoothieSet.isEmpty()) {
+            ingredientGridDiv.getUserSmoothies().setValue(smoothieSet.iterator().next());
+        }
         splitLayout.addToPrimary(ingredientGridDiv, deleteSmoothieBtn, totalNutrInfoView);
     }
 
     private void deleteSmoothieButtonOnClick(UserSession userSession, SmoothieService smoothieService) {
-        if (ingredientGridDiv.getUserSmoothies().getValue() != null){
+        if (ingredientGridDiv.getUserSmoothies().getValue() != null) {
             smoothieService.deleteSmoothie(ingredientGridDiv.getUserSmoothies().getValue());
             Set<Smoothie> smoothieSetInUser = new HashSet<>(userSession.getUser().getSmoothies());
             ingredientGridDiv.getUserSmoothies().setItems(smoothieSetInUser);
