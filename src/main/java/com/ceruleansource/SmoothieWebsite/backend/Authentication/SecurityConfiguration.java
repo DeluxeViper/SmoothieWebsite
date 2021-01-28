@@ -1,6 +1,5 @@
 package com.ceruleansource.SmoothieWebsite.backend.Authentication;
 
-import com.ceruleansource.SmoothieWebsite.backend.Services.CustomOidcUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.oidc.userinfo.OidcUserService;
-
-import javax.transaction.Transactional;
 
 @EnableWebSecurity
 @Configuration
@@ -41,7 +38,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.antMatcher("/**")
                 // Authorize requests
                 .authorizeRequests()
-                .antMatchers("/", "/home", "/forum").permitAll()
+                .antMatchers("/home", "/", "/forum").permitAll()
                 // Allow all flow internal requests
                 .requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
                 // Allow all requests by logged in users
@@ -55,7 +52,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    public void configure(WebSecurity web) throws Exception {
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers(
                 // Vaadin Flow static resources //
                 "/VAADIN/**",

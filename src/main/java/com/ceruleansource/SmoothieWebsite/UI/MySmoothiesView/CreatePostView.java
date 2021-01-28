@@ -28,6 +28,10 @@ import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.dom.DomEventListener;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.StreamResource;
+import elemental.json.Json;
+import elemental.json.JsonArray;
+import elemental.json.JsonObject;
+import elemental.json.impl.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.imageio.ImageIO;
@@ -56,7 +60,7 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
 
     // LHS - vertical layout, nutritional view fields
     private TextField postTitle;
-    private TextArea description;
+    private TextArea postDescription;
     private Details nutrViewDetails;
     private NutritionalInfoView nutritionalInfoView;
     private VerticalLayout overallVLayout;
@@ -84,7 +88,7 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
         submitPostBtn.addClickListener(buttonClickEvent -> {
            // Save Post
             postToCreate.setTitle(postTitle.getValue());
-            postToCreate.setDescription(description.getValue());
+            postToCreate.setDescription(postDescription.getValue());
             // Note: Post image is already set within uploader -> see initUploader()
             postToCreate.setDateTime(LocalDateTime.now());
             postToCreate.setSmoothie(smoothie);
@@ -103,7 +107,9 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
         backBtn.setId("back-btn");
         backBtn.addThemeName("icon");
         backBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
-        backBtn.addClickListener(buttonClickEvent -> UI.getCurrent().getPage().getHistory().back());
+        backBtn.addClickListener(buttonClickEvent -> getUI().ifPresent(ui -> {
+            ui.navigate("my-smoothies");
+        }));
 
         VerticalLayout imageVLayout = new VerticalLayout(imageContainer, uploadPostImage);
         imageVLayout.setId("image-v-layout");
@@ -117,10 +123,10 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
         overallVLayout = new VerticalLayout();
         postTitle = new TextField("Title");
         postTitle.setClassName("text-field");
-        description = new TextArea("Description");
-        description.setClassName("text-field");
-        description.setId("post-description");
-        overallVLayout.add(postTitle, description);
+        postDescription = new TextArea("Description");
+        postDescription.setClassName("text-field");
+        postDescription.setId("post-description");
+        overallVLayout.add(postTitle, postDescription);
         overallVLayout.setId("overall-v-layout");
     }
 
@@ -134,8 +140,8 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
                 BufferedImage inputImage = ImageIO.read(buffer.getInputStream());
                 ByteArrayOutputStream pngContent = new ByteArrayOutputStream();
                 ImageIO.write(inputImage, "png", pngContent);
-                saveProfilePicture(pngContent.toByteArray());
                 postToCreate.setPostImage(pngContent.toByteArray());
+                postToCreate.setPostImageName(succeededEvent.getFileName());
                 showImage();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -154,11 +160,7 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
         postImage.setId("post-image");
         imageContainer.removeAll();
         imageContainer.add(postImage);
-    }
 
-
-    private void saveProfilePicture(byte[] imageBytes) {
-        postToCreate.setPostImage(imageBytes);
     }
 
     private void initImageContainer() {
@@ -181,12 +183,35 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
 
         postTitle.setPlaceholder(smoothie.getName());
 
+        if (smoothie.getPost() != null){
+            postToCreate = smoothie.getPost();
+            submitPostBtn.setText("Update Post");
+            initPostView();
+        }
+
         initNutrViewDetails();
 
         nutritionalInfoView = new NutritionalInfoView(smoothie.getTotalNutritionalInfoGrams(), smoothie.getTotalNutritionalInfoPercentage());
         nutritionalInfoView.setId("nutrition-facts-view");
         overallVLayout.add(nutritionalInfoView);
         add(submitPostBtn);
+    }
+
+    private void initPostView() {
+        postTitle.setValue(postToCreate.getTitle());
+        postDescription.setValue(postToCreate.getDescription());
+
+        // Updating uploader with image
+        JsonArray jsonArray = Json.createArray();
+        JsonObject jsonObject = Json.createObject();
+        jsonObject.put("name", postToCreate.getPostImageName());
+        jsonObject.put("progress", 100);
+        jsonObject.put("complete", true);
+        jsonArray.set(0, jsonObject);
+        uploadPostImage.getElement().setPropertyJson("files", jsonArray);
+
+        // Showing post image
+        showImage();
     }
 
     private void initNutrViewDetails() {

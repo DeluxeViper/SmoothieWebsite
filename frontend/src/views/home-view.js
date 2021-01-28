@@ -13,7 +13,6 @@ class HomeView extends PolymerElement {
                     height: 100%;
                 }
             </style>
-              <link rel="stylesheet" href="home-view-styles.css">
 <div draggable="true" vaadin-dnd-layout-item="true" style="text-align: center; width: 100%; margin: auto; background-image: url(&quot;https://cdn.pixabay.com/photo/2016/03/10/18/44/top-view-1248949_960_720.jpg&quot;); background-repeat: no-repeat; background-size: cover; -webkit-clip-path: polygon(50% 100%, 100% 80%, 100% 0, 0 0, 0 80%); height: 1000px; z-index: 3; position: relative;" id="welcomeDiv">
  <h1 style="font-family: &quot;Times New Roman&quot;, Times, serif; margin-top: 0px; font-size: 80px; padding-right: var(--lumo-space-xl); padding-left: var(--lumo-space-xl); color: white; text-shadow: 8px 8px 70px black; display: flex; justify-content: center; align-items: center; text-align: center; height: 800px;">Welcome to Smoothie Makers Club!</h1>
 </div>

@@ -12,6 +12,7 @@ import com.github.appreciated.layout.FlexibleGridLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,16 +45,19 @@ public class ForumView extends Div {
      */
     @Autowired
     public ForumView(PostService postService) {
+        H2 title = new H2("Forum View");
+
         postsGrid = new PaginatedGrid<>();
         postsGrid.addColumn(Post::getTitle).setHeader("Post Name").setAutoWidth(true);
         postsGrid.addColumn(Post::getDescription).setHeader("Description").setAutoWidth(true);
         postsGrid.addColumn(Post::getPostImage).setHeader("Image").setAutoWidth(true);
+        postsGrid.addColumn(Post::getDateString).setHeader("Date Posted").setAutoWidth(true);
 
         postsGrid.setItems(postService.retrieveAllPosts());
         postsGrid.setHeightByRows(true);
         postsGrid.setWidthFull();
 
-        add(postsGrid);
+        add(title, postsGrid);
 //        Page page;
 //        Optional<UI> ui = this.getUI();
 //        if (ui.isPresent()){

@@ -72,7 +72,7 @@ public class MySmoothiesView extends Div {
                 getUI().ifPresent(ui -> ui.navigate(CreatePostView.class, smoothie.getId()));
             });
             if (smoothie.getPost() != null){
-                postButton.setEnabled(false);
+                postButton.setText("Edit Post");
             }
             return postButton;
         }).setAutoWidth(true).setKey("post_column");

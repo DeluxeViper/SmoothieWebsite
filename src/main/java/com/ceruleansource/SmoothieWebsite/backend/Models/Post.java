@@ -4,8 +4,6 @@ import com.sun.istack.Nullable;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.Objects;
 
 @Entity
@@ -20,6 +18,8 @@ public class Post {
     private String description;
 
     private LocalDateTime dateTime;
+
+    private String postImageName;
 
     @Lob
     @Basic
@@ -69,8 +69,25 @@ public class Post {
         return dateTime;
     }
 
+    /**
+     *
+     * @return - The date in the following format: "Month dayOfMonth, year"
+     * Example: January 27, 2020
+     */
+    public String getDateString(){
+        return dateTime.getMonth().name().substring(0, 1) + dateTime.getMonth().name().substring(1).toLowerCase() + " " + dateTime.getDayOfMonth() + ", " + dateTime.getYear();
+    }
+
     public void setDateTime(LocalDateTime dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public String getPostImageName() {
+        return postImageName;
+    }
+
+    public void setPostImageName(String postImageName) {
+        this.postImageName = postImageName;
     }
 
     public byte[] getPostImage() {

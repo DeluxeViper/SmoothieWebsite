@@ -24,8 +24,6 @@ import java.util.Collections;
 @Push(transport = Transport.LONG_POLLING)
 public class LoginView extends VerticalLayout
         implements BeforeEnterObserver {
-    @Autowired
-    UserSession userSession;
 
     private Button registerButton;
     private LoginForm loginForm;
