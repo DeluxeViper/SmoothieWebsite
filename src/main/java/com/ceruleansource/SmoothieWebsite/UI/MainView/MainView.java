@@ -1,15 +1,18 @@
 package com.ceruleansource.SmoothieWebsite.UI.MainView;
 
-import com.ceruleansource.SmoothieWebsite.UI.*;
-import com.ceruleansource.SmoothieWebsite.UI.MySmoothiesView.CreatePostView;
+import com.ceruleansource.SmoothieWebsite.UI.AboutView;
+import com.ceruleansource.SmoothieWebsite.UI.CaloriesBurnoutPlanView;
+import com.ceruleansource.SmoothieWebsite.UI.CreateSmoothieView.CreateSmoothieView;
+import com.ceruleansource.SmoothieWebsite.UI.ForumView.ForumView;
+import com.ceruleansource.SmoothieWebsite.UI.HomeView;
 import com.ceruleansource.SmoothieWebsite.UI.MySmoothiesView.MySmoothiesView;
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
-import com.ceruleansource.SmoothieWebsite.UI.CreateSmoothieView.CreateSmoothieView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.CssImport;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -39,6 +42,7 @@ import java.util.Optional;
 //        shortName = "Smoothie Web",
 //        startPath = "home",
 //        description = "This is a smoothie website application.")
+@JsModule("./src/views/prefers-color-scheme.js")
 @CssImport("./src/styles/views/main/main-view.css")
 public class MainView extends AppLayout implements AfterNavigationObserver {
 
@@ -123,8 +127,6 @@ public class MainView extends AppLayout implements AfterNavigationObserver {
 
         tabs.add(createTab(VaadinIcon.CUTLERY, "My Smoothies", MySmoothiesView.class));
 
-        tabs.add(createTab(VaadinIcon.CUTLERY, "Create Post", CreatePostView.class));
-
         tabs.forEach(tab -> {
             tab.setId("tab");
         });
@@ -140,16 +142,7 @@ public class MainView extends AppLayout implements AfterNavigationObserver {
         routerLink.add(new Span(title));
         tab.add(routerLink);
         ComponentUtil.setData(tab, Class.class, viewClass);
-        if (title.equals("Create Post")){
-            tab.setVisible(false);
-        }
         return tab;
-    }
-
-    @Override
-    protected void afterNavigation() {
-        super.afterNavigation();
-        getTabForComponent(getContent()).ifPresent(mainMenu::setSelectedTab);
     }
 
     private Optional<Tab> getTabForComponent(Component component) {
@@ -157,16 +150,31 @@ public class MainView extends AppLayout implements AfterNavigationObserver {
                 .findFirst().map(Tab.class::cast);
     }
 
+    private Optional<Tab> getTabForClass(Class<?> cls) {
+        return mainMenu.getChildren().filter(tab -> ComponentUtil.getData(tab, Class.class).equals(cls))
+                .findFirst().map(Tab.class::cast);
+    }
+
     @Override
     public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
+        String path = afterNavigationEvent.getLocation().getPath();
+        if (!(path.contains("create-post") || path.contains("post-view"))) {
+            getTabForComponent(getContent()).ifPresent(tab -> mainMenu.setSelectedTab(tab));
+        } else {
+            if (path.contains("create-post")) {
+                getTabForClass(MySmoothiesView.class).ifPresent(tab -> mainMenu.setSelectedTab(tab));
+            } else if (path.contains("post-view")) {
+                getTabForClass(ForumView.class).ifPresent(tab -> mainMenu.setSelectedTab(tab));
+            }
+            System.out.println("Your on either create-post or post-view");
+        }
+
         if (UserSession.isLoggedIn()) {
             accountDropDown.setVisible(true);
-//            logoutButton.setVisible(true);
             loginButton.setVisible(false);
             accountDropDown.setVisible(true);
         } else {
             accountDropDown.setVisible(false);
         }
-//        System.out.println(accountDropDown.isVisible());
     }
 }
