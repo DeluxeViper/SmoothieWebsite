@@ -2,26 +2,24 @@
     align-items: center;
     text-align: center;
     height: fit-content;
-    width: 100%;
     padding-bottom: 30px;
 }
 
 #overall-h-layout {
     align-items: center;
-    height: 100%;
-    width: 100%;
+    justify-content: center;
 }
 
-#overall-v-layout {
+#LHS-v-layout {
     align-items: center;
     height: 100%;
 }
 
 #image-v-layout {
+    display: block;
     height: 100%;
     align-items: center;
-    margin-left: 20px;
-    margin-right: 20px;
+    justify-content: center;
 }
 
 .text-field {
@@ -45,9 +43,10 @@
 
 #image-container {
     width: 100%;
+    margin: 0;
     align-items: center;
     justify-content: center;
-    border-style: dashed;
+    border: 1px dashed var(--lumo-contrast-20pct);
 }
 
 #uploader {
@@ -72,6 +71,12 @@
 }
 
 #back-btn {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    width: 300px;
+    height: 100px;
+    background-size: 100%;
 }
 
 #submit-post-btn {

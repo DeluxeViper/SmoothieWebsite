@@ -7,7 +7,6 @@ import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
 import com.ceruleansource.SmoothieWebsite.backend.Services.PostService;
 import com.ceruleansource.SmoothieWebsite.backend.Services.SmoothieService;
 import com.vaadin.flow.component.Html;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -15,6 +14,7 @@ import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -25,13 +25,15 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
+import com.vaadin.flow.data.binder.BeanValidationBinder;
+import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.data.validator.StringLengthValidator;
 import com.vaadin.flow.dom.DomEventListener;
 import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.StreamResource;
 import elemental.json.Json;
 import elemental.json.JsonArray;
 import elemental.json.JsonObject;
-import elemental.json.impl.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.imageio.ImageIO;
@@ -41,6 +43,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
+@PageTitle("Create Your Post")
 @CssImport("./src/styles/views/createpost/create-post-view.css")
 @Route(value = "create-post", layout = MainView.class)
 public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterNavigationObserver {
@@ -63,10 +66,11 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
     private TextArea postDescription;
     private Details nutrViewDetails;
     private NutritionalInfoView nutritionalInfoView;
-    private VerticalLayout overallVLayout;
+    private VerticalLayout LHSVLayout;
+    private BeanValidationBinder<Post> postBinder;
 
     // Submit/Go back button fields
-    private Button submitPostBtn;
+    private final Button submitPostBtn;
     private Button backBtn;
 
 
@@ -77,30 +81,47 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
         HorizontalLayout overallHLayout = new HorizontalLayout();
         overallHLayout.setId("overall-h-layout");
 
-        initOverallVLayout();
+        initLHSVLayout();
         initImageContainer();
         initUploader();
+
+        // Binder & Error message init
+        postBinder = new BeanValidationBinder<>(Post.class);
+
+        postBinder.forField(postTitle).asRequired(new StringLengthValidator("Please enter a title", 1, 32)).bind("title");
+        postBinder.forField(postDescription).asRequired().bind("description");
+
+        Span errorMessage = new Span();
+        errorMessage.getStyle().set("color", "var(--lumo-error-text-color)");
+        errorMessage.getStyle().set("padding", "0 0");
+
+        postBinder.setStatusLabel(errorMessage);
 
         submitPostBtn = new Button("Submit");
         submitPostBtn.addThemeVariants(ButtonVariant.LUMO_SUCCESS);
         submitPostBtn.setId("submit-post-btn");
         submitPostBtn.addThemeName("primary");
         submitPostBtn.addClickListener(buttonClickEvent -> {
-           // Save Post
-            postToCreate.setTitle(postTitle.getValue());
-            postToCreate.setDescription(postDescription.getValue());
-            // Note: Post image is already set within uploader -> see initUploader()
-            postToCreate.setDateTime(LocalDateTime.now());
-            postToCreate.setSmoothie(smoothie);
-            if (postService.savePost(postToCreate)){
-                System.out.println("All posts: " + postService.retrieveAllPosts());
-                getUI().ifPresent(ui -> {
-                    ui.navigate("my-smoothies");
-                    Notification.show("Successfully added post!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
-                });
-            } else {
-                Notification.show("Error occurred while trying to save post").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            try {
+                postToCreate.setSmoothie(smoothie);
+                postToCreate.setDateTime(LocalDateTime.now());
+                postBinder.writeBean(postToCreate);
+//                System.out.println("PostToCreate bean: " + postToCreate);
+
+                // Save Post
+                // Note: Post image is already set within uploader -> see initUploader()
+                if (postService.savePost(postToCreate)){
+                    getUI().ifPresent(ui -> {
+                        ui.navigate("my-smoothies");
+                        Notification.show("Successfully added post!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                    });
+                } else {
+                    Notification.show("Error occurred while trying to save post").addThemeVariants(NotificationVariant.LUMO_ERROR);
+                }
+            } catch (ValidationException validationException) {
+                validationException.printStackTrace();
             }
+
         });
 
         backBtn = new Button(new Icon(VaadinIcon.ARROW_LEFT));
@@ -113,21 +134,21 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
 
         VerticalLayout imageVLayout = new VerticalLayout(imageContainer, uploadPostImage);
         imageVLayout.setId("image-v-layout");
-        overallHLayout.add(overallVLayout, imageVLayout);
+        overallHLayout.add(LHSVLayout, imageVLayout);
         H1 title = new H1("Create Your Smoothie Post");
         title.setId("post-title");
         add(backBtn, title, overallHLayout);
     }
 
-    private void initOverallVLayout(){
-        overallVLayout = new VerticalLayout();
+    private void initLHSVLayout(){
+        LHSVLayout = new VerticalLayout();
         postTitle = new TextField("Title");
         postTitle.setClassName("text-field");
         postDescription = new TextArea("Description");
         postDescription.setClassName("text-field");
         postDescription.setId("post-description");
-        overallVLayout.add(postTitle, postDescription);
-        overallVLayout.setId("overall-v-layout");
+        LHSVLayout.add(postTitle, postDescription);
+        LHSVLayout.setId("LHS-v-layout");
     }
 
     private void initUploader() {
@@ -179,13 +200,14 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
     @Override
     public void afterNavigation(AfterNavigationEvent afterNavigationEvent) {
         smoothie = smoothieService.getSmoothie(smoothieId);
-        System.out.println("CreatePostView: Smoothie: " + smoothie);
+//        System.out.println("CreatePostView: Smoothie: " + smoothie);
 
         postTitle.setPlaceholder(smoothie.getName());
 
         if (smoothie.getPost() != null){
             postToCreate = smoothie.getPost();
             submitPostBtn.setText("Update Post");
+            setText("Edit Your Post");
             initPostView();
         }
 
@@ -193,7 +215,7 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
 
         nutritionalInfoView = new NutritionalInfoView(smoothie.getTotalNutritionalInfoGrams(), smoothie.getTotalNutritionalInfoPercentage());
         nutritionalInfoView.setId("nutrition-facts-view");
-        overallVLayout.add(nutritionalInfoView);
+        LHSVLayout.add(nutritionalInfoView);
         add(submitPostBtn);
     }
 
@@ -224,7 +246,7 @@ public class CreatePostView extends Div implements HasUrlParameter<Long>, AfterN
         nutrViewDetails = new Details();
         nutrViewDetails.setSummaryText("Show Smoothie Details");
         nutrViewDetails.addContent(smoothieNameText, smoothieIngredientsText);
-        overallVLayout.addComponentAsFirst(nutrViewDetails);
+        LHSVLayout.addComponentAsFirst(nutrViewDetails);
         nutrViewDetails.addOpenedChangeListener(openedChangeEvent -> {
             if (openedChangeEvent.isOpened()){
                 nutrViewDetails.setSummary(new Html("<b>Hide Smoothie Details</b>"));

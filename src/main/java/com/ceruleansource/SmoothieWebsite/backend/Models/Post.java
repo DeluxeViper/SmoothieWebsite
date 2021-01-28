@@ -1,6 +1,8 @@
 package com.ceruleansource.SmoothieWebsite.backend.Models;
 
+import com.sun.istack.NotNull;
 import com.sun.istack.Nullable;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,6 +15,8 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    @Length(min = 1, max = 32)
     private String title;
 
     private String description;
