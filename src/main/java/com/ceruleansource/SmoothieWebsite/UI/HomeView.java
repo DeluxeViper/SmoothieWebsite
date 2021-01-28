@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Designer will add and remove fields with @Id mappings but
  * does not overwrite or otherwise change this file.
  */
+@PageTitle("Home")
 @Tag("home-view")
 @JsModule("./src/views/home-view.js")
 @CssImport("./src/styles/views/homeview/home-view-styles.css")

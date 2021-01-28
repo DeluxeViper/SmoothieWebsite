@@ -18,12 +18,13 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 
-
+@PageTitle("My Smoothies")
 @Route(value = "my-smoothies", layout = MainView.class)
 public class MySmoothiesView extends Div {
 

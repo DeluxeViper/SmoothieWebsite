@@ -14,6 +14,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.page.Page;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 //@Tag("forum-view")
 //@JsModule("./src/views/forum-view.js")
+@PageTitle("Forum")
 @Route(value = "forum", layout = MainView.class)
 public class ForumView extends Div {
 
