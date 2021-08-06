@@ -22,14 +22,12 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @PageTitle("Create Smoothie")
 @CssImport("./src/styles/views/createsmoothie/create-smoothie-view.css")
@@ -41,10 +39,15 @@ public class CreateSmoothieView extends Div {
     // Editor layout fields
     private ComboBox<String> ingredientName;
     private ComboBox<Ingredient> ingredientAmount;
+    private NumberField ingredientAmountNumberField;
     private final Button ingredientSaveBtn = new Button("Save");
     private final Button cancelIngredientBtn = new Button("Cancel");
     private final Button removeIngredientBtn = new Button("Remove");
     private NutritionalInfoView ingrNutritionalInfoView = new NutritionalInfoView();
+
+    private Ingredient selectedIngredient; // Selected ingredient in editor
+    private NutritionalInformationGrams defaultNutrGramsInfo;
+    private NutritionalInformationPercentage defaultNutrPercInfo;
 
     // Total info
     private NutritionalInformationGrams totalNutrGrams;
@@ -53,6 +56,10 @@ public class CreateSmoothieView extends Div {
 
     // Smoothie delete button: Here because UserSmoothies.asSelect() is here
     private Button deleteSmoothieBtn;
+
+    // Nutritional info that includes the multiplied value within the multiplier
+    private NutritionalInformationGrams nutrInfoGrams;
+    private NutritionalInformationPercentage nutrInfoPerc;
 
     @Autowired
     public CreateSmoothieView(IngredientService ingredientService, UserSession userSession, SmoothieService smoothieService) {
@@ -92,7 +99,7 @@ public class CreateSmoothieView extends Div {
         // Editor: Adding ingredient save button
         ingredientSaveBtn.addClickListener(e -> {
             try {
-                saveIngredientEditorMethod(smoothieService);
+                saveIngredientEditorMethod(smoothieService, ingredientService);
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
@@ -108,11 +115,15 @@ public class CreateSmoothieView extends Div {
 
         FormLayout formLayout = new FormLayout();
         formLayout.setId("form-layout");
-        ingredientName = new ComboBox<>("Ingredient Name");
 
+        ingredientName = new ComboBox<>("Ingredient Name");
         ingredientAmount = new ComboBox<>("Ingredient Amount");
+        ingredientAmountNumberField = new NumberField();
+
+        ingredientService.findAllDistinctNamedIngredientsWithSingleMultiplier();
 
         List<String> ingredientDistinctNamesList = ingredientService.findAllDistinctNamedIngredients();
+        System.out.println("Distinct names list: " +ingredientDistinctNamesList);
 
         // Populating the form combo boxes
         // Ingredient name
@@ -121,19 +132,55 @@ public class CreateSmoothieView extends Div {
         ingredientName.setClearButtonVisible(true);
         ingredientName.setItems(ingredientDistinctNamesList);
 
-        // Ingredient amount
-        ingredientAmount.setLabel("Amount");
+        // Ingredient amount type
+        ingredientAmount.setLabel("Amount Type");
         ingredientAmount.setRequired(true);
         ingredientAmount.setClearButtonVisible(true);
         ingredientAmount.setItemLabelGenerator(Ingredient::getQuantityTypeAndValue);
-
         ingredientName.addValueChangeListener(event -> editorIngrNameChangeListener(ingredientService, event));
+
+        // Ingredient amount number field
+        ingredientAmountNumberField.setLabel("Amount Multiplier");
+        ingredientAmountNumberField.setHasControls(true);
+        ingredientAmountNumberField.setMin(1);
+        ingredientAmountNumberField.setValue(1.0);
 
         // Nutrition Info grams & Percentage
         ingredientAmount.addValueChangeListener(this::editorIngrAmountChangeListener);
 
+        ingredientAmountNumberField.addValueChangeListener(numberFieldDoubleComponentValueChangeEvent -> {
+            if (ingredientAmount.getValue() != null && selectedIngredient != null){
+                double multiplier = numberFieldDoubleComponentValueChangeEvent.getValue();
+
+                // Cloning to prevent changes to default nutritional information
+                nutrInfoGrams = null;
+                nutrInfoPerc = null;
+                try {
+                    nutrInfoGrams = (NutritionalInformationGrams) defaultNutrGramsInfo.clone();
+                    nutrInfoPerc = (NutritionalInformationPercentage) defaultNutrPercInfo.clone();
+
+                    nutrInfoGrams.multiplyGrams(multiplier);
+                    nutrInfoPerc.multiplyPercentage(multiplier);
+//                    selectedIngredient.setNutritionalInformationGrams(nutrInfoGrams);
+//                    selectedIngredient.setNutritionalInformationPercentage(nutrInfoPerc);
+//                    selectedIngredient.setMultiplier(multiplier);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (nutrInfoGrams != null && nutrInfoPerc != null){
+                    ingrNutritionalInfoView.setNutritionalInformation(nutrInfoGrams, nutrInfoPerc);
+                } else {
+                    Notification.show("Error. Cannot find Nutritional Information.").addThemeVariants(NotificationVariant.LUMO_ERROR);
+                }
+
+                System.out.println("Selected ingredient: "+ selectedIngredient);
+            } else {
+                Notification.show("Please select an amount type.").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            }
+        });
         // Setting form layout
-        Component[] fields = new Component[]{ingredientName, ingredientAmount};
+        Component[] fields = new Component[]{ingredientName, ingredientAmount, ingredientAmountNumberField};
 //        for (Component field : fields) {
 //            ((HasStyle) field).addClassName("");
 //        }
@@ -188,14 +235,38 @@ public class CreateSmoothieView extends Div {
         }
     }
 
-    private void saveIngredientEditorMethod(SmoothieService smoothieService) throws Exception {
+    private void saveIngredientEditorMethod(SmoothieService smoothieService, IngredientService ingredientService) throws Exception {
         if (ingredientGridDiv.getSelectedSmoothie() != null) {
             if (ingredientAmount.getValue() != null) {
-                smoothieService.addIngredient(ingredientGridDiv.getSelectedSmoothie(), ingredientAmount.getValue());
-                Notification.show("Added " + ingredientAmount.getValue().getName()).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                // PROBLEM::
+                //  SAVING the exact same ingredient to the smoothie doesn't change anything due to the set of ingredients within smoothie
+                // POTENTIAL SOLUTION:
+                //  Must detect whether or not the ingredient is already saved in the smoothie and add to it's multiplier
+
+                // Try to save ingredient
+                Ingredient ingredientToSave = new Ingredient(selectedIngredient.getName(), selectedIngredient.getQuantityTypeAndValue(), ingredientAmountNumberField.getValue(), nutrInfoGrams, nutrInfoPerc);
+                Ingredient foundIngredient;
+                if ((foundIngredient = checkIfIngredientExistsInSmoothie(ingredientToSave)) != null) {
+                    // Ingredient does exist in smoothie, updating ingredient that exists in smoothie's multiplier
+                    ingredientService.updateIngredientMultiplier(ingredientGridDiv.getSelectedSmoothie(), foundIngredient, ingredientToSave.getMultiplier());
+                    Notification.show("Added " + ingredientToSave.getName()).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                } else {
+                    // Ingredient doesn't exist in smoothie, simply save ingredient to smoothie
+                    Ingredient ingredientInDb;
+                    if ((ingredientInDb = ingredientService.findIngredient(ingredientToSave.getName(), ingredientToSave.getQuantityTypeAndValue(), ingredientToSave.getMultiplier())) != null){
+                        // Ingredient already exists in database
+                        smoothieService.addIngredient(ingredientGridDiv.getSelectedSmoothie(), ingredientInDb);
+                    } else {
+                        // Ingredient does not exist in database
+                        Ingredient savedIngredient = ingredientService.saveIngredient(ingredientToSave);
+                        smoothieService.addIngredient(ingredientGridDiv.getSelectedSmoothie(), savedIngredient);
+                    }
+                    Notification.show("Added " + ingredientToSave.getName()).addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+                }
+                ingredientGridDiv.refreshGrid(smoothieService);
+                System.out.println("Selected smoothie: " + ingredientGridDiv.getSelectedSmoothie());
                 totalNutrInfoView.setNutritionalInformation(
                         ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoGrams(), ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoPercentage());
-                ingredientGridDiv.refreshGrid();
                 clearForm();
             } else {
                 Notification.show("Error. Please select an ingredient first!").addThemeVariants(NotificationVariant.LUMO_ERROR);
@@ -205,6 +276,14 @@ public class CreateSmoothieView extends Div {
         }
     }
 
+    private Ingredient checkIfIngredientExistsInSmoothie(Ingredient ingredientToSave) {
+        for (Ingredient curIngr : ingredientGridDiv.getSelectedSmoothie().getIngredients()) {
+            if (curIngr.getName().equals(ingredientToSave.getName()) && curIngr.getQuantityTypeAndValue().equals(ingredientToSave.getQuantityTypeAndValue()))
+                return curIngr;
+        }
+        return null;
+    }
+
     private void removeIngredientEditorMethod(SmoothieService smoothieService) throws Exception {
         if (ingredientAmount.getValue() != null) {
             if (ingredientGridDiv.getSelectedSmoothie() != null) {
@@ -212,7 +291,7 @@ public class CreateSmoothieView extends Div {
                 Notification.show(ingredientAmount.getValue().getName() + " removed!");
                 totalNutrInfoView.setNutritionalInformation(
                         ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoGrams(), ingredientGridDiv.getSelectedSmoothie().getTotalNutritionalInfoPercentage());
-                ingredientGridDiv.refreshGrid();
+                ingredientGridDiv.refreshGrid(smoothieService);
                 clearForm();
             } else {
                 Notification.show("Please create/select a smoothie first!").addThemeVariants(NotificationVariant.LUMO_ERROR);
@@ -226,14 +305,20 @@ public class CreateSmoothieView extends Div {
         if (event.getValue() == null) {
             // No ingredient amount selected
             ingrNutritionalInfoView.setVisible(false);
+            selectedIngredient = null;
         } else {
             // Ingredient amount selected
+            ingredientAmountNumberField.setValue(1.0);
+            selectedIngredient = event.getValue();
             ingrNutritionalInfoView.setVisible(true);
-            ingrNutritionalInfoView.setNutritionalInformation(event.getValue().getNutritionalInformationGrams(), event.getValue().getNutritionalInformationPercentage());
-            ingrNutritionalInfoView.setCalories(String.valueOf(event.getValue().getNutritionalInformationGrams().getCalories()));
+            defaultNutrGramsInfo = event.getValue().getNutritionalInformationGrams();
+            defaultNutrPercInfo = event.getValue().getNutritionalInformationPercentage();
+            ingrNutritionalInfoView.setNutritionalInformation(defaultNutrGramsInfo, defaultNutrPercInfo);
+            ingrNutritionalInfoView.setCalories(String.valueOf(defaultNutrGramsInfo.getCalories()));
         }
     }
 
+    // On selection of editor ingredient name -> the ingredient amount types are selected according to ingredient
     private void editorIngrNameChangeListener(IngredientService ingredientService, AbstractField.ComponentValueChangeEvent<ComboBox<String>, String> event) {
         if (event.getValue() == null) {
             // No ingredient selected
@@ -278,7 +363,7 @@ public class CreateSmoothieView extends Div {
 
     private void onIngredientRowSelect(IngredientService ingredientService, AbstractField.ComponentValueChangeEvent<Grid<Ingredient>, Ingredient> event) {
         if (event.getValue() != null) {
-            Optional<Ingredient> ingredientOptional = ingredientService.getIngredient(event.getValue().getId());
+            Optional<Ingredient> ingredientOptional = ingredientService.getIngredient(event.getValue().getId(), event.getValue().getMultiplier());
             if (ingredientOptional.isPresent()) {
                 populateForm(ingredientOptional.get());
                 System.out.println("Selected: " + ingredientOptional.get());

@@ -132,7 +132,7 @@ public class Smoothie {
                     "id=" + id +
                     ", name='" + name + '\'' +
                     ", userEmail=" + user.getEmail() +
-                    ", ingredients=" + ingredients +
+                    ", ingredients=" + getIngredientNames() +
                     ", post=" + post.getTitle() +
                     ", totalNutritionalInfoGrams=" + totalNutritionalInfoGrams +
                     ", totalNutritionalInfoPercentage=" + totalNutritionalInfoPercentage +
@@ -142,7 +142,7 @@ public class Smoothie {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", userEmail=" + user.getEmail() +
-                ", ingredients=" + ingredients +
+                ", ingredients=" + getIngredientNames() +
                 ", totalNutritionalInfoGrams=" + totalNutritionalInfoGrams +
                 ", totalNutritionalInfoPercentage=" + totalNutritionalInfoPercentage +
                 '}';

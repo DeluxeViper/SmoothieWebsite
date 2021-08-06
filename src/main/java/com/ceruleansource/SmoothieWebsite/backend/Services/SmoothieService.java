@@ -50,6 +50,7 @@ public class SmoothieService {
         ingredientSet.add(ingredient);
         smoothie.setIngredients(ingredientSet);
         calcNutriWithAddition(smoothie, ingredient);
+//        System.out.println("Smoothie within add Ingredient: " + smoothie);
         smoothieRepository.save(smoothie);
     }
 
@@ -84,15 +85,15 @@ public class SmoothieService {
 
     /**
      * @param smoothie   - Smoothie to subtract ingredient from
-     * @param ingredient - ingredient to subtract from smoothie
+     * @param ingredient - ingredient nutritional values to subtract from smoothie total nutritional values
      * @throws Exception - exception for two nutriGram values that have different units
      */
     private void calcNutriWithSubtraction(Smoothie smoothie, Ingredient ingredient) throws Exception {
         // Calculate total nutrition
         NutritionalInformationGrams totalGrams = smoothie.getTotalNutritionalInfoGrams();
-        totalGrams.subtractGrams(ingredient.getNutritionalInformationGrams());
+        totalGrams.subtractGrams(ingredient.getNutritionalInformationGrams().multiplyGrams(ingredient.getMultiplier()));
         NutritionalInformationPercentage totalPerc = smoothie.getTotalNutritionalInfoPercentage();
-        totalPerc.subtractPercentage(ingredient.getNutritionalInformationPercentage());
+        totalPerc.subtractPercentage(ingredient.getNutritionalInformationPercentage().multiplyPercentage(ingredient.getMultiplier()));
     }
 
     /**
@@ -108,9 +109,8 @@ public class SmoothieService {
         if (currentUserOptional.isPresent()) {
 //            System.out.println("User is present");
             User currentUser = currentUserOptional.get();
-            System.out.println("SmoothieService: " + currentUser);
             if (!currentUser.getSmoothies().isEmpty()) {
-                System.out.println("SmoothieService: getUserSmoothies: " + currentUser.getSmoothieNames());
+//                System.out.println("SmoothieService: getUserSmoothies: " + currentUser.getSmoothieNames());
                 smoothieSet.addAll(currentUser.getSmoothies());
             }
             //                System.out.println("User does not have any smoothies");

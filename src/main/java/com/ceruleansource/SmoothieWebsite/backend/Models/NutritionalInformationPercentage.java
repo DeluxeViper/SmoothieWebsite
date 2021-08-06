@@ -7,10 +7,10 @@ import javax.persistence.Id;
 
 /**
  * Entity that describes the ingredient's daily percentage values (including vitamins)
- *  - Follows the structure of Nutrition facts obtained from Google's search
+ * - Follows the structure of Nutrition facts obtained from Google's search
  */
 @Entity
-public class NutritionalInformationPercentage {
+public class NutritionalInformationPercentage implements Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -283,7 +283,7 @@ public class NutritionalInformationPercentage {
         this.magnesium = magnesium;
     }
 
-    public void addPercentage(NutritionalInformationPercentage nutrPercentage){
+    public void addPercentage(NutritionalInformationPercentage nutrPercentage) {
         this.totalFat = addPercentageValue(totalFat, nutrPercentage.getTotalFat());
         this.saturatedFat = addPercentageValue(saturatedFat, nutrPercentage.getSaturatedFat());
         this.polyunsaturatedFat = addPercentageValue(polyunsaturatedFat, nutrPercentage.getPolyunsaturatedFat());
@@ -307,7 +307,7 @@ public class NutritionalInformationPercentage {
         this.magnesium = addPercentageValue(magnesium, nutrPercentage.getMagnesium());
     }
 
-    public void subtractPercentage(NutritionalInformationPercentage nutrPercentage){
+    public void subtractPercentage(NutritionalInformationPercentage nutrPercentage) {
         this.totalFat = subtractPercentageValue(totalFat, nutrPercentage.getTotalFat());
         this.saturatedFat = subtractPercentageValue(saturatedFat, nutrPercentage.getSaturatedFat());
         this.polyunsaturatedFat = subtractPercentageValue(polyunsaturatedFat, nutrPercentage.getPolyunsaturatedFat());
@@ -331,16 +331,45 @@ public class NutritionalInformationPercentage {
         this.magnesium = subtractPercentageValue(magnesium, nutrPercentage.getMagnesium());
     }
 
-    public int getInt(String perc){
+    public NutritionalInformationPercentage multiplyPercentage(double multiplier) {
+        this.totalFat = calculatePercentageValue(totalFat, multiplier);
+        this.saturatedFat = calculatePercentageValue(saturatedFat, multiplier);
+        this.polyunsaturatedFat = calculatePercentageValue(saturatedFat, multiplier);
+        this.monounsaturatedFat = calculatePercentageValue(monounsaturatedFat, multiplier);
+        this.transFatRegulation = calculatePercentageValue(transFatRegulation, multiplier);
+        this.cholesterol = calculatePercentageValue(cholesterol, multiplier);
+        this.sodium = calculatePercentageValue(sodium, multiplier);
+        this.potassium = calculatePercentageValue(potassium, multiplier);
+        this.totalCarbohydrates = calculatePercentageValue(totalCarbohydrates, multiplier);
+        this.dietaryFiber = calculatePercentageValue(dietaryFiber, multiplier);
+        this.sugars = calculatePercentageValue(sugars, multiplier);
+        this.protein = calculatePercentageValue(protein, multiplier);
+        this.caffeine = calculatePercentageValue(caffeine, multiplier);
+        this.vitaminA = calculatePercentageValue(vitaminA, multiplier);
+        this.vitaminC = calculatePercentageValue(vitaminC, multiplier);
+        this.calcium = calculatePercentageValue(calcium, multiplier);
+        this.iron = calculatePercentageValue(iron, multiplier);
+        this.vitaminD = calculatePercentageValue(vitaminD, multiplier);
+        this.vitaminB6 = calculatePercentageValue(vitaminB6, multiplier);
+        this.cobalamin = calculatePercentageValue(cobalamin, multiplier);
+        this.magnesium = calculatePercentageValue(magnesium, multiplier);
+        return this;
+    }
+
+    public int getInt(String perc) {
         return Integer.parseInt(perc.split("%")[0]);
     }
 
-    public String addPercentageValue(String perc1, String perc2){
-        return (Integer.parseInt(perc1.split("%")[0]) + Integer.parseInt(perc2.split("%")[0])) + "%";
+    public String calculatePercentageValue(String perc, double multiplier) {
+        return ((int)(getInt(perc) * multiplier)) + "%";
     }
 
-    public String subtractPercentageValue(String perc1, String perc2){
-        return (Integer.parseInt(perc1.split("%")[0]) - Integer.parseInt(perc2.split("%")[0])) + "%";
+    public String addPercentageValue(String perc1, String perc2) {
+        return (getInt(perc1) + getInt(perc2))+ "%";
+    }
+
+    public String subtractPercentageValue(String perc1, String perc2) {
+        return (getInt(perc1) - getInt(perc2)) + "%";
     }
 
     @Override
@@ -369,5 +398,10 @@ public class NutritionalInformationPercentage {
                 ", cobalamin=" + cobalamin +
                 ", magnesium=" + magnesium +
                 '}';
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

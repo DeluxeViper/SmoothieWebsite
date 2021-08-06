@@ -15,6 +15,8 @@ public class Ingredient {
 
     private String quantityTypeAndValue;
 
+    private double multiplier;
+
     @OneToOne
     private NutritionalInformationGrams nutritionalInformationGrams;
 
@@ -27,12 +29,21 @@ public class Ingredient {
     public Ingredient(){
     }
 
-    public Ingredient(Long id, String name, String quantityTypeAndValue, NutritionalInformationGrams nutritionalInformationGrams, NutritionalInformationPercentage nutritionalInformationPercentage) {
+    public Ingredient(String name, String quantityTypeAndValue, double multiplier, NutritionalInformationGrams nutritionalInformationGrams, NutritionalInformationPercentage nutritionalInformationPercentage) {
+        this.name = name;
+        this.quantityTypeAndValue = quantityTypeAndValue;
+        this.nutritionalInformationGrams = nutritionalInformationGrams;
+        this.nutritionalInformationPercentage = nutritionalInformationPercentage;
+        this.multiplier = multiplier;
+    }
+
+    public Ingredient(Long id, String name, String quantityTypeAndValue, double multiplier, NutritionalInformationGrams nutritionalInformationGrams, NutritionalInformationPercentage nutritionalInformationPercentage) {
         this.id = id;
         this.name = name;
         this.quantityTypeAndValue = quantityTypeAndValue;
         this.nutritionalInformationGrams = nutritionalInformationGrams;
         this.nutritionalInformationPercentage = nutritionalInformationPercentage;
+        this.multiplier = multiplier;
     }
 
     public Long getId() {
@@ -57,6 +68,14 @@ public class Ingredient {
 
     public void setQuantityTypeAndValue(String quantityTypeAndValue) {
         this.quantityTypeAndValue = quantityTypeAndValue;
+    }
+
+    public double getMultiplier() {
+        return multiplier;
+    }
+
+    public void setMultiplier(double multiplier) {
+        this.multiplier = multiplier;
     }
 
     public NutritionalInformationGrams getNutritionalInformationGrams() {
@@ -89,6 +108,7 @@ public class Ingredient {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", quantityTypeAndValue='" + quantityTypeAndValue + '\'' +
+                ", multiplier=" + multiplier +
                 ", nutritionalInformationGrams=" + nutritionalInformationGrams +
                 ", nutritionalInformationPercentage=" + nutritionalInformationPercentage +
                 '}';

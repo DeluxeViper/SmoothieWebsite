@@ -4,13 +4,14 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.text.DecimalFormat;
 
 /**
  * Entity that describes ingredients nutrition facts in grams/milligrams
  *  - Follows the structure of Nutrition facts obtained from Google's search
  */
 @Entity
-public class NutritionalInformationGrams {
+public class NutritionalInformationGrams implements Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -233,8 +234,39 @@ public class NutritionalInformationGrams {
         this.protein = subtractGramValue(protein, nutrGram.getProtein());
         this.caffeine = subtractGramValue(caffeine, nutrGram.getCaffeine());
     }
-    
-    public String addGramValue(String gram1, String gram2) throws Exception {
+
+    public NutritionalInformationGrams multiplyGrams(double multiplier) throws Exception {
+        this.calories = (int) (calories *multiplier);
+        this.totalFat = multiplyGramValue(totalFat, multiplier);
+        this.saturatedFat = multiplyGramValue(saturatedFat, multiplier);
+        this.polyunsaturatedFat = multiplyGramValue(saturatedFat, multiplier);
+        this.monounsaturatedFat = multiplyGramValue(monounsaturatedFat, multiplier);
+        this.transFatRegulation = multiplyGramValue(transFatRegulation, multiplier);
+        this.cholesterol = multiplyGramValue(cholesterol, multiplier);
+        this.sodium = multiplyGramValue(sodium, multiplier);
+        this.potassium = multiplyGramValue(potassium, multiplier);
+        this.totalCarbohydrates = multiplyGramValue(totalCarbohydrates, multiplier);
+        this.dietaryFiber = multiplyGramValue(dietaryFiber, multiplier);
+        this.sugars = multiplyGramValue(sugars, multiplier);
+        this.protein = multiplyGramValue(protein, multiplier);
+        this.caffeine = multiplyGramValue(caffeine, multiplier);
+        return this;
+    }
+
+    // The following 3 methods are required due to the gram value being in a string format
+    // ie. 5 mg
+    private String multiplyGramValue(String gram, double multiplier) throws Exception{
+        String [] gramSplit = gram.split(" ");
+        if (gramSplit.length > 2){
+            throw new Exception("Error, incorrect gram formatting for applying multiplier: " + gram);
+        }
+        DecimalFormat twoDecimalPlacesFormat = new DecimalFormat("#.##");
+        double newDoubleValue = Double.parseDouble(gramSplit[0])*multiplier;
+//        System.out.println("Multiplying: " + gram + " by " + multiplier + " = " + twoDecimalPlacesFormat.format(newDoubleValue) + " " + gramSplit[1]);
+        return Double.valueOf(twoDecimalPlacesFormat.format(newDoubleValue)) + " " + gramSplit[1];
+    }
+
+    private String addGramValue(String gram1, String gram2) throws Exception {
 //        System.out.println("Adding: " + gram1 + " and " + gram2);
         String [] gram1s = gram1.split(" ");
         String [] gram2s = gram2.split(" ");
@@ -244,7 +276,7 @@ public class NutritionalInformationGrams {
         return Math.round((Double.parseDouble(gram1s[0]) + Double.parseDouble(gram2s[0])) * 100)/ 100.0 + " " + gram1s[1];
     }
 
-    public String subtractGramValue(String gram1, String gram2) throws Exception {
+    private String subtractGramValue(String gram1, String gram2) throws Exception {
         String [] gram1s = gram1.split(" ");
         String [] gram2s = gram2.split(" ");
         if (!gram1s[1].equals(gram2s[1])) {
@@ -272,5 +304,10 @@ public class NutritionalInformationGrams {
                 ", protein=" + protein +
                 ", caffeine=" + caffeine +
                 '}';
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

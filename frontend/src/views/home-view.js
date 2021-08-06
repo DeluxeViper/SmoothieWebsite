@@ -14,7 +14,7 @@ class HomeView extends PolymerElement {
                 }
             </style>
 <div draggable="true" vaadin-dnd-layout-item="true" style="text-align: center; width: 100%; margin: auto; background-image: url(&quot;https://cdn.pixabay.com/photo/2016/03/10/18/44/top-view-1248949_960_720.jpg&quot;); background-repeat: no-repeat; background-size: cover; -webkit-clip-path: polygon(50% 100%, 100% 80%, 100% 0, 0 0, 0 80%); height: 1000px; z-index: 3; position: relative;" id="welcomeDiv">
- <h1 style="font-family: &quot;Times New Roman&quot;, Times, serif; margin-top: 0px; font-size: 80px; padding-right: var(--lumo-space-xl); padding-left: var(--lumo-space-xl); color: white; text-shadow: 8px 8px 70px black; display: flex; justify-content: center; align-items: center; text-align: center; height: 800px;">Welcome to Smoothie Makers Club!</h1>
+ <h1 style="font-family: &quot;Times New Roman&quot;, Times, serif; margin-top: 0px; font-size: 80px; padding-right: var(--lumo-space-xl); padding-left: var(--lumo-space-xl); color: white; text-shadow: 8px 8px 70px black; display: flex; justify-content: center; align-items: center; text-align: center; height: 800px;">Welcome to the Smoothie Maker's Club!</h1>
 </div>
 <div style="z-index = 100; width: 5px; height: 80px; background: rgb(46, 70, 57); margin: auto; z-index: inherit; position: relative; z-index: 6; margin-top: -25px;"></div>
 <div style="justify-content: center; height: 1200px; background-image: url(&quot;https://cdn.pixabay.com/photo/2017/07/07/12/31/lime-2481346_1280.jpg&quot;); background-size: cover; z-index:1; margin-top: -260px; position: relative; -webkit-clip-path: polygon(0 0, 100% 0, 100% 100%, 0 80%);">

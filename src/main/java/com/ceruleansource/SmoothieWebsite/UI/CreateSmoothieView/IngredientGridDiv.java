@@ -2,6 +2,8 @@ package com.ceruleansource.SmoothieWebsite.UI.CreateSmoothieView;
 
 import com.ceruleansource.SmoothieWebsite.backend.Authentication.UserSession;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Ingredient;
+import com.ceruleansource.SmoothieWebsite.backend.Models.NutritionalInformationGrams;
+import com.ceruleansource.SmoothieWebsite.backend.Models.NutritionalInformationPercentage;
 import com.ceruleansource.SmoothieWebsite.backend.Models.Smoothie;
 import com.ceruleansource.SmoothieWebsite.backend.Services.SmoothieService;
 import com.ceruleansource.SmoothieWebsite.UI.NutritionalInfoView;
@@ -17,6 +19,8 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,12 +99,22 @@ public class IngredientGridDiv extends Div {
 
     private void initializeIngredientGrid() {
         // Configure Grid
+        int multiplier = 1;
         ingredientGrid.addColumn(Ingredient::getName)
                 .setHeader("Name").setAutoWidth(true)
                 .setSortable(true);
         ingredientGrid.addColumn(Ingredient::getQuantityTypeAndValue)
                 .setHeader("Amount").setAutoWidth(true);
-        ingredientGrid.addComponentColumn(this::getViewNutrFactsButton).setHeader("Nutritional Info");
+        ingredientGrid.addColumn(Ingredient::getMultiplier).setHeader("Multiplier").setAutoWidth(true);
+        ingredientGrid.addComponentColumn(ingredient -> {
+            try {
+                return getViewNutrFactsButton(ingredient);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Notification.show("Error. Could not retrieve Nutrition Facts View.").addThemeVariants(NotificationVariant.LUMO_ERROR);
+            return null;
+        }).setHeader("Nutritional Info");
         ingredientGrid.setHeightByRows(true);
 
         // Initialize ingredient grid items
@@ -109,14 +123,28 @@ public class IngredientGridDiv extends Div {
         ingredientGrid.setHeightFull();
     }
 
-    private Button getViewNutrFactsButton(Ingredient ingredient) {
+    /**
+     * This method introduces a tooltip which contains the nutritional information table for the specific ingredient row
+     * within the smoothie ingredients grid
+     *
+     * @param ingredient - ingredient to retrieve nutritional facts for
+     * @return
+     * @throws Exception
+     */
+    private Button getViewNutrFactsButton(Ingredient ingredient) throws Exception {
         Button viewFactsBtn = new Button(VaadinIcon.EYE.create());
         viewFactsBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
         Tooltip tooltip = new Tooltip();
         tooltip.setThemeName("light");
         tooltip.setAlignment(TooltipAlignment.CENTER);
         NutritionalInfoView nutritionalInfoView = new NutritionalInfoView();
-        nutritionalInfoView.setNutritionalInformation(ingredient.getNutritionalInformationGrams(), ingredient.getNutritionalInformationPercentage());
+
+        // Multiply nutriInfo
+        NutritionalInformationGrams nutritionalInformationGrams = ingredient.getNutritionalInformationGrams().multiplyGrams(ingredient.getMultiplier());
+        NutritionalInformationPercentage nutritionalInformationPercentage = ingredient.getNutritionalInformationPercentage().multiplyPercentage(ingredient.getMultiplier());
+
+        nutritionalInfoView.setNutritionalInformation(nutritionalInformationGrams, nutritionalInformationPercentage);
+
         tooltip.add(nutritionalInfoView);
         tooltip.setCloseButtonVisible(true);
         add(tooltip);
@@ -124,9 +152,11 @@ public class IngredientGridDiv extends Div {
         return viewFactsBtn;
     }
 
-    public void refreshGrid() {
+    public void refreshGrid(SmoothieService smoothieService) {
         ingredientGrid.select(null);
         if (selectedSmoothie != null) {
+            // Refreshing smoothie (for possible multiplier change in ingredients which need an ingredients refresh)
+            selectedSmoothie = smoothieService.getSmoothie(selectedSmoothie.getId());
             ingredientGrid.setItems(selectedSmoothie.getIngredients());
         } else {
             ingredientGrid.setItems();
