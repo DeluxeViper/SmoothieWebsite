@@ -11,6 +11,15 @@
 
 }
 
+#delete-smoothie-btn {
+    margin-left: 2rem;
+}
+
+#create-smoothie-btn {
+    margin-left: 2rem;
+    margin-top: 2.3rem;
+}
+
 :host {
     display: flex;
     height: 100%;

@@ -123,7 +123,7 @@ public class MainView extends AppLayout implements AfterNavigationObserver {
         tabs.add(createTab(VaadinIcon.USERS, "Forum", ForumView.class));
 
         // About Tab
-        tabs.add(createTab(VaadinIcon.INFO, "About", AboutView.class));
+//        tabs.add(createTab(VaadinIcon.INFO, "About", AboutView.class));
 
         tabs.add(createTab(VaadinIcon.CUTLERY, "My Smoothies", MySmoothiesView.class));
 

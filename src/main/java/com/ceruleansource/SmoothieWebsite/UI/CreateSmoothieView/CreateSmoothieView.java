@@ -212,6 +212,7 @@ public class CreateSmoothieView extends Div {
         deleteSmoothieBtn = new Button("Delete Smoothie");
         deleteSmoothieBtn.addThemeVariants(ButtonVariant.LUMO_ERROR);
         deleteSmoothieBtn.setVisible(false);
+        deleteSmoothieBtn.setId("delete-smoothie-btn");
         deleteSmoothieBtn.addClickListener(event -> deleteSmoothieButtonOnClick(userSession, smoothieService));
 
         // Automatically selecting first smoothie available on arriving to CreateSmoothieView page

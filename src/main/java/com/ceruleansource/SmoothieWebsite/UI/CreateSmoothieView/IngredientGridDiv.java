@@ -79,6 +79,7 @@ public class IngredientGridDiv extends Div {
         initSmoothieCreateDialog(userSession, smoothieService);
 
         Button createSmoothieBtn = new Button("Create Smoothie");
+        createSmoothieBtn.setId("create-smoothie-btn");
         createSmoothieBtn.addClickListener(e -> smoothieDialog.open());
 
         hLayout.add(userSmoothies, createSmoothieBtn);
