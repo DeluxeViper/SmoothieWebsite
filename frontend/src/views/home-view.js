@@ -32,14 +32,12 @@ class HomeView extends PolymerElement {
  </vaadin-vertical-layout>
 </div>
 <div style="height: 1000px; background-image: url(&quot;https://cdn.pixabay.com/photo/2015/09/06/01/00/surfing-926822_1280.jpg&quot;); background-repeat: no-repeat; background-size: cover; margin-top: -300px; position: relative; z-index = -1; image-rendering: auto; width: 100%; background-position: center; text-shadow: 8px 8px 70px black;">
- <h1 style="font-weight: 900; text-align: center; width: 100%; font-size: 50px; padding-top: 300px; position: relative; z-index: 5;">Calculate A Workout Plan.</h1>
- <h3 style="margin-top: 50px; font-weight: 300; text-align: center; align-self: center; position: relative; z-index: 5;">Get your AUTO-GENERATED calorie workout plan after creating your smoothie!</h3>
+ <h1 style="font-weight: 900; text-align: center; width: 100%; font-size: 50px; padding-top: 300px; position: relative; z-index: 5; color: #213041;">Calculate A Workout Plan.</h1>
+ <h3 style="margin-top: 50px; font-weight: 300; text-align: center; align-self: center; position: relative; z-index: 5; color: #213041;">Get your AUTO-GENERATED calorie workout plan after creating your smoothie!</h3>
 </div>
-<div id="panel2" style="height: 1000px; background-image: url(&quot;https://cdn.pixabay.com/photo/2018/08/21/23/29/fog-3622519_1280.jpg&quot;); background-size: cover; background-position: center; -webkit-clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%); margin-top: -180px; position: relative; z-index: 10;">
- <h2 style="font-weight: 900; text-align: center; width: 100%; font-size: 50px; position: relative; z-index: 5; padding-top: 200px;">Get Together and Start Engaging </h2>
-</div>
-<div style="height: 1000px; margin: var(--lumo-space-xl);">
- <h2 style="font-weight: 900; text-align: center; margin: auto;">About Us</h2>
+<div id="panel2" style="height: 1000px; background-image: url(&quot;https://images.unsplash.com/photo-1461354464878-ad92f492a5a0?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1650&amp;q=80&quot;); background-size: cover; background-position: center; -webkit-clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%); margin-top: -200px; position: relative; z-index: 10;">
+ <h2 style="font-weight: 900; text-align: center; width: 100%; font-size: 50px; position: relative; z-index: 5; padding-top: 300px; text-shadow: 10px 10px 100px black; color: #e1e1e1;">Get Together and Start Engaging </h2>
+ <h3 style="margin-top: 50px; font-weight: 300; text-align: center; align-self: center; position: relative; z-index: 5; color: white;">Share your smoothies with others!</h3>
 </div>
 `;
     }
