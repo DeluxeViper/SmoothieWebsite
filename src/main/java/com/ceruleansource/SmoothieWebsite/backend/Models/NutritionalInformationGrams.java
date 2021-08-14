@@ -257,11 +257,15 @@ public class NutritionalInformationGrams implements Cloneable {
     // ie. 5 mg
     private String multiplyGramValue(String gram, double multiplier) throws Exception{
         String [] gramSplit = gram.split(" ");
-        if (gramSplit.length > 2){
-            throw new Exception("Error, incorrect gram formatting for applying multiplier: " + gram);
-        }
         DecimalFormat twoDecimalPlacesFormat = new DecimalFormat("#.##");
         double newDoubleValue = Double.parseDouble(gramSplit[0])*multiplier;
+        if (gramSplit.length > 2){
+            throw new Exception("Error, incorrect gram formatting for applying multiplier: " + gram);
+        } else if (gramSplit.length == 1 && gramSplit[0].equals("0")){
+            // Some protein values within the nutritional gram table don't have a unit, and start at 0
+            //      so i'm adding a unit manually to prevent Array out of bounds.
+            return Double.valueOf(twoDecimalPlacesFormat.format(newDoubleValue)) + " g";
+        }
 //        System.out.println("Multiplying: " + gram + " by " + multiplier + " = " + twoDecimalPlacesFormat.format(newDoubleValue) + " " + gramSplit[1]);
         return Double.valueOf(twoDecimalPlacesFormat.format(newDoubleValue)) + " " + gramSplit[1];
     }
@@ -271,7 +275,15 @@ public class NutritionalInformationGrams implements Cloneable {
         String [] gram1s = gram1.split(" ");
         String [] gram2s = gram2.split(" ");
         if (!gram1s[1].equals(gram2s[1])) {
-            throw new Exception("Error adding gram values. Not in equal measurements: " + gram1s[1] + " and " + gram2s[1]);
+            if (gram1s[1].equals("g") && gram2s[1].equals("mg")) {
+                // Converting the second gram value (which is in mg) to g before adding the gram values
+                return Math.round((Double.parseDouble(gram1s[0]) + Double.parseDouble(gram2s[0])/1000) * 100)/ 100.0 + " g";
+            } else if (gram1s[1].equals("mg") && gram2s[1].equals("g")) {
+                // Converting the first gram value (which is in mg) to g before adding the gram values
+                return Math.round((Double.parseDouble(gram1s[0])/1000 + Double.parseDouble(gram2s[0])) * 100) / 100.0 + " g";
+            } else {
+                throw new Exception("Error adding gram values. Cannot compute. Not in equal measurements: " + gram1s[1] + " and " + gram2s[1]);
+            }
         }
         return Math.round((Double.parseDouble(gram1s[0]) + Double.parseDouble(gram2s[0])) * 100)/ 100.0 + " " + gram1s[1];
     }
@@ -280,7 +292,15 @@ public class NutritionalInformationGrams implements Cloneable {
         String [] gram1s = gram1.split(" ");
         String [] gram2s = gram2.split(" ");
         if (!gram1s[1].equals(gram2s[1])) {
-            throw new Exception("Error adding gram values. Not in equal measurements: " + gram1s[1] + " and " + gram2s[1]);
+            if (gram1s[1].equals("g") && gram2s[1].equals("mg")) {
+                // Converting the second gram value (which is in mg) to g before adding the gram values
+                return Math.round((Double.parseDouble(gram1s[0]) - Double.parseDouble(gram2s[0])/1000) * 100)/ 100.0 + " g";
+            } else if (gram1s[1].equals("mg") && gram2s[1].equals("g")) {
+                // Converting the first gram value (which is in mg) to g before adding the gram values
+                return Math.round((Double.parseDouble(gram1s[0])/1000 - Double.parseDouble(gram2s[0])) * 100) / 100.0 + " g";
+            } else {
+                throw new Exception("Error subtracting gram values. Cannot compute. Not in equal measurements: " + gram1s[1] + " and " + gram2s[1]);
+            }
         }
         return Math.round((Double.parseDouble(gram1s[0]) - Double.parseDouble(gram2s[0])) * 100)/ 100.0 + " " + gram1s[1];
     }
