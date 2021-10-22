@@ -64,4 +64,11 @@ public class PostService {
         return new Image(sr, "post-picture");
     }
 
+    @Transactional
+    public Post getPost(Long postId) {
+        Optional<Post> post = postRepository.findById(postId);
+
+        return post.orElse(null);
+    }
+
 }

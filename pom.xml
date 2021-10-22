@@ -163,7 +163,7 @@
                 <spring.profiles.active>
                     prod
                 </spring.profiles.active>
-                <vaadin.productionMode>true</vaadin.productionMode>
+                <vaadin.productionMode>false</vaadin.productionMode>
             </properties>
 
             <dependencies>
