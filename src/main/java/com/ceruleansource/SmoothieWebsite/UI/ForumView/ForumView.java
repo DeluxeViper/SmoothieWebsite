@@ -54,9 +54,7 @@ public class ForumView extends Div {
         searchPostsField.setPlaceholder("Filter by smoothie name...");
         searchPostsField.setClearButtonVisible(true);
         searchPostsField.setValueChangeMode(ValueChangeMode.EAGER);
-        searchPostsField.addValueChangeListener(e -> {
-            // TODO: Figure out how to dynamically change items within FlexibleGridLayout
-        });
+
         postsGrid = new PaginatedGrid<>();
         postsGrid.addColumn(Post::getTitle).setHeader("Post Name").setAutoWidth(true);
         postsGrid.addColumn(Post::getDescription).setHeader("Description").setAutoWidth(true);
@@ -100,7 +98,7 @@ public class ForumView extends Div {
             }
         });
 
-        List<SmoothiePostCard> postCards = populateSmoothiePostCards(postService);
+        List<SmoothiePostCard> postCards = populateSmoothiePostCards(postService, null);
         gridLayout = new FlexibleGridLayout()
 //                .withAutoFlow(GridLayoutComponent.AutoFlow.toAutoFlow("row | column | row dense | column dense"))
                 .withColumns(Repeat.RepeatMode.AUTO_FILL, new MinMax(new Length("500px"), new Flex(1)))
@@ -113,16 +111,32 @@ public class ForumView extends Div {
                 .withAutoFlow(GridLayoutComponent.AutoFlow.ROW_DENSE)
                 .withOverflow(GridLayoutComponent.Overflow.AUTO);
         gridLayout.setSizeFull();
+
+        searchPostsField.addValueChangeListener(e -> {
+            gridLayout.removeAll();
+            List<SmoothiePostCard> smoothiePostCards = populateSmoothiePostCards(postService, e.getValue());
+            gridLayout.withItems(smoothiePostCards.toArray(new Component[0]));
+        });
         setSizeFull();
         add(searchPostsField, gridLayout);
     }
 
-    private List<SmoothiePostCard> populateSmoothiePostCards(PostService postService) {
-        Set<Post> postsList = new HashSet<>(postService.retrieveAllPosts());
-        List<SmoothiePostCard> postCards = new ArrayList<>();
-        for (Post post : postsList) {
-            postCards.add(new SmoothiePostCard(post));
+    private List<SmoothiePostCard> populateSmoothiePostCards(PostService postService, String filter) {
+        List<SmoothiePostCard> postCards;
+        if (filter == null) {
+            Set<Post> postsList = new HashSet<>(postService.retrieveAllPosts());
+            postCards = new ArrayList<>();
+            for (Post post : postsList) {
+                postCards.add(new SmoothiePostCard(post));
+            }
+        } else {
+            List<Post> postsList = new ArrayList<>(postService.getPostsByFilter(filter));
+            postCards = new ArrayList<>();
+            for (Post post : postsList) {
+                postCards.add(new SmoothiePostCard(post));
+            }
         }
+
         return postCards;
     }
 }

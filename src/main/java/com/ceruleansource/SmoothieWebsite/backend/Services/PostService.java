@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class PostService {
@@ -69,6 +67,13 @@ public class PostService {
         Optional<Post> post = postRepository.findById(postId);
 
         return post.orElse(null);
+    }
+
+    @Transactional
+    public ArrayList<Post> getPostsByFilter(String filter) {
+        Optional<ArrayList<Post>> posts = postRepository.findAllByTitleContaining(filter);
+
+        return posts.orElse(null);
     }
 
 }
