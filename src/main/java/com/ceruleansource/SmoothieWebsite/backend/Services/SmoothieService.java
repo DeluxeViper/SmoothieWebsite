@@ -61,10 +61,13 @@ public class SmoothieService {
      */
     private void calcNutriWithAddition(Smoothie smoothie, Ingredient ingredient) throws Exception {
         // Calculate total nutrition
+        System.out.println("Calculate nutrition with addition: ");
+        System.out.println("Smoothie: " + smoothie);
+        System.out.println("Ingredient: " + ingredient);
         NutritionalInformationGrams totalGrams = smoothie.getTotalNutritionalInfoGrams();
-        totalGrams.addGrams(ingredient.getNutritionalInformationGrams());
+        totalGrams.addGrams(ingredient.getNutritionalInformationGrams().multiplyGrams(ingredient.getMultiplier()));
         NutritionalInformationPercentage totalPerc = smoothie.getTotalNutritionalInfoPercentage();
-        totalPerc.addPercentage(ingredient.getNutritionalInformationPercentage());
+        totalPerc.addPercentage(ingredient.getNutritionalInformationPercentage().multiplyPercentage(ingredient.getMultiplier()));
     }
 
     /**
@@ -96,6 +99,25 @@ public class SmoothieService {
         totalPerc.subtractPercentage(ingredient.getNutritionalInformationPercentage().multiplyPercentage(ingredient.getMultiplier()));
     }
 
+    public void recalculateTotalNutrition(Smoothie smoothie) {
+        // Calculate total nutrition
+        NutritionalInformationGrams totalGrams = new NutritionalInformationGrams();
+        NutritionalInformationPercentage totalPerc = new NutritionalInformationPercentage();
+        Set<Ingredient> smoothieIngredients = smoothie.getIngredients();
+
+        for (Ingredient ingr : smoothieIngredients) {
+//            totalGrams.addGrams(ingr.getNutritionalInformationGrams().multiplyGrams());
+        }
+
+    }
+
+    public void addToTotalNutritionValue(Smoothie smoothie, Ingredient ingredient, double multiplier) throws Exception {
+        NutritionalInformationGrams totalGrams = smoothie.getTotalNutritionalInfoGrams();
+        totalGrams.addGrams(ingredient.getNutritionalInformationGrams().multiplyGrams(multiplier));
+        NutritionalInformationPercentage totalPerc = smoothie.getTotalNutritionalInfoPercentage();
+        totalPerc.addPercentage(ingredient.getNutritionalInformationPercentage().multiplyPercentage(multiplier));
+        smoothieRepository.save(smoothie);
+    }
     /**
      * GET: Smoothies in current user
      *

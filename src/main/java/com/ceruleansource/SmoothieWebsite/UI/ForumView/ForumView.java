@@ -12,6 +12,7 @@ import com.github.appreciated.layout.FlexibleGridLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.page.ExtendedClientDetails;
 import com.vaadin.flow.component.page.Page;
@@ -48,13 +49,13 @@ public class ForumView extends Div {
      */
     @Autowired
     public ForumView(PostService postService) {
-        H2 title = new H2("Forum View");
-        title.getStyle().set("margin", "15px");
+        H1 title = new H1("Public Forum");
+        title.setId("title");
 
         searchPostsField.setPlaceholder("Filter by smoothie name...");
         searchPostsField.setClearButtonVisible(true);
         searchPostsField.setValueChangeMode(ValueChangeMode.EAGER);
-
+        searchPostsField.setId("search-field");
         postsGrid = new PaginatedGrid<>();
         postsGrid.addColumn(Post::getTitle).setHeader("Post Name").setAutoWidth(true);
         postsGrid.addColumn(Post::getDescription).setHeader("Description").setAutoWidth(true);
@@ -118,7 +119,7 @@ public class ForumView extends Div {
             gridLayout.withItems(smoothiePostCards.toArray(new Component[0]));
         });
         setSizeFull();
-        add(searchPostsField, gridLayout);
+        add(title, searchPostsField, gridLayout);
     }
 
     private List<SmoothiePostCard> populateSmoothiePostCards(PostService postService, String filter) {

@@ -1,5 +1,4 @@
 #post-image {
-    margin: 10rem;
 }
 
 #h-layout {
@@ -13,4 +12,13 @@
 }
 
 #post-view {
+}
+
+#search-field {
+    margin: 2rem;
+    width: 300px !important;
+}
+
+#title {
+    margin: 2rem;
 }
