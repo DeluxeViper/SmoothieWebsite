@@ -12,6 +12,7 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.StreamResource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.print.attribute.standard.PageRanges;
 import java.io.ByteArrayInputStream;
 
 @PageTitle("Post View")
@@ -27,6 +28,7 @@ public class PostView extends Div implements HasUrlParameter<Long>, AfterNavigat
     H1 pageTitle;
     H3 postTitle;
     Span postDescription;
+    Paragraph postDate;
 
     Image postImage;
     NutritionalInfoView nutritionalInfoView;
@@ -41,13 +43,15 @@ public class PostView extends Div implements HasUrlParameter<Long>, AfterNavigat
         postTitle = new H3("Post Title");
         postDescription = new Span("Post description");
         postImage = new Image();
-        postImage.setId("post-image");
+        postImage.setId("post-view-image");
+        postDate = new Paragraph("Date posted:");
         nutritionalInfoView = new NutritionalInfoView();
         nutritionalInfoView.setId("nutr-info-view");
 
-        VerticalLayout verticalLayout = new VerticalLayout(pageTitle, postTitle, postDescription, nutritionalInfoView);
+        VerticalLayout verticalLayout = new VerticalLayout(pageTitle, postTitle, postDescription, postDate, nutritionalInfoView);
         verticalLayout.setId("v-layout");
         HorizontalLayout horizontalLayout = new HorizontalLayout(verticalLayout, postImage);
+        horizontalLayout.getStyle().set("align-items", "center");
         horizontalLayout.setId("h-layout");
         System.out.println(post);
         add(horizontalLayout);
@@ -76,6 +80,8 @@ public class PostView extends Div implements HasUrlParameter<Long>, AfterNavigat
 
             postDescription.setText(post.getDescription());
             nutritionalInfoView.setNutritionalInformation(post.getSmoothie().getTotalNutritionalInfoGrams(), post.getSmoothie().getTotalNutritionalInfoPercentage());
+
+            postDate.setText("Date Posted: " + post.getDateTime().toLocalDate().toString());
         }
     }
 }

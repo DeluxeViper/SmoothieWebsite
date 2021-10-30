@@ -1,4 +1,8 @@
-#post-image {
+#post-view-image {
+    padding: 2rem;
+    padding-right: 3rem;
+    width: 100%;
+    height: 100%;
 }
 
 #h-layout {

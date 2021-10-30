@@ -25,6 +25,7 @@ import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.AfterNavigationEvent;
 import com.vaadin.flow.router.AfterNavigationObserver;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.PWA;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,10 +39,12 @@ import java.util.Optional;
  */
 //@Tag("main-view")
 //@JsModule("./src/views/main-view.js")
-//@PWA(name = "Smoothie Website Application",
-//        shortName = "Smoothie Web",
-//        startPath = "home",
-//        description = "This is a smoothie website application.")
+@PWA(name = "Smoothie Makers Web Application",
+        shortName = "SmoothieMakersWebsite",
+        startPath = "home",
+        description = "This is where smoothie makers make their smoothies.",
+        enableInstallPrompt = true
+)
 @JsModule("./src/views/prefers-color-scheme.js")
 @CssImport("./src/styles/views/main/main-view.css")
 public class MainView extends AppLayout implements AfterNavigationObserver {

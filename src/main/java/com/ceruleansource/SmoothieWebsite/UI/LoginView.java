@@ -6,6 +6,8 @@ import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.login.LoginForm;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.router.BeforeEnterEvent;
@@ -39,7 +41,9 @@ public class LoginView extends VerticalLayout
         loginForm.setAction("login");
         add(title, loginForm, registerButton);
         setAlignItems(Alignment.CENTER);
-
+        loginForm.addForgotPasswordListener(forgotPasswordEvent -> {
+            Notification.show("Feature yet to be implemented.").addThemeVariants(NotificationVariant.LUMO_CONTRAST);
+        });
         registerButton.addClickListener(e -> {
             registerButton.getUI().ifPresent(ui -> ui.navigate("register"));
         });

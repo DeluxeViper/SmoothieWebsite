@@ -5,4 +5,4 @@ function apply() {
 }
 
 mm.addListener(apply);
-apply();
+// apply();

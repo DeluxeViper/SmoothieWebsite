@@ -38,7 +38,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http.antMatcher("/**")
                 // Authorize requests
                 .authorizeRequests()
-                .antMatchers("/home", "/", "/forum").permitAll()
+                .antMatchers("/home", "/", "/forum", "/post-view**", "/post-view/**", "/post-view*", "/post-view/*", "/post-view").permitAll()
                 // Allow all flow internal requests
                 .requestMatchers(SecurityUtils::isFrameworkInternalRequest).permitAll()
                 // Allow all requests by logged in users
@@ -67,6 +67,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 "/manifest.webmanifest",
                 "/sw.js",
                 "/offline-page.html",
+                "/images/**",
 
                 // (development mode) static resources //
                 "/frontend/**",
