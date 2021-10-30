@@ -24,17 +24,17 @@ http://smoothiemakerswebsite-env.eba-m6qvhd3n.us-east-2.elasticbeanstalk.com/hom
   <img src="/HomePage.png" width="700"/>
 </kbd>
 
-### Registering Account
+### Register Your Account
 <kbd>
   <img src="/RegisterPage.png" width="700"/>
 </kbd>
 
-### Logging In
+### Log In
 <kbd>
 <img src="/LoginPage.png" width="700"/>
 </kbd>
 
-### Adding a Smoothie and its Ingredients
+### Add a Smoothie and Ingredients
 <kbd>
   <img src="/CreateYourOwnSmoothiePage.png" width="700"/>
 </kbd>
@@ -44,12 +44,12 @@ http://smoothiemakerswebsite-env.eba-m6qvhd3n.us-east-2.elasticbeanstalk.com/hom
   <img src="/YourSavedRecipes.png" width="700"/>
 </kbd>
 
-### Sharing your smoothie - Creating a smoothie post
+### Share your smoothie - Create a smoothie post
 <kbd>
 <img src="/CreateYourOwnSmoothiePost.png" width="700"/>
 </kbd>
 
-### Checking out smoothies made from others
+### Check out smoothies made from others
 <kbd>
   <img src="/PublicForumPage.png" width="700"/>
 </kbd>
