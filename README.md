@@ -1,6 +1,6 @@
-# Smoothie Makers
+# Smoothie Makers Full Stack Website
 
-A Progressive Web Application that allows all Smoothie Makers alike to come together, create healthy & nutritious recipes, and share them with everyone else. Developed by Abdullah Mohamed, credits to Hudson Pu for the Idea!
+A Progressive Web Application (that means you can *install* the website) that brings all Smoothie Makers alike to come together, create healthy & nutritious recipes, and share them with everyone else. Developed by Abdullah Mohamed, credits to Hudson Pu for the Idea!
 
 # TLDR
 
