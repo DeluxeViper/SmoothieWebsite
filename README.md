@@ -20,22 +20,36 @@ http://smoothiemakerswebsite-env.eba-m6qvhd3n.us-east-2.elasticbeanstalk.com/hom
 
 
 ### The Landing page
-<img src="/HomePage.png" width="700"/>
+<kbd>
+  <img src="/HomePage.png" width="700"/>
+</kbd>
 
 ### Registering Account
-<img src="/RegisterPage.png" width="700"/>
+<kbd>
+  <img src="/RegisterPage.png" width="700"/>
+</kbd>
 
 ### Logging In
+<kbd>
 <img src="/LoginPage.png" width="700"/>
+</kbd>
 
 ### Adding a Smoothie and its Ingredients
-<img src="/CreateYourOwnSmoothiePage.png" width="700"/>
+<kbd>
+  <img src="/CreateYourOwnSmoothiePage.png" width="700"/>
+</kbd>
 
 ### Your Saved Recipes all in one place
-<img src="/YourSavedRecipes.png" width="700"/>
+<kbd>
+  <img src="/YourSavedRecipes.png" width="700"/>
+</kbd>
 
 ### Sharing your smoothie - Creating a smoothie post
+<kbd>
 <img src="/CreateYourOwnSmoothiePost.png" width="700"/>
+</kbd>
 
 ### Checking out smoothies made from others
-<img src="/PublicForumPage.png" width="700"/>
+<kbd>
+  <img src="/PublicForumPage.png" width="700"/>
+</kbd>
