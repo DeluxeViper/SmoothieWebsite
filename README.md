@@ -2,6 +2,10 @@
 
 A Progressive Web Application (that means you can *download* the website) that brings all Smoothie Makers alike to come together, create healthy & nutritious recipes, and share them with each other.
 
+  <p align="center">
+    <img src="/HomePage.png" width="700"/>
+  </p>
+
 # TLDR
 
 * A full-stack website created using a **Vaadin** (**Java, Javascript, CSS, HTML**) frontend with a **Spring Boot** (**Java, JPQL, Spring Data JPA**) backend with a **MySQL** database
@@ -16,10 +20,9 @@ http://smoothiemakerswebsite-env.eba-m6qvhd3n.us-east-2.elasticbeanstalk.com/hom
 
 ### You can Download it!
 
-
 ### The Landing page
 <kbd>
-  <img src="/HomePage.png" width="700"/>
+  <img src="/LandingPageGif&#32;(1).gif" width="700"/>
 </kbd>
 
 ### Register Your Account
