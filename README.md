@@ -18,8 +18,6 @@ http://smoothiemakerswebsite-env.eba-m6qvhd3n.us-east-2.elasticbeanstalk.com/hom
 
 ## Features
 
-### You can Download it!
-
 ### The Landing page
 <kbd>
   <img src="/LandingPageGif&#32;(1).gif" width="700"/>
