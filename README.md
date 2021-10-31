@@ -60,6 +60,7 @@ http://smoothiemakerswebsite-env.eba-m6qvhd3n.us-east-2.elasticbeanstalk.com/hom
 * Spring Framework (Spring Boot, Spring Security, Spring Data JPA, Spring OAuth2.0, Spring Web)
 * Python (Selenium, BeautifulSoup4)
 * MySQL
+* Vaadin
 * Javascript
 * HTML/CSS
 * AWS (Elastic Beanstalk, RDS)
