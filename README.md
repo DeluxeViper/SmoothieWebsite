@@ -64,3 +64,7 @@ http://smoothiemakerswebsite-env.eba-m6qvhd3n.us-east-2.elasticbeanstalk.com/hom
 * HTML/CSS
 * AWS (Elastic Beanstalk, RDS)
 
+### UML Diagram (Excluding the Post entity)
+<kbd>
+  <img src="/SmoothieUMLDiagram.png" width="700"/>
+</kbd>
